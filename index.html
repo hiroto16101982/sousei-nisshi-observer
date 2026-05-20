@@ -1,26 +1,29 @@
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>創星日誌 - 生命圏観測シミュレーター</title>
+  <title>創星日誌 - 生命圏観測・グレートフィルターシミュレーター</title>
   <style>
     :root {
-      --bg0: #050816;
-      --panel: rgba(12, 20, 45, 0.84);
-      --panel2: rgba(18, 32, 68, 0.74);
-      --line: rgba(158, 190, 255, 0.22);
-      --line2: rgba(255, 255, 255, 0.12);
-      --text: #edf5ff;
-      --muted: #9fb2d8;
-      --subtle: #7082aa;
-      --gold: #ffd976;
-      --cyan: #7ee8ff;
-      --green: #9dffb2;
-      --red: #ff8a9d;
-      --purple: #c6a6ff;
-      --shadow: 0 18px 55px rgba(0,0,0,.42);
-      --radius: 22px;
+      --bg0: #02040a;
+      --panel: rgba(8, 14, 32, 0.88);
+      --panel2: rgba(15, 27, 58, 0.78);
+      --line: rgba(126, 232, 255, 0.25);
+      --line-active: rgba(126, 232, 255, 0.6);
+      --line2: rgba(255, 255, 255, 0.08);
+      --text: #f0f6fc;
+      --muted: #8b9ebf;
+      --subtle: #56688a;
+      --gold: #ffcf56;
+      --cyan: #52e3ff;
+      --green: #4eff8a;
+      --red: #ff5f7e;
+      --purple: #b085ff;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      --radius: 20px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     }
 
     * {
@@ -33,36 +36,52 @@
       min-height: 100%;
       margin: 0;
       color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: var(--font);
       overflow-x: hidden;
       background:
-        radial-gradient(circle at 20% 0%, rgba(79, 118, 255, .28), transparent 28%),
-        radial-gradient(circle at 80% 12%, rgba(138, 64, 255, .20), transparent 22%),
-        linear-gradient(160deg, #030511 0%, #08142f 48%, #050816 100%);
+        radial-gradient(circle at 10% 10%, rgba(82, 227, 255, 0.15), transparent 35%),
+        radial-gradient(circle at 90% 85%, rgba(176, 133, 255, 0.12), transparent 40%),
+        linear-gradient(150deg, #02040a 0%, #060b1d 50%, #010307 100%);
     }
 
+    /* 走査線・レトロSF風グリッドオーバーレイ */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
+      background-image: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 4px, 6px 100%;
+      z-index: 100;
+      opacity: 0.4;
+    }
+
+    /* 星屑背景 */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
       background-image:
-        radial-gradient(circle, rgba(255,255,255,.55) 0 1px, transparent 1.7px),
-        radial-gradient(circle, rgba(126,232,255,.30) 0 1px, transparent 1.6px);
-      background-size: 82px 82px, 137px 137px;
-      background-position: 0 0, 24px 52px;
-      opacity: .18;
-      mask-image: linear-gradient(to bottom, black, transparent 86%);
+        radial-gradient(circle, rgba(255, 255, 255, 0.6) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(82, 227, 255, 0.4) 1px, transparent 1.5px);
+      background-size: 110px 110px, 190px 190px;
+      background-position: 0 0, 45px 80px;
+      opacity: 0.25;
+      mask-image: linear-gradient(to bottom, black 80%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent);
     }
 
     .app {
-      width: min(100%, 540px);
+      width: min(100%, 560px);
       min-height: 100dvh;
       margin: 0 auto;
-      padding: calc(12px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));
+      padding: calc(16px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       position: relative;
     }
 
@@ -71,7 +90,9 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding: 8px 6px 0;
+      padding: 4px 6px 0;
+      border-bottom: 1px solid var(--line2);
+      padding-bottom: 12px;
     }
 
     .titleBlock {
@@ -80,16 +101,20 @@
 
     .appTitle {
       margin: 0;
-      font-size: 22px;
-      letter-spacing: .06em;
-      line-height: 1.05;
-      font-weight: 850;
+      font-size: 24px;
+      letter-spacing: .08em;
+      line-weight: 1.05;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px rgba(82, 227, 255, 0.3);
     }
 
     .appSub {
       margin-top: 4px;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: .04em;
       white-space: nowrap;
       overflow: hidden;
@@ -98,157 +123,183 @@
 
     .miniBtns {
       display: flex;
-      gap: 7px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
     button {
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.07);
+      background: rgba(8, 22, 46, 0.6);
       color: var(--text);
       border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 13px;
-      font-weight: 750;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,.16);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       touch-action: manipulation;
+      backdrop-filter: blur(4px);
+    }
+
+    button:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 8px rgba(82, 227, 255, 0.4);
+      transform: translateY(-1px);
     }
 
     button:active {
-      transform: translateY(1px) scale(.99);
+      transform: translateY(1px) scale(.97);
     }
 
     button.primary {
-      background: linear-gradient(135deg, rgba(126,232,255,.22), rgba(198,166,255,.18));
-      border-color: rgba(126,232,255,.36);
+      background: linear-gradient(135deg, rgba(82, 227, 255, 0.25), rgba(176, 133, 255, 0.15));
+      border-color: rgba(82, 227, 255, 0.45);
+    }
+    button.primary:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(82, 227, 255, 0.5);
     }
 
     button.warn {
-      background: rgba(255,138,157,.12);
-      border-color: rgba(255,138,157,.26);
+      background: rgba(255, 95, 126, 0.12);
+      border-color: rgba(255, 95, 126, 0.3);
+    }
+    button.warn:hover {
+      border-color: var(--red);
+      box-shadow: 0 0 10px rgba(255, 95, 126, 0.4);
     }
 
     button.locked {
-      opacity: .45;
-      filter: grayscale(.5);
+      opacity: .4;
+      filter: grayscale(.7);
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     .gameLayout {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .leftPane,
     .rightPane {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       min-width: 0;
     }
 
     .planetCard {
       position: relative;
-      background: linear-gradient(180deg, rgba(13, 23, 55, .78), rgba(7, 13, 29, .70));
+      background: linear-gradient(180deg, rgba(8, 16, 38, 0.8), rgba(4, 7, 18, 0.95));
       border: 1px solid var(--line);
-      border-radius: 30px;
+      border-radius: 28px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 356px;
+      min-height: 380px;
     }
 
-    .planetCard::after {
+    .planetCard::before {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
-      border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255,255,255,.10), transparent 22%, transparent 70%, rgba(126,232,255,.08));
-      mix-blend-mode: screen;
+      background: radial-gradient(circle at 50% 50%, rgba(82, 227, 255, 0.05) 0%, transparent 70%);
+      z-index: 1;
     }
 
     #planetCanvas {
       display: block;
       width: 100%;
-      height: 356px;
+      height: 380px;
       touch-action: none;
       user-select: none;
+      cursor: grab;
+    }
+    #planetCanvas:active {
+      cursor: grabbing;
     }
 
     .planetHint {
       position: absolute;
       left: 14px;
-      top: 12px;
+      bottom: 14px;
       z-index: 2;
-      color: rgba(237,245,255,.74);
-      font-size: 11px;
-      background: rgba(3, 7, 18, .38);
-      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(237, 245, 255, 0.7);
+      font-size: 10px;
+      background: rgba(2, 6, 16, 0.65);
+      border: 1px solid rgba(82, 227, 255, 0.25);
       border-radius: 999px;
-      padding: 7px 10px;
-      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.05em;
     }
 
     .ageBadge {
       position: absolute;
       right: 14px;
-      top: 12px;
+      top: 14px;
       z-index: 3;
       text-align: right;
-      background: rgba(3, 7, 18, .44);
-      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(2, 6, 16, 0.7);
+      border: 1px solid rgba(82, 227, 255, 0.25);
       border-radius: 16px;
-      padding: 8px 10px;
-      backdrop-filter: blur(10px);
-      max-width: 190px;
+      padding: 8px 12px;
+      backdrop-filter: blur(8px);
+      max-width: 220px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .ageBadge .planetName {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--gold);
-      font-weight: 850;
+      font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(255, 207, 86, 0.3);
     }
 
     .ageBadge .age {
       margin-top: 2px;
       font-size: 11px;
       color: var(--muted);
+      font-family: monospace;
     }
 
+    /* 観測ワイプUI */
     .wipe {
       position: absolute;
-      right: 14px;
-      bottom: 14px;
+      left: 14px;
+      top: 14px;
       z-index: 5;
-      width: min(48%, 218px);
-      min-height: 156px;
+      width: min(72%, 240px);
+      min-height: 180px;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(5, 9, 20, .76);
-      box-shadow: 0 18px 45px rgba(0,0,0,.38);
-      backdrop-filter: blur(14px);
-      transform: translateY(10px);
+      border: 1px solid rgba(82, 227, 255, 0.35);
+      background: rgba(3, 7, 20, 0.92);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      backdrop-filter: blur(16px);
+      transform: scale(0.9) translateY(-10px);
       opacity: 0;
       pointer-events: none;
-      transition: .22s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .wipe.show {
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
       opacity: 1;
       pointer-events: auto;
     }
 
     .wipeScene {
-      height: 76px;
+      height: 84px;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(#1b3159, #0b172e);
+      border-bottom: 1px solid rgba(82, 227, 255, 0.2);
     }
 
     .wipeScene canvas {
@@ -258,41 +309,67 @@
     }
 
     .wipeBody {
-      padding: 9px 10px 10px;
+      padding: 10px;
     }
 
     .wipeName {
-      font-size: 13px;
-      font-weight: 850;
+      font-size: 14px;
+      font-weight: 800;
       line-height: 1.2;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--cyan);
     }
 
     .wipeLine {
-      margin-top: 3px;
+      margin-top: 4px;
       font-size: 11px;
-      line-height: 1.35;
+      line-height: 1.4;
       color: var(--muted);
     }
 
     .wipeActions {
       display: flex;
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .wipeActions button {
-      padding: 6px 8px;
+      padding: 6px 10px;
       font-size: 11px;
       flex: 1;
+      border-radius: 8px;
     }
 
+    .wipeCloseBtn {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      z-index: 6;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .wipeCloseBtn:hover {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    /* ステータスセクション */
     .statusPanel {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
     }
 
     .statBox,
@@ -304,46 +381,68 @@
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: 0 12px 30px rgba(0,0,0,.22);
-      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(15px);
+      transition: border-color 0.3s;
+    }
+    .statBox:hover {
+      border-color: rgba(82, 227, 255, 0.4);
     }
 
     .statBox {
-      padding: 11px 12px;
+      padding: 12px 14px;
       min-width: 0;
+      position: relative;
+      overflow: hidden;
     }
+    .statBox::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--cyan);
+      opacity: 0.5;
+    }
+    .statBox.stage-life::before { background: var(--green); }
+    .statBox.stage-civ::before { background: var(--gold); }
+    .statBox.stage-points::before { background: var(--cyan); }
+    .statBox.stage-filter::before { background: var(--red); }
 
     .statLabel {
       color: var(--subtle);
-      font-size: 11px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       margin-bottom: 4px;
     }
 
     .statValue {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.25;
-      font-weight: 820;
+      font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .cyan { color: var(--cyan); }
-    .gold { color: var(--gold); }
-    .green { color: var(--green); }
-    .red { color: var(--red); }
-    .purple { color: var(--purple); }
+    .cyan { color: var(--cyan); text-shadow: 0 0 6px rgba(82, 227, 255, 0.2); }
+    .gold { color: var(--gold); text-shadow: 0 0 6px rgba(255, 207, 86, 0.2); }
+    .green { color: var(--green); text-shadow: 0 0 6px rgba(78, 255, 138, 0.2); }
+    .red { color: var(--red); text-shadow: 0 0 6px rgba(255, 95, 126, 0.2); }
+    .purple { color: var(--purple); text-shadow: 0 0 6px rgba(176, 133, 255, 0.2); }
 
     .controlPanel {
-      padding: 11px;
+      padding: 12px;
       display: grid;
       gap: 10px;
     }
 
     .speedRow {
       display: grid;
-      grid-template-columns: 48px 1fr 48px;
-      gap: 9px;
+      grid-template-columns: 46px 1fr 46px;
+      gap: 10px;
       align-items: center;
     }
 
@@ -351,29 +450,30 @@
       height: 44px;
       font-size: 18px;
       padding: 0;
+      border-radius: 12px;
     }
 
     .speedDisplay {
       min-height: 44px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
+      border: 1px solid rgba(82, 227, 255, 0.15);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      background: rgba(255,255,255,.06);
-      line-height: 1.05;
+      background: rgba(255, 255, 255, 0.03);
+      line-height: 1.1;
     }
 
     .speedDisplay b {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--cyan);
     }
 
     .speedDisplay small {
-      margin-top: 3px;
+      margin-top: 2px;
       color: var(--subtle);
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .quickRow {
@@ -383,16 +483,17 @@
     }
 
     .quickRow button {
-      padding: 10px 6px;
-      font-size: 12px;
+      padding: 10px 4px;
+      font-size: 11px;
+      border-radius: 10px;
     }
 
     .timeStyleBox,
     .interventionBox {
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(82, 227, 255, 0.12);
       border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      padding: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 8px 10px;
     }
 
     .timeStyleBox summary,
@@ -400,6 +501,8 @@
       cursor: pointer;
       color: var(--muted);
       font-size: 11px;
+      font-weight: 700;
+      user-select: none;
     }
 
     .styleRow,
@@ -414,46 +517,53 @@
     .styleRow button,
     .interventionGrid button,
     .observerGrid button {
-      padding: 7px 6px;
+      padding: 8px 6px;
       font-size: 11px;
+      border-radius: 8px;
       box-shadow: none;
     }
 
     .styleState {
-      margin-top: 7px;
+      margin-top: 8px;
       font-size: 10px;
       color: var(--subtle);
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
+    /* モード選択パネル - 固定ヘッダー化 */
     .modePanel {
-      padding: 8px;
+      padding: 6px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
       position: sticky;
       top: calc(8px + env(safe-area-inset-top));
       z-index: 8;
-      background: rgba(8, 15, 34, .92);
-      border-radius: 18px;
+      background: rgba(4, 8, 22, 0.95);
+      border-radius: 16px;
       backdrop-filter: blur(12px);
     }
 
     .modePanel button {
-      padding: 10px 4px;
-      font-size: 12px;
-      border-radius: 15px;
+      padding: 10px 2px;
+      font-size: 11px;
+      border-radius: 12px;
       box-shadow: none;
+      border-color: transparent;
+      background: transparent;
     }
 
     .modePanel button.active {
-      background: linear-gradient(135deg, rgba(255,217,118,.22), rgba(126,232,255,.16));
-      border-color: rgba(255,217,118,.38);
-      color: #fff5d6;
+      background: linear-gradient(135deg, rgba(82, 227, 255, 0.15), rgba(176, 133, 255, 0.12));
+      border-color: var(--line-active);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(82, 227, 255, 0.1);
     }
 
+    /* ピン留めトレイ */
     .pinTray {
-      padding: 10px;
+      padding: 12px;
       display: none;
     }
 
@@ -467,16 +577,20 @@
       align-items: center;
       gap: 8px;
       margin-bottom: 8px;
+      border-bottom: 1px solid rgba(82, 227, 255, 0.15);
+      padding-bottom: 6px;
     }
 
     .sectionTitle b {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--gold);
+      letter-spacing: 0.05em;
     }
 
     .sectionTitle span {
       color: var(--subtle);
-      font-size: 11px;
+      font-size: 10px;
+      font-family: monospace;
     }
 
     .pinList {
@@ -486,97 +600,115 @@
     }
 
     .pinCard {
+      cursor: pointer;
       min-width: 0;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      border-radius: 16px;
+      border: 1px solid rgba(82, 227, 255, 0.15);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
       padding: 8px;
+      transition: all 0.2s;
+    }
+    .pinCard:hover {
+      border-color: var(--cyan);
+      background: rgba(82, 227, 255, 0.04);
     }
 
     .pinName {
       font-size: 11px;
-      font-weight: 850;
+      font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--cyan);
     }
 
     .pinState {
       margin-top: 4px;
       color: var(--muted);
-      font-size: 10px;
-      line-height: 1.25;
-      min-height: 25px;
+      font-size: 9px;
+      line-height: 1.3;
+      min-height: 24px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .pinCard button {
-      margin-top: 7px;
+      margin-top: 6px;
       width: 100%;
-      padding: 5px;
-      font-size: 10px;
+      padding: 4px;
+      font-size: 9px;
+      border-radius: 6px;
     }
 
+    /* メイン情報パネル */
     .detailPanel {
-      padding: 13px;
-      min-height: 184px;
+      padding: 14px;
+      min-height: 200px;
     }
 
     .detailHeader {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      align-items: flex-start;
+      align-items: center;
       margin-bottom: 10px;
     }
 
     .detailHeader h2 {
       margin: 0;
-      font-size: 16px;
-      line-height: 1.25;
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 900;
+      color: #fff;
     }
 
     .tag {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      padding: 5px 8px;
-      color: var(--muted);
-      font-size: 11px;
+      border-radius: 6px;
+      border: 1px solid rgba(82, 227, 255, 0.3);
+      background: rgba(82, 227, 255, 0.08);
+      padding: 4px 8px;
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 700;
       white-space: nowrap;
     }
 
     .modeGuide {
       display: grid;
-      gap: 7px;
-      margin: 8px 0 10px;
+      gap: 8px;
+      margin: 8px 0 12px;
     }
 
     .guideCard {
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding: 8px;
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .guideCard b {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       margin-bottom: 2px;
+      color: var(--cyan);
     }
 
     .guideCard small {
       color: var(--muted);
-      line-height: 1.35;
-      font-size: 11px;
+      line-height: 1.4;
+      font-size: 10px;
+      display: block;
     }
 
     .modeHint {
       color: var(--muted);
       font-size: 11px;
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       line-height: 1.5;
     }
 
@@ -587,25 +719,27 @@
     }
 
     .infoItem {
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.045);
-      border-radius: 15px;
-      padding: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      padding: 8px 10px;
       min-width: 0;
     }
 
     .infoItem small {
       display: block;
       color: var(--subtle);
-      font-size: 10px;
-      margin-bottom: 4px;
+      font-size: 9px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
     }
 
     .infoItem b {
       display: block;
       font-size: 12px;
-      line-height: 1.28;
-      font-weight: 780;
+      line-height: 1.3;
+      font-weight: 800;
+      color: var(--text);
     }
 
     .wide {
@@ -614,8 +748,8 @@
 
     .desc {
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.55;
+      font-size: 11px;
+      line-height: 1.5;
       margin: 0;
     }
 
@@ -626,8 +760,8 @@
 
     .barLine {
       display: grid;
-      grid-template-columns: 86px 1fr 34px;
-      gap: 7px;
+      grid-template-columns: 90px 1fr 34px;
+      gap: 8px;
       align-items: center;
       font-size: 11px;
       color: var(--muted);
@@ -635,16 +769,18 @@
 
     .barTrack {
       height: 8px;
-      background: rgba(255,255,255,.08);
+      background: rgba(255, 255, 255, 0.06);
       border-radius: 999px;
       overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .barFill {
       height: 100%;
-      width: 50%;
-      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
       border-radius: 999px;
+      transition: width 0.4s ease;
     }
 
     .chipRow {
@@ -657,147 +793,176 @@
     .chip {
       font-size: 10px;
       color: var(--cyan);
-      border: 1px solid rgba(126,232,255,.3);
-      border-radius: 999px;
-      padding: 3px 7px;
+      border: 1px solid rgba(82, 227, 255, 0.25);
+      border-radius: 6px;
+      padding: 2px 6px;
+      background: rgba(82, 227, 255, 0.04);
     }
 
     .fold {
-      margin-top: 8px;
-      border: 1px solid rgba(255,255,255,.10);
+      margin-top: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      background: rgba(255,255,255,.03);
+      background: rgba(255, 255, 255, 0.01);
     }
 
     .fold summary {
       cursor: pointer;
-      padding: 8px 10px;
+      padding: 8px 12px;
       color: var(--muted);
       font-size: 11px;
+      font-weight: bold;
     }
 
     .fold .foldBody {
-      padding: 0 10px 10px;
+      padding: 0 12px 12px;
     }
 
+    /* 詳細地域マップ */
     .areaMapWrap {
       position: relative;
-      margin: 8px 0 10px;
-      border-radius: 18px;
+      margin: 8px 0 12px;
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(82, 227, 255, 0.25);
+      background: #020616;
     }
 
     #areaMapCanvas {
       display: block;
       width: 100%;
-      height: 260px;
-      background: #123;
+      height: 250px;
     }
 
     .mapLegend {
       position: absolute;
-      left: 9px;
+      left: 8px;
       bottom: 8px;
       z-index: 2;
       display: flex;
-      gap: 5px;
+      gap: 4px;
       flex-wrap: wrap;
-      max-width: calc(100% - 18px);
+      max-width: calc(100% - 16px);
     }
 
     .mapLegend span {
       font-size: 9px;
-      color: rgba(237,245,255,.78);
-      border: 1px solid rgba(255,255,255,.13);
-      background: rgba(4,8,18,.45);
-      border-radius: 999px;
-      padding: 3px 6px;
-      backdrop-filter: blur(8px);
+      color: rgba(237, 245, 255, 0.85);
+      border: 1px solid rgba(82, 227, 255, 0.2);
+      background: rgba(2, 6, 20, 0.8);
+      border-radius: 4px;
+      padding: 2px 5px;
+      backdrop-filter: blur(4px);
     }
 
+    /* ログパネル */
     .logPanel {
-      padding: 13px;
+      padding: 14px;
     }
 
     .logFilters {
       display: flex;
       gap: 6px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .logFilters button {
-      padding: 7px 9px;
-      font-size: 11px;
+      padding: 6px 10px;
+      font-size: 10px;
       box-shadow: none;
+      border-radius: 8px;
     }
 
     .logFilters button.active {
-      background: rgba(126,232,255,.18);
-      border-color: rgba(126,232,255,.34);
+      background: rgba(82, 227, 255, 0.15);
+      border-color: rgba(82, 227, 255, 0.4);
+      color: #fff;
     }
 
     .logList {
       display: grid;
       gap: 8px;
-      max-height: 310px;
-      overflow: auto;
-      padding-right: 2px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* スクロールバー装飾 */
+    .logList::-webkit-scrollbar,
+    .journalBox::-webkit-scrollbar {
+      width: 4px;
+    }
+    .logList::-webkit-scrollbar-track,
+    .journalBox::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.02);
+    }
+    .logList::-webkit-scrollbar-thumb,
+    .journalBox::-webkit-scrollbar-thumb {
+      background: rgba(82, 227, 255, 0.2);
+      border-radius: 999px;
     }
 
     .logItem {
       display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 9px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      padding-bottom: 8px;
+      grid-template-columns: 74px 1fr;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .logItem:hover {
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .logAge {
       color: var(--gold);
       font-size: 10px;
-      line-height: 1.25;
+      font-family: monospace;
+      line-height: 1.4;
     }
 
     .logType {
       display: inline-block;
       font-size: 9px;
       color: var(--subtle);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 999px;
-      padding: 1px 5px;
-      margin-right: 5px;
-      vertical-align: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 1px 4px;
+      margin-right: 4px;
+      vertical-align: middle;
     }
 
     .logText {
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.42;
+      font-size: 11px;
+      line-height: 1.4;
     }
 
     .logText b {
       color: var(--text);
     }
 
+    /* トースト通知 */
     .toast {
       position: fixed;
       left: 50%;
-      top: calc(56px + env(safe-area-inset-top));
-      transform: translate(-50%, -8px);
+      top: calc(70px + env(safe-area-inset-top));
+      transform: translate(-50%, -10px);
       z-index: 50;
-      background: rgba(6, 11, 26, .9);
-      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(4, 9, 24, 0.94);
+      border: 1px solid var(--cyan);
       border-radius: 12px;
-      padding: 8px 10px;
-      min-width: 180px;
-      max-width: min(92vw, 380px);
+      padding: 10px 16px;
+      min-width: 220px;
+      max-width: min(92vw, 420px);
       opacity: 0;
       pointer-events: none;
-      transition: .2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       font-size: 12px;
       color: var(--text);
+      box-shadow: 0 10px 30px rgba(82, 227, 255, 0.2);
+      text-align: center;
     }
 
     .toast.show {
@@ -805,6 +970,7 @@
       transform: translate(-50%, 0);
     }
 
+    /* イベント・ダイアログモーダル */
     .eventModal {
       position: fixed;
       inset: 0;
@@ -812,8 +978,9 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(2,6,16,.72);
-      padding: 14px;
+      background: rgba(1, 3, 9, 0.82);
+      padding: 16px;
+      backdrop-filter: blur(6px);
     }
 
     .eventModal.show {
@@ -821,32 +988,34 @@
     }
 
     .eventCard {
-      width: min(100%, 460px);
-      background: rgba(10,18,40,.96);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 12px;
+      width: min(100%, 450px);
+      background: rgba(6, 12, 30, 0.98);
+      border: 1px solid var(--line-active);
+      border-radius: 20px;
+      padding: 16px;
       box-shadow: var(--shadow);
     }
 
+    /* 日誌生成表示ボックス */
     .journalBox {
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.045);
-      border-radius: 16px;
+      border: 1px solid rgba(82, 227, 255, 0.2);
+      background: rgba(3, 8, 22, 0.6);
+      border-radius: 14px;
       padding: 12px;
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
+      font-size: 11px;
+      line-height: 1.6;
       white-space: pre-wrap;
-      max-height: 420px;
-      overflow: auto;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: monospace;
     }
 
     .endingBanner {
-      border: 1px solid rgba(255,217,118,.24);
-      background: linear-gradient(135deg, rgba(255,217,118,.12), rgba(126,232,255,.08));
-      border-radius: 16px;
-      padding: 10px;
+      border: 1px solid rgba(255, 207, 86, 0.3);
+      background: linear-gradient(135deg, rgba(255, 207, 86, 0.1), rgba(82, 227, 255, 0.05));
+      border-radius: 14px;
+      padding: 10px 12px;
       margin: 8px 0;
     }
 
@@ -857,62 +1026,75 @@
       margin-bottom: 4px;
     }
 
-    .footerNote {
-      color: rgba(159,178,216,.65);
+    /* 手動コピー用のフォールバックエリア */
+    .fallbackArea {
+      margin-top: 8px;
+      display: none;
+    }
+    .fallbackArea textarea {
+      width: 100%;
+      height: 80px;
+      background: rgba(0,0,0,0.4);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px;
       font-size: 10px;
+    }
+
+    .footerNote {
+      color: rgba(159, 178, 216, 0.45);
+      font-size: 9px;
       text-align: center;
-      padding: 2px 8px 0;
-      line-height: 1.5;
+      padding: 6px 8px 0;
+      line-height: 1.4;
     }
 
     @media (max-width: 380px) {
-      .appTitle { font-size: 19px; }
-      .planetCard { min-height: 336px; }
-      #planetCanvas { height: 336px; }
-      .wipe { width: 54%; }
+      .appTitle { font-size: 20px; }
+      .planetCard { min-height: 320px; }
+      #planetCanvas { height: 320px; }
+      .wipe { width: 85%; }
       .infoGrid { grid-template-columns: 1fr; }
       .wide { grid-column: auto; }
       .pinList { grid-template-columns: 1fr; }
-      #areaMapCanvas { height: 230px; }
+      #areaMapCanvas { height: 210px; }
     }
 
-    @media (orientation: landscape) and (min-width: 720px) {
+    @media (orientation: landscape) and (min-width: 768px) {
       .app {
-        width: min(100%, 1120px);
+        width: min(100%, 1100px);
         min-height: 100dvh;
       }
 
       .gameLayout {
         display: grid;
-        grid-template-columns: minmax(410px, 1.06fr) minmax(360px, .94fr);
+        grid-template-columns: minmax(430px, 1.1fr) minmax(380px, 0.9fr);
         align-items: start;
+        gap: 14px;
       }
 
       .leftPane,
       .rightPane {
-        min-height: calc(100dvh - 86px);
+        min-height: calc(100dvh - 100px);
       }
 
       .planetCard {
-        min-height: calc(100dvh - 255px);
+        min-height: calc(100dvh - 280px);
       }
 
       #planetCanvas {
-        height: calc(100dvh - 255px);
-        min-height: 350px;
-        max-height: 560px;
-      }
-
-      .modePanel {
-        top: calc(8px + env(safe-area-inset-top));
+        height: calc(100dvh - 280px);
+        min-height: 380px;
+        max-height: 580px;
       }
 
       .logList {
-        max-height: 260px;
+        max-height: 320px;
       }
 
       #areaMapCanvas {
-        height: min(38dvh, 280px);
+        height: min(32dvh, 260px);
       }
     }
   </style>
@@ -921,6 +1103,7 @@
   <main class="app">
     <div class="toast" id="toast"></div>
 
+    <!-- イベントポップアップ（詳細確認・中断兼用） -->
     <div class="eventModal" id="eventModal">
       <div class="eventCard">
         <div class="detailHeader">
@@ -928,72 +1111,79 @@
           <span class="tag" id="modalType">記録</span>
         </div>
         <div class="logAge" id="modalAge"></div>
-        <p class="desc" id="modalBody"></p>
-        <div class="quickRow" style="margin-top:10px">
-          <button id="modalRegionBtn">地域を見る</button>
+        <p class="desc" id="modalBody" style="margin: 12px 0; font-size:12px; line-height:1.6;"></p>
+        <div class="quickRow" style="margin-top:14px">
+          <button id="modalRegionBtn" class="primary">地域を見る</button>
           <button id="modalCloseBtn">閉じる</button>
-          <button id="modalResumeBtn">再開</button>
+          <button id="modalResumeBtn" class="primary">観測再開</button>
         </div>
-        <p class="styleState" id="modalPauseNote">観測停止中：イベント閲覧</p>
+        <p class="styleState" id="modalPauseNote" style="text-align:center; margin-top:10px;">一時停止中 (ダイアログ表示時)</p>
       </div>
     </div>
 
+    <!-- ヘッダーバー -->
     <header class="topbar">
       <div class="titleBlock">
         <h1 class="appTitle">創星日誌</h1>
-        <div class="appSub">生命圏・文明興亡・グレートフィルター観測</div>
+        <div class="appSub">生命圏・文明興亡・グレートフィルター観測装置</div>
       </div>
       <div class="miniBtns">
         <button id="fullscreenBtn" title="フルスクリーン">全画面</button>
-        <button id="saveBtn" title="保存">保存</button>
-        <button id="resetBtn" class="warn" title="新しい惑星">新星</button>
+        <button id="saveBtn" title="進捗保存">保存</button>
+        <button id="resetBtn" class="warn" title="初期化して新星を作る">新星</button>
       </div>
     </header>
 
     <div class="gameLayout">
+      <!-- 左側：惑星像・基本操作 -->
       <section class="leftPane">
         <section class="planetCard">
-          <canvas id="planetCanvas" width="900" height="760" aria-label="回転できる惑星"></canvas>
-          <div class="planetHint">↔ 横回転　↕ 傾き　◎ タップで地域</div>
+          <canvas id="planetCanvas" width="900" height="760" aria-label="回転可能な仮想惑星"></canvas>
+          <div class="planetHint">↔ ドラッグで回転・縦傾斜調整 ｜ 地域を直接タップ</div>
+          
           <div class="ageBadge">
             <div class="planetName" id="planetName">---</div>
             <div class="age" id="ageText">---</div>
           </div>
+
+          <!-- 簡易観測情報ワイプ（地表タップで展開） -->
           <aside class="wipe" id="wipe">
+            <div class="wipeCloseBtn" id="closeWipeBtn">×</div>
             <div class="wipeScene">
               <canvas id="wipeCanvas" width="360" height="130"></canvas>
             </div>
             <div class="wipeBody">
               <div class="wipeName" id="wipeName">観測地点</div>
-              <div class="wipeLine" id="wipeLine">惑星表面をタップしてください。</div>
+              <div class="wipeLine" id="wipeLine">表面を走査中...</div>
               <div class="wipeActions">
-                <button id="pinBtn">ピン留め</button>
-                <button id="detailBtn">詳しく</button>
-                <button id="closeWipeBtn">×</button>
+                <button id="pinBtn" class="primary">追跡</button>
+                <button id="detailBtn">展開</button>
               </div>
             </div>
           </aside>
         </section>
 
+        <!-- メジャーステータス（左にカラーボーダー付き） -->
         <section class="statusPanel">
-          <div class="statBox">
+          <div class="statBox stage-life">
             <div class="statLabel">生命段階</div>
             <div class="statValue green" id="lifeStageText">---</div>
           </div>
-          <div class="statBox">
+          <div class="statBox stage-civ">
             <div class="statLabel">文明段階</div>
             <div class="statValue gold" id="civStageText">---</div>
           </div>
-          <div class="statBox">
-            <div class="statLabel">観測点</div>
+          <div class="statBox stage-points">
+            <div class="statLabel">残観測点</div>
             <div class="statValue cyan" id="pointText">---</div>
           </div>
-          <div class="statBox">
+          <div class="statBox stage-filter">
             <div class="statLabel">グレートフィルター</div>
             <div class="statValue red" id="filterText">---</div>
           </div>
         </section>
 
+        <!-- 観測スピードコントロール -->
         <section class="controlPanel">
           <div class="speedRow">
             <button id="speedDown">−</button>
@@ -1002,42 +1192,46 @@
           </div>
           <div class="quickRow">
             <button id="pauseBtn">⏸ 一時停止</button>
-            <button id="normalBtn">通常速度</button>
+            <button id="normalBtn">等速</button>
             <button id="fastBtn">早送り</button>
           </div>
-          <details class="timeStyleBox">
-            <summary>時間進行スタイル</summary>
+          <details class="timeStyleBox" open>
+            <summary>進行スタイルプリセット</summary>
             <div class="styleRow">
-              <button data-style="calm">じっくり観測</button>
-              <button data-style="evolution">生命進化重視</button>
-              <button data-style="civilization">文明観察重視</button>
-              <button data-style="event">イベント重視</button>
-              <button data-style="idle" style="grid-column:1/-1">長期放置</button>
+              <button data-style="calm">じっくり</button>
+              <button data-style="evolution">生命進化</button>
+              <button data-style="civilization">文明観察</button>
+              <button data-style="event">イベント多</button>
+              <button data-style="idle" style="grid-column: 1 / -1">長期放置(超加速)</button>
             </div>
             <div class="styleState" id="styleState">---</div>
           </details>
         </section>
       </section>
 
+      <!-- 右側：観測モードタブ・詳細表示 -->
       <section class="rightPane">
-        <nav class="modePanel" aria-label="観察モード">
+        <nav class="modePanel" aria-label="詳細情報カテゴリ">
           <button data-mode="planet" class="active">🌍惑星</button>
           <button data-mode="region">📍地域</button>
           <button data-mode="biosphere">🧬生命圏</button>
-          <button data-mode="record">📜記録</button>
+          <button data-mode="record">📜日誌</button>
         </nav>
 
+        <!-- ピン留めされた追跡地域（登録時のみ自動展開） -->
         <section class="pinTray" id="pinTray">
-          <div class="sectionTitle"><b>ピン留め観測</b><span id="pinCount">0/3</span></div>
+          <div class="sectionTitle"><b>追跡観測スロット</b><span id="pinCount">0/3</span></div>
           <div class="pinList" id="pinList"></div>
         </section>
 
+        <!-- 詳細パネル（モード切替により書き換え） -->
         <section class="detailPanel" id="detailPanel"></section>
 
+        <!-- 簡易ログリスト -->
         <section class="logPanel">
-          <div class="sectionTitle"><b>最新ログ</b><span id="logCount">0件</span></div>
+          <div class="sectionTitle"><b>統合ログフィード</b><span id="logCount">0件</span></div>
           <div class="logFilters">
-            <button data-log="all" class="active">全部</button>
+            <button data-log="all" class="active">ALL</button>
             <button data-log="life">生命</button>
             <button data-log="civ">文明</button>
             <button data-log="planet">惑星</button>
@@ -1047,7 +1241,7 @@
       </section>
     </div>
 
-    <div class="footerNote">遊び用プロトタイプです。科学的厳密性より、進化と文明を“眺める楽しさ”を優先しています。</div>
+    <div class="footerNote">※本装置は観測用シミュレーターです。科学的近似をベースに、宇宙の知的生命と文明がグレートフィルターを突破する物語性を最優先に再構築されています。</div>
   </main>
 
   <script>
@@ -1063,150 +1257,84 @@
     const lerp = (a, b, t) => a + (b - a) * t;
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-    const SAVE_KEY = 'sousei-nisshi-full-prototype-v1';
+    const SAVE_KEY = 'sousei-nisshi-full-prototype-v2';
 
-    const SPEEDS = [0, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000];
-    const SPEED_LABELS = ['停止', '×1年/秒', '×10年/秒', '×100年/秒', '×1千年/秒', '×1万年/秒', '×10万年/秒', '×100万年/秒', '×1000万年/秒'];
-    const SPEED_HELP = ['観測停止', '細かく観察', '文明史向き', '文明史早送り', '生態系早送り', '進化観察', '長期進化', '惑星史', '超高速'];
+    const SPEEDS = [0, 1, 15, 150, 1500, 15000, 150000, 1500000, 15000000];
+    const SPEED_LABELS = ['一時停止', '×1年/秒', '×15年/秒', '×150年/秒', '×1.5千年/秒', '×1.5万年/秒', '×15万年/秒', '×150万年/秒', '×1500万年/秒'];
+    const SPEED_HELP = ['観測中断中', '極細部追跡', '文明発生期', '文明進展早送り', '地質変動初期', '種の適応放散', '生命陸上進出', '惑星環境の大変動', '星雲進化スケール'];
 
     const TIME_STYLES = {
-      calm: 'じっくり観測',
-      evolution: '生命進化重視',
-      civilization: '文明観察重視',
-      event: 'イベント重視',
-      idle: '長期放置'
+      calm: 'じっくり(極低速優先)',
+      evolution: '生命進化優先',
+      civilization: '文明観察優先',
+      event: 'イベント密度優先',
+      idle: '長期放置(超高時間跳躍)'
     };
 
     const LIFE_STAGES = [
       { key: 'sterile', at: 0, label: '無生命惑星' },
-      { key: 'chemistry', at: 120_000_000, label: '有機化学期' },
-      { key: 'microbe', at: 650_000_000, label: '原始生命期' },
-      { key: 'oxygen', at: 1_900_000_000, label: '酸素革命期' },
-      { key: 'multicell', at: 2_900_000_000, label: '多細胞生命期' },
-      { key: 'oceanLife', at: 3_300_000_000, label: '海洋生態系期' },
-      { key: 'landLife', at: 3_650_000_000, label: '陸上進出期' },
-      { key: 'megafauna', at: 3_900_000_000, label: '大型生物繁栄期' },
-      { key: 'preIntelligence', at: 4_120_000_000, label: '知性候補期' },
-      { key: 'intelligence', at: 4_240_000_000, label: '知的生命誕生期' }
+      { key: 'chemistry', at: 150_000_000, label: '有機高分子スープ期' },
+      { key: 'microbe', at: 600_000_000, label: '原核微生物期' },
+      { key: 'oxygen', at: 1_800_000_000, label: '酸素大発生革命期' },
+      { key: 'multicell', at: 2_800_000_000, label: '真核・多細胞初期' },
+      { key: 'oceanLife', at: 3_200_000_000, label: '海洋生態系爆発期' },
+      { key: 'landLife', at: 3_550_000_000, label: '地表陸上進出期' },
+      { key: 'megafauna', at: 3_800_000_000, label: '巨大生命群雄割拠期' },
+      { key: 'preIntelligence', at: 4_050_000_000, label: '高次学習・道具予兆' },
+      { key: 'intelligence', at: 4_200_000_000, label: '知性形成・記号認知期' }
     ];
 
     const CIV_STAGES = [
       { key: 'none', at: 0, label: '未発生' },
-      { key: 'proto', at: 4_270_000_000, label: '原始文化' },
-      { key: 'agri', at: 4_300_000_000, label: '農耕・定住文明' },
-      { key: 'city', at: 4_322_000_000, label: '都市国家' },
-      { key: 'empire', at: 4_340_000_000, label: '王国・帝国時代' },
-      { key: 'industrial', at: 4_357_000_000, label: '産業文明' },
-      { key: 'info', at: 4_365_000_000, label: '情報文明' },
-      { key: 'space', at: 4_371_000_000, label: '宇宙進出文明' },
-      { key: 'stellar', at: 4_382_000_000, label: '恒星間文明候補' }
+      { key: 'proto', at: 4_210_000_000, label: '原始的狩猟文化' },
+      { key: 'agri', at: 4_250_000_000, label: '大規模農耕・集落定住' },
+      { key: 'city', at: 4_290_000_000, label: '都市国家連合・青銅器' },
+      { key: 'empire', at: 4_330_000_000, label: '大陸制覇帝国・哲学' },
+      { key: 'industrial', at: 4_355_000_000, label: '熱機関・第1次産業革命' },
+      { key: 'info', at: 4_364_000_000, label: '量子通信・情報統合社会' },
+      { key: 'space', at: 4_371_000_000, label: '軌道開拓・宇宙進出初期' },
+      { key: 'stellar', at: 4_380_000_000, label: '星系間移民・ダイソン候補' }
     ];
 
     const LINEAGES = [
-      {
-        id: 'mammal',
-        name: '哺乳系獣人型',
-        base: '小型群居哺乳系',
-        traits: ['高い社会性', '長い子育て', '道具操作'],
-        culture: '共同体、交易、感情表現が発達しやすい。'
-      },
-      {
-        id: 'reptile',
-        name: '爬虫系竜人型',
-        base: '乾燥地帯の大型爬虫系',
-        traits: ['耐乾燥性', '長寿傾向', '熱管理'],
-        culture: '王朝、石造建築、地熱利用が発達しやすい。'
-      },
-      {
-        id: 'avian',
-        name: '鳥類系翼人型',
-        base: '断崖性鳥類系',
-        traits: ['高視力', '立体移動', '方位感覚'],
-        culture: '塔、空路、天文観測文化が発達しやすい。'
-      },
-      {
-        id: 'arthropod',
-        name: '節足・群体型知性体',
-        base: '群体性節足系',
-        traits: ['役割分化', '多肢作業', '集合意思決定'],
-        culture: '効率都市、地下交通、分業社会が発達しやすい。'
-      },
-      {
-        id: 'cephalo',
-        name: '海洋頭足類型',
-        base: '高器用性頭足系',
-        traits: ['触腕作業', '擬態', '色彩言語'],
-        culture: '浅海都市、音波記録、沿岸連邦が発達しやすい。'
-      },
-      {
-        id: 'mycelial',
-        name: '菌類・群体知性',
-        base: '地下菌糸ネットワーク',
-        traits: ['分散知性', '超長期記憶', '共生建築'],
-        culture: '森林都市、記憶林、地下共生圏が発達しやすい。'
-      }
+      { id: 'mammal', name: '哺乳獣類型(社会性特化)', base: '樹上性小型哺乳群', traits: ['高度群集社会', '情緒・音声言語', '極精密五感'], culture: '情緒的共生、ギルド、交易と協調を重んじる文化圏を形成。' },
+      { id: 'reptile', name: '竜羽類竜人型(頑健性特化)', base: '乾燥帯大型爬虫竜', traits: ['極耐候表皮', '地熱・環境熱適応', '幾何学設計'], culture: '巨石神殿、厳格なカースト、熱制御を生かした重厚建築を愛する。' },
+      { id: 'avian', name: '鳥脚類翼人型(高次元機動)', base: '断崖性滑空鳥盤類', traits: ['完全立体空間認知', '気流航行', '広域天文視覚'], culture: '天塔都市、気流を基にする巡礼、優れた天文測定・天空芸術。' },
+      { id: 'arthropod', name: '節足群体脳型(集合共生)', base: '地下社会性甲殻群体', traits: ['超効率並列タスク', '有機フェロモン言語', '自給型建築'], culture: '均質なハチの巣型迷宮都市、完全役割分担、強固な合意形成能力。' },
+      { id: 'cephalo', name: '海洋頭足形態(可塑性極大)', base: '高機能皮膚変色頭足', traits: ['触腕マニピュレータ', '色彩投写言語', '超流体変形'], culture: '光が揺らめく浅海連邦都市、音波彫刻、極めて動的な社会変動。' },
+      { id: 'mycelial', name: '菌糸ネットワーク分散知性', base: '地下ネットワーク有機群', traits: ['分散ノード型思考', '物質情報循環', '自己修復細胞'], culture: '森林まるごと一体化した記憶共生システム。都市そのものが呼吸する生命体。' }
     ];
 
     const REGION_BASES = [
-      '北部温帯森林', '赤道大河流域', '東部サバンナ', '西方乾燥盆地',
-      '南部湿原地帯', '中央山脈', '西海岸群島', '内海沿岸',
-      '極北氷原', '南方針葉林', '赤道密林', '東方高原',
-      '外洋浅海域', '火山列島', '南極海氷縁', '大陸縁辺草原'
+      '北方常緑森林帯', '赤道デルタ大湿帯', '東部サバンナ大平原', '西海超巨大盆地',
+      '南部デルタ湿原', '中央火山隆起山脈', '西海岸孤立群島', '中央内海沿岸',
+      '永久磁極超氷原', '南方針葉高原', '赤道密林ジャングル', '東部高標高高原',
+      '赤道浅海珊瑚海', '環太平洋海底火山列島', '南極大氷冠縁海', '古大陸大草原'
     ];
 
-    const SYLLABLES = ['ア', 'ル', 'ナ', 'セ', 'イ', 'ラ', 'カ', 'ロ', 'ミ', 'ト', 'ヴァ', 'リ', 'オ', 'ノ', 'ク', 'シ', 'エ', 'ル', 'ハ', 'ザ', 'フィ', 'メ', 'リア', 'ソ'];
+    const SYLLABLES = ['エル', 'アス', 'ノア', 'ゼア', 'レイ', 'シア', 'オル', 'カル', 'ヴィ', 'サ', 'ハル', 'ヴェ', 'ロサ', 'マナ', 'ド', 'ギ', 'イグ', 'リュ', 'フォ', 'ミナ', 'ユリ', 'ソラ', 'ラド', 'ゼン'];
 
     const FILTER_TYPES = [
-      {
-        id: 'climate',
-        label: '環境崩壊型',
-        sign: '海と空の均衡が崩れ、文明圏全体に環境危機の兆候が広がっています。',
-        cost: 420
-      },
-      {
-        id: 'war',
-        label: '全面戦争型',
-        sign: '複数の大国が臨界状態に入り、惑星規模の戦争リスクが上昇しています。',
-        cost: 460
-      },
-      {
-        id: 'tech',
-        label: '技術暴走型',
-        sign: '自律技術と巨大インフラが文明の制御能力を超え始めています。',
-        cost: 500
-      },
-      {
-        id: 'resource',
-        label: '資源枯渇型',
-        sign: '文明維持に必要な資源循環が限界に近づいています。',
-        cost: 380
-      },
-      {
-        id: 'cosmic',
-        label: '外宇宙災害型',
-        sign: '外宇宙由来の異常が検出され、惑星防衛能力が試されています。',
-        cost: 540
-      },
-      {
-        id: 'social',
-        label: '社会分断型',
-        sign: '情報文明の内側で信頼と合意形成が崩れ始めています。',
-        cost: 440
-      }
+      { id: 'climate', label: '急進的環境崩壊 (Greenhouse Trap)', sign: '急速な化石燃料と大気変動により、熱平衡が限界。全球乾燥・酸性雨が進んでいます。', cost: 450 },
+      { id: 'war', label: '究極核兵器・全面自滅 (Thermonuclear Dust)', sign: '核分縮合および超兵器の拡散が限界を突破。超大国間の対立が危機的水準です。', cost: 480 },
+      { id: 'tech', label: '自己増殖ナノマシン暴走 (Grey Goo)', sign: '制御を離れた自律分解複製ナノマシンの微小震源が観測されました。地表全体の分解危惧。', cost: 550 },
+      { id: 'resource', label: '不可逆資源散逸 (Entropic Depletion)', sign: '地殻コアと重要触媒元素が枯渇。宇宙進出推進に必要な希少元素が再利用不能になっています。', cost: 420 },
+      { id: 'cosmic', label: '近傍超新星大爆発・急襲 (Gamma Ray Strike)', sign: '星系間近傍の巨星が崩壊直前。大出力ガンマ線バーストの直撃予測が立っています。', cost: 580 },
+      { id: 'social', label: '超情報分散・信頼崩壊 (Cognitive Dissolution)', sign: 'ネット空間の過剰分化と高度偽情報により、客観的合意形成が完全破綻しています。', cost: 460 }
     ];
 
     const OBSERVERS = {
-      normal: { label: '通常観測者', unlock: true },
-      childBoy: { label: '小さな観測者・男の子', unlock: true },
-      childGirl: { label: '小さな観測者・女の子', unlock: true },
-      foreigner: { label: '異邦の観測者', unlock: false },
-      north: { label: '北国の観測者', unlock: false },
-      samurai: { label: '武士観測者', unlock: false },
-      kyoto: { label: 'はんなり観測者', unlock: false },
-      gal: { label: 'ギャル観測者', unlock: false },
-      oldGirl: { label: '古き星見の童女', unlock: false },
-      net: { label: '名無しの観測者', unlock: false },
-      transfer: { label: '転生観測者', unlock: false }
+      normal: { label: '機密アーカイブAI (標準)', unlock: true },
+      childBoy: { label: '知的好奇心旺盛な少年', unlock: true },
+      childGirl: { label: '夢見がちな星見の少女', unlock: true },
+      foreigner: { label: '異なる次元の旅人', unlock: false },
+      north: { label: '老練な辺境観測士', unlock: false },
+      samurai: { label: '星を詠む若武者', unlock: false },
+      kyoto: { label: '古都の陰陽術師', unlock: false },
+      gal: { label: 'ノリが軽い未来ギャル', unlock: false },
+      oldGirl: { label: '悠久を生きる長寿精霊', unlock: false },
+      net: { label: '匿名のネット観測民', unlock: false },
+      transfer: { label: '転生してきた研究員', unlock: false }
     };
 
     const defaultMeta = () => ({
@@ -1228,7 +1356,7 @@
       paused: false,
       rotY: 0,
       rotX: -0.08,
-      autoSpin: 0.025,
+      autoSpin: 0.02,
       env: null,
       landDots: [],
       cloudDots: [],
@@ -1243,7 +1371,7 @@
       intelligence: null,
       collapse: false,
       collapseAge: null,
-      nextRandomEvent: 240_000_000,
+      nextRandomEvent: 200_000_000,
       greatFilter: {
         status: 'none',
         type: null,
@@ -1288,9 +1416,9 @@
     }
 
     function formatAge(years) {
-      if (years < 10_000) return Math.floor(years).toLocaleString() + '年';
-      if (years < 100_000_000) return Math.floor(years / 10_000).toLocaleString() + '万年';
-      return (years / 100_000_000).toFixed(years < 1_000_000_000 ? 1 : 2) + '億年';
+      if (years < 10000) return Math.floor(years).toLocaleString() + '年';
+      if (years < 100_000_000) return (years / 10000).toFixed(1) + '万年';
+      return (years / 100_000_000).toFixed(3) + '億年';
     }
 
     function getStage(list, age) {
@@ -1328,21 +1456,21 @@
       el.textContent = text;
       el.classList.add('show');
       clearTimeout(toast._t);
-      toast._t = setTimeout(() => el.classList.remove('show'), 2400);
+      toast._t = setTimeout(() => el.classList.remove('show'), 2800);
     }
 
     function triggerFx(type, power = 1) {
       state.fx = {
         type,
         start: performance.now(),
-        duration: 1500 + power * 500,
+        duration: 1200 + power * 400,
         power
       };
     }
 
     function addPoints(amount, reason) {
       state.points = Math.max(0, state.points + amount);
-      if (amount > 0 && reason) toast(`観測点 +${amount}：${reason}`);
+      if (amount > 0 && reason) toast(`【観測】+${amount} Pt ➔ ${reason}`);
       state.dirty = true;
     }
 
@@ -1356,11 +1484,11 @@
         regionId: Number.isInteger(meta.regionId) ? meta.regionId : null,
         subType: meta.subType || null
       });
-      if (state.logs.length > 220) state.logs.length = 220;
+      if (state.logs.length > 250) state.logs.length = 250;
 
       if (important) {
-        addPoints(meta.points || 35, title);
-        toast(`${typeLabel(type)}：${title}`);
+        addPoints(meta.points || 40, title);
+        toast(`重要記録【${typeLabel(type)}】: ${title}`);
       }
 
       state.dirty = true;
@@ -1369,34 +1497,34 @@
     }
 
     function typeLabel(type) {
-      return type === 'life' ? '生命' : type === 'civ' ? '文明' : '惑星';
+      return type === 'life' ? '🧬生命' : type === 'civ' ? '👑文明' : '🌍惑星';
     }
 
     function makePlanet() {
       const oldMeta = state.meta || defaultMeta();
 
       state.seed = Math.floor(Math.random() * 999999);
-      state.name = randomName('惑星') + '-' + (2 + Math.floor(Math.random() * 8));
+      state.name = randomName('星海第') + '-' + (100 + Math.floor(Math.random() * 899)) + '号';
       state.age = 0;
       state.speedIndex = 5;
       state.lastSpeedIndex = 5;
       state.manualSpeedOffset = 0;
       state.paused = false;
       state.rotY = Math.random() * Math.PI * 2;
-      state.rotX = -0.08;
+      state.rotX = -0.06;
       state.env = {
-        ocean: Math.random(),
-        gravity: 0.65 + Math.random() * 0.9,
+        ocean: 0.3 + Math.random() * 0.55,
+        gravity: 0.55 + Math.random() * 1.1,
         temperature: Math.random(),
         humidity: Math.random(),
-        oxygenPotential: 0.35 + Math.random() * 0.65,
+        oxygenPotential: 0.3 + Math.random() * 0.7,
         tectonics: Math.random(),
         disaster: Math.random(),
         forest: Math.random(),
         mountains: Math.random(),
         winds: Math.random(),
         socialPressure: Math.random(),
-        stability: Math.random()
+        stability: 0.3 + Math.random() * 0.6
       };
       state.landDots = makeLandDots();
       state.cloudDots = makeCloudDots();
@@ -1407,11 +1535,11 @@
       state.pinnedRegionIds = [];
       state.mode = 'planet';
       state.logFilter = 'all';
-      state.points = 30 + Math.floor(oldMeta.carryPoints || 0);
+      state.points = 40 + Math.floor(oldMeta.carryPoints || 0);
       state.intelligence = null;
       state.collapse = false;
       state.collapseAge = null;
-      state.nextRandomEvent = 240_000_000 + Math.random() * 280_000_000;
+      state.nextRandomEvent = 200_000_000 + Math.random() * 200_000_000;
       state.greatFilter = {
         status: 'none',
         type: null,
@@ -1426,7 +1554,7 @@
       state.fx = null;
       state.meta = oldMeta;
 
-      addLog('planet', '観測開始', `${state.name} の長期観測を開始。海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。`, true, { points: 0 });
+      addLog('planet', '初期星体特定', `観測対象「${state.name}」を特定。重力 ${state.env.gravity.toFixed(2)}G、初期海洋率 ${Math.round(state.env.ocean * 100)}%。安定した観察軌道を確立。`, true, { points: 0 });
       applyStyleSpeed(true);
       hideWipe();
       markAllDirty();
@@ -1436,25 +1564,25 @@
 
     function makeLandDots() {
       const dots = [];
-      const continentCount = 5 + Math.floor(Math.random() * 4);
+      const continentCount = 6 + Math.floor(Math.random() * 5);
       const centers = [];
       for (let i = 0; i < continentCount; i++) {
         centers.push({
           lon: Math.random() * Math.PI * 2 - Math.PI,
-          lat: (Math.random() - 0.5) * Math.PI * 0.85,
-          size: 0.35 + Math.random() * 0.48
+          lat: (Math.random() - 0.5) * Math.PI * 0.82,
+          size: 0.3 + Math.random() * 0.45
         });
       }
-      for (let i = 0; i < 760; i++) {
+      for (let i = 0; i < 900; i++) {
         const c = pick(centers);
         const lon = c.lon + (Math.random() - 0.5) * c.size * 1.8;
         const lat = c.lat + (Math.random() - 0.5) * c.size;
         const polar = Math.abs(lat) / (Math.PI / 2);
-        const isLand = Math.random() > state.env.ocean * 0.55;
+        const isLand = Math.random() > state.env.ocean * 0.6;
         dots.push({
           lon,
           lat: clamp(lat, -1.45, 1.45),
-          r: 0.006 + Math.random() * 0.018,
+          r: 0.005 + Math.random() * 0.015,
           land: isLand,
           polar,
           fert: Math.random()
@@ -1465,12 +1593,12 @@
 
     function makeCloudDots() {
       const dots = [];
-      for (let i = 0; i < 170; i++) {
+      for (let i = 0; i < 220; i++) {
         dots.push({
           lon: Math.random() * Math.PI * 2 - Math.PI,
           lat: (Math.random() - 0.5) * Math.PI,
-          r: 0.006 + Math.random() * 0.012,
-          a: 0.06 + Math.random() * 0.16
+          r: 0.005 + Math.random() * 0.014,
+          a: 0.08 + Math.random() * 0.18
         });
       }
       return dots;
@@ -1478,9 +1606,9 @@
 
     function makeRegions() {
       return REGION_BASES.map((base, index) => {
-        const lon = (index / REGION_BASES.length) * Math.PI * 2 - Math.PI + (Math.random() - .5) * .35;
-        const lat = Math.sin(index * 1.7) * .9 + (Math.random() - .5) * .25;
-        const isOcean = /海|浅海|群島|沿岸|氷縁/.test(base) || Math.random() < state.env.ocean * .34;
+        const lon = (index / REGION_BASES.length) * Math.PI * 2 - Math.PI + (Math.random() - 0.5) * 0.3;
+        const lat = Math.sin(index * 1.8) * 0.85 + (Math.random() - 0.5) * 0.2;
+        const isOcean = /海|浅海|沿岸|氷縁|群島/.test(base) || Math.random() < state.env.ocean * 0.35;
         const climate = climateFrom(base, lat, isOcean);
         const root = randomName('');
         return {
@@ -1491,15 +1619,15 @@
           lat,
           isOcean,
           climate,
-          fertility: clamp(Math.random() * .55 + (isOcean ? .2 : .35) + state.env.humidity * .25, 0, 1),
-          resources: clamp(Math.random() * .7 + (base.includes('山') || base.includes('火山') ? .3 : .05), 0, 1),
-          biodiversity: Math.random() * .5,
+          fertility: clamp(Math.random() * 0.5 + (isOcean ? 0.25 : 0.35) + state.env.humidity * 0.25, 0, 1),
+          resources: clamp(Math.random() * 0.7 + (base.includes('山') || base.includes('火山') ? 0.35 : 0.05), 0, 1),
+          biodiversity: Math.random() * 0.4,
           pollution: 0,
           ruin: false,
           city: false,
           crater: false,
           volcano: base.includes('火山'),
-          uplift: base.includes('山'),
+          uplift: base.includes('山') || base.includes('高原'),
           origin: Math.random(),
           historyNames: [base],
           currentName: base,
@@ -1510,12 +1638,12 @@
     }
 
     function climateFrom(base, lat, isOcean) {
-      if (base.includes('氷') || Math.abs(lat) > 1.15) return '寒冷';
-      if (base.includes('乾燥') || state.env.humidity < .25) return '乾燥';
-      if (base.includes('湿') || state.env.humidity > .72) return '湿潤';
-      if (isOcean) return '海洋性';
-      if (Math.abs(lat) < .35) return '熱帯';
-      return '温帯';
+      if (base.includes('氷') || Math.abs(lat) > 1.1) return '極地寒冷';
+      if (base.includes('乾燥') || state.env.humidity < 0.28) return '不毛乾燥';
+      if (base.includes('湿') || state.env.humidity > 0.7) return '温帯多湿';
+      if (isOcean) return '海洋性温和';
+      if (Math.abs(lat) < 0.32) return '赤道熱帯';
+      return '四季温帯';
     }
 
     function chooseIntelligence() {
@@ -1523,48 +1651,45 @@
 
       const env = state.env;
       const scores = LINEAGES.map(l => {
-        let score = Math.random() * .25;
-        if (l.id === 'mammal') score += (1 - env.ocean) * .5 + env.socialPressure * .7 + env.forest * .4;
-        if (l.id === 'reptile') score += env.temperature * .7 + (1 - env.humidity) * .55 + (1 - env.ocean) * .35;
-        if (l.id === 'avian') score += env.mountains * .75 + env.winds * .55;
-        if (l.id === 'arthropod') score += env.socialPressure * .9 + env.temperature * .35;
-        if (l.id === 'cephalo') score += env.ocean * .95 + env.stability * .45;
-        if (l.id === 'mycelial') score += env.forest * .8 + env.stability * .75 + env.humidity * .35;
+        let score = Math.random() * 0.3;
+        if (l.id === 'mammal') score += (1 - env.ocean) * 0.45 + env.socialPressure * 0.65 + env.forest * 0.4;
+        if (l.id === 'reptile') score += env.temperature * 0.65 + (1 - env.humidity) * 0.5 + (1 - env.ocean) * 0.3;
+        if (l.id === 'avian') score += env.mountains * 0.7 + env.winds * 0.5;
+        if (l.id === 'arthropod') score += env.socialPressure * 0.85 + env.temperature * 0.3;
+        if (l.id === 'cephalo') score += env.ocean * 0.9 + env.stability * 0.4;
+        if (l.id === 'mycelial') score += env.forest * 0.75 + env.stability * 0.7 + env.humidity * 0.3;
         return { l, score };
       }).sort((a, b) => b.score - a.score);
 
       const chosen = scores[0].l;
-      const suffix = chosen.id === 'cephalo' ? '潮族'
+      const suffix = chosen.id === 'cephalo' ? '潮霊種'
         : chosen.id === 'avian' ? '翼人種'
-        : chosen.id === 'mycelial' ? '記憶林'
-        : chosen.id === 'arthropod' ? '群族'
-        : chosen.id === 'reptile' ? '竜人種'
-        : '獣人種';
+        : chosen.id === 'mycelial' ? '意識体菌座'
+        : chosen.id === 'arthropod' ? '群体蜂殻種'
+        : chosen.id === 'reptile' ? '爬竜人種'
+        : '霊長獣人種';
 
       const speciesName = randomName('') + suffix;
       state.intelligence = { ...chosen, speciesName, score: scores[0].score };
 
-      addLog('life', '知的生命体の出現', `${chosen.base} から ${speciesName} が出現。特徴は「${chosen.traits.join('・')}」。`, true, { points: 80, subType: 'intelligence' });
-      triggerFx('intelligence', 1.2);
+      addLog('life', '初知的知的種種の覚醒', `【系統種確立】「${chosen.base}」より「${speciesName}」が自意識を獲得。形質：「${chosen.traits.join('・')}」。`, true, { points: 100, subType: 'intelligence' });
+      triggerFx('intelligence', 1.3);
       autoSlowdownForImportantEvent();
 
+      // 知性発生地の起源にボーナス
       const candidates = state.regions
         .map(r => ({
           r,
-          score:
-            r.fertility +
-            r.resources * .35 +
-            (r.isOcean && chosen.id === 'cephalo' ? .6 : 0) +
-            (!r.isOcean && chosen.id !== 'cephalo' ? .25 : 0) -
-            Math.abs(r.lat) * .1 +
-            Math.random() * .3
+          score: r.fertility + r.resources * 0.4 + (r.isOcean && chosen.id === 'cephalo' ? 0.7 : 0) + (!r.isOcean && chosen.id !== 'cephalo' ? 0.3 : 0) + Math.random() * 0.3
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 2);
 
       for (const c of candidates) {
-        c.r.origin += .8;
+        c.r.origin += 0.85;
         markRegionEvent(c.r, 'origin');
+        c.r.currentName = c.r.rootName + '文明発祥領域';
+        c.r.historyNames.push(c.r.currentName);
       }
     }
 
@@ -1591,8 +1716,9 @@
 
       maybeStartGreatFilter();
 
-      if (!state.collapse && state.age > 4_372_000_000 && riskValue() > 76 && Math.random() < 0.004) {
-        triggerCollapse('複合危機');
+      // 文明段階が高く高リスク時のランダム崩壊判定
+      if (!state.collapse && state.age > 4_350_000_000 && riskValue() > 78 && Math.random() < 0.003) {
+        triggerCollapse('惑星規模の破局連鎖');
       }
 
       while (!state.ended && state.age >= state.nextRandomEvent) {
@@ -1607,98 +1733,99 @@
 
     function milestoneLife(st) {
       const msgs = {
-        sterile: ['無生命期', '地表は不安定。生命の兆候はまだありません。'],
-        chemistry: ['有機分子形成', '海洋と大気中で複雑な有機化学反応が増加しました。'],
-        microbe: ['原始生命誕生', '浅海と熱水域に微生物圏が成立。生命ログの記録を開始します。'],
-        oxygen: ['酸素革命', '光合成型生命が拡大。生態系が大きく再編されます。'],
-        multicell: ['多細胞生命の安定化', '複数の系統で大型化と分化が始まりました。'],
-        oceanLife: ['海洋生態系の拡大', '外骨格・遊泳能力・感覚器が進化。海洋のニッチ争いが激化します。'],
-        landLife: ['陸上進出', '沿岸から陸地へ生命圏が広がります。'],
-        megafauna: ['大型生物繁栄', '複数地域で大型生物が繁栄。支配系統の入れ替わりが起きやすい時代です。'],
-        preIntelligence: ['知性候補期', '道具使用・群れ行動・学習能力の高い系統が観測されています。'],
-        intelligence: ['知性の火花', '一部の生物系統で記号・道具・世代間学習が成立し始めました。']
+        sterile: ['無生命期の継続', '大気中には硫化物。激しい初期衝突活動が続いています。'],
+        chemistry: ['原始有機スープ創生', '海洋の局所アミノ酸合成が活発化。自己複製分子の気配。'],
+        microbe: ['微生物の定着', '熱水噴出孔および干潟に太古の微生物相が定着しました。'],
+        oxygen: ['大気化学酸素革命', 'シアノバクテリア型生物が繁殖。大気構成が猛毒の遊離酸素へ一変。'],
+        multicell: ['真核多細胞進化', 'ミトコンドリア型共生が生起。細胞外壁と役割の機能分化を確認。'],
+        oceanLife: ['古海洋生物多様性爆発', 'キチン質殻、複眼、遊泳機能が発達。食物連鎖の雛形が完了。'],
+        landLife: ['生命地表進出', 'オゾン層形成に伴い、不毛の陸地へ緑色植物と節足生物が上陸。'],
+        megafauna: ['支配的巨大生命繁栄', '温暖湿潤な適性環境下で、体躯巨大化による圧倒的群雄割拠期。'],
+        preIntelligence: ['認知構造の複雑化', '高度な脳容積と前肢機能により、道具保持と世代間学習の片鱗。'],
+        intelligence: ['知的生命段階到達', '抽象的な記号、複雑な相互伝達が可能になり、生態適応限界を打破。']
       };
 
-      addLog('life', msgs[st.key][0], msgs[st.key][1], true, { points: st.key === 'intelligence' ? 80 : 30 });
-      if (st.key === 'intelligence') triggerFx('intelligence', 1.1);
+      addLog('life', msgs[st.key][0], msgs[st.key][1], true, { points: st.key === 'intelligence' ? 90 : 35 });
+      if (st.key === 'intelligence') triggerFx('intelligence', 1.2);
 
       for (const r of state.regions) {
-        r.biodiversity = clamp(r.biodiversity + .08 + Math.random() * .12, 0, 1);
+        r.biodiversity = clamp(r.biodiversity + 0.1 + Math.random() * 0.15, 0, 1);
       }
     }
 
     function milestoneCiv(st) {
       if (st.key === 'none') return;
 
-      const species = state.intelligence ? state.intelligence.speciesName : '未確定知性体';
+      const species = state.intelligence ? state.intelligence.speciesName : '知性候補体';
       const msgs = {
-        proto: ['原始文化の成立', `${species} が火・道具・記号的コミュニケーションを使い始めました。`],
-        agri: ['定住文明の発生', '食料生産と定住地が拡大。地域名が固有名へ変化し始めます。'],
-        city: ['都市国家の形成', '河川・沿岸・資源地帯に都市が出現。交易と争いが記録されます。'],
-        empire: ['国家と帝国の時代', '複数の都市圏が統合され、地域名が王国・州・聖域として再編されます。'],
-        industrial: ['産業文明へ移行', '燃料利用と機械化が進行。環境負荷が上昇します。'],
-        info: ['情報文明へ移行', '惑星規模の通信網が成立。都市光が夜面に広がります。'],
-        space: ['宇宙進出開始', '軌道施設と宇宙港が建設されました。グレートフィルターの兆候に注意。'],
-        stellar: ['恒星間文明候補', '惑星文明の一部が恒星間進出を試みています。']
+        proto: ['原始神話と道具文化', `${species} が火、原初的な言語、埋葬行動を獲得しました。`],
+        agri: ['定住型農業・灌漑文明', '収穫物の管理、神殿を中心とした定住集落が群島や大河流域に定着。'],
+        city: ['都市国家・青銅器同盟', '書記、組織化された軍隊、法律が誕生。広域での物資調奪が加速。'],
+        empire: ['広域帝国・普遍的哲学', '巨大版図による覇権構造。普遍的な倫理、交易貨幣システムが稼働。'],
+        industrial: ['機械化産業革命と石炭利用', '化石エネルギーの過剰消費。蒸気機関、大量生産システムが稼働。'],
+        info: ['統合網情報社会・脱炭素葛藤', '惑星全体をつなぐ超高速通信網。サイバー空間と資源危機の同時進行。'],
+        space: ['惑星離脱・軌道ステーション群', '第1脱出速度を克服。星系開発への扉、および軌道デブリの蓄積。'],
+        stellar: ['星系間進出・移民艦隊推進', '超光速候補の検討。第一段階ダイソン・スフィア構築が視野に。']
       };
 
-      addLog('civ', msgs[st.key][0], msgs[st.key][1], true, { points: ['city', 'industrial', 'space'].includes(st.key) ? 75 : 45, subType: st.key });
-      if (st.key === 'proto') triggerFx('civilization', 1);
-      if (st.key === 'space') triggerFx('space', 1.2);
+      addLog('civ', msgs[st.key][0], msgs[st.key][1], true, { points: ['city', 'industrial', 'space'].includes(st.key) ? 80 : 50, subType: st.key });
+      if (st.key === 'proto') triggerFx('civilization', 1.0);
+      if (st.key === 'space') triggerFx('space', 1.3);
       if (['proto', 'city', 'industrial', 'space'].includes(st.key)) autoSlowdownForImportantEvent();
       evolveRegionNames();
     }
 
     function randomEventGap() {
       const ll = lifeLevel();
-      if (ll < 3) return 220_000_000 + Math.random() * 360_000_000;
-      if (ll < 8) return 45_000_000 + Math.random() * 160_000_000;
-      if (civLevel() < 5) return 2_000_000 + Math.random() * 12_000_000;
-      return 70_000 + Math.random() * 1_200_000;
+      const cl = civLevel();
+      if (ll < 3) return 200_000_000 + Math.random() * 300_000_000;
+      if (ll < 8) return 50_000_000 + Math.random() * 150_000_000;
+      if (cl < 5) return 2_500_000 + Math.random() * 10_000_000;
+      return 100_000 + Math.random() * 1_000_000;
     }
 
     function randomEvent() {
       const ll = lifeLevel();
       const cl = civLevel();
 
+      // 自然災害優先チェック
       if (Math.random() < naturalTectonicChance()) {
         triggerTectonic(true);
         return;
       }
-
       if (Math.random() < naturalMeteorChance()) {
         triggerMeteor(true);
         return;
       }
 
       if (ll < 2) {
-        addLog('planet', '地殻活動', '火山活動により大気成分と海洋鉱物濃度が変動しました。');
+        addLog('planet', '長期的地熱活動', '火山灰層による日光遮断が発生。地表温度が微減。');
         return;
       }
 
       if (ll < 8) {
         const events = [
-          ['life', '生態系の放散', '空いたニッチに複数系統が進出。地域ごとの生物相が豊かになりました。', 'expansion'],
-          ['life', '小規模絶滅', '気候変動により一部系統が衰退。別系統が空いた席に入り始めます。', 'ecosystem'],
-          ['planet', '気候振動', '寒冷期と温暖期の揺れにより、移動能力と適応力が試されています。', 'ecosystem'],
-          ['life', '形質の獲得', '視覚・群れ行動・外骨格などの形質が複数地域で発達しました。', 'expansion']
+          ['life', '新種群の適応放散', '空白となったニッチを巡り、多種多様な固有亜種が分化しました。', 'expansion'],
+          ['life', '局所環境変動による小絶滅', '寒冷化に耐えられず一部の固有種が消失。生命力が試されます。', 'ecosystem'],
+          ['planet', '地磁気反転期', '一時的に地表シールドが減少。適応のための変異誘発率が上昇。', 'ecosystem'],
+          ['life', '画期的遺伝機構の獲得', '感覚器官の高度化、あるいは卵生から胎生への変化が発生。', 'expansion']
         ];
         const e = pick(events);
         addLog(e[0], e[1], e[2]);
-        if (e[1].includes('絶滅') || e[1].includes('振動')) triggerFx('hazard', .8);
+        if (e[1].includes('絶滅') || e[1].includes('反転')) triggerFx('hazard', 0.85);
         markRegionEvent(pick(state.regions), e[3]);
         for (const r of state.regions) {
-          r.biodiversity = clamp(r.biodiversity + (Math.random() - .35) * .08, 0, 1);
+          r.biodiversity = clamp(r.biodiversity + (Math.random() - 0.38) * 0.1, 0, 1);
         }
         return;
       }
 
       if (cl < 5) {
         const events = [
-          ['civ', '交易圏の拡大', '複数地域で物資と文化が交換され、地名と勢力圏が再編されました。', 'prosper'],
-          ['civ', '地域紛争', '水・資源・聖地をめぐる争いが発生。一部地域の安定度が低下します。', 'conflict'],
-          ['life', '家畜化と共生', '文明種の周辺で、野生生物の一部が共生・家畜化しました。', 'ecosystem'],
-          ['civ', '文字記録の発展', '地域史と神話が記録され、土地の名前が固定化され始めました。', 'origin']
+          ['civ', '交易同盟・シルクロード網', '文明種間で異境交易が勃興。遠方に土地名が統合されて伝わります。', 'prosper'],
+          ['civ', '覇権主義的な局所戦争', '肥沃な農耕地を巡る武力抗争。一部地域に荒廃の傷痕。', 'conflict'],
+          ['life', '生物圏家畜化と共生化', '一部の優秀な植物・草食獣が生態統御され、バイオマス構成が激変。', 'ecosystem'],
+          ['civ', '大宗教運動の全土波及', '独自の生死観が統一され、共通倫理によって社会的安定性が強化。', 'origin']
         ];
         const e = pick(events);
         addLog(e[0], e[1], e[2]);
@@ -1707,132 +1834,112 @@
         return;
       }
 
+      // 産業期以降のイベント
       const events = [
-        ['civ', '環境負荷の増大', '都市圏と工業地帯の拡大により、複数地域で汚染が上昇しました。', 'conflict'],
-        ['life', '都市適応種の増加', '旧来の大型野生生物は減少し、都市環境に適応した小型種が増えています。', 'ecosystem'],
-        ['civ', '技術的跳躍', '通信・エネルギー・材料技術が進歩。宇宙進出の可能性が上昇します。', 'prosper'],
-        ['planet', '極端気象', '気候システムの変動が激しくなり、文明圏と生態系の両方に影響が出ています。', 'conflict']
+        ['civ', '産業汚染物質の大量放出', '工業生産の拡大により、主要地域で酸性雨とスモッグ汚染が上昇。', 'conflict'],
+        ['life', '都市・人工適応種の急速な進化', '野生の大型脊椎生物は衰退。人工照明、重金属、電磁波に適応する新種が出現。', 'ecosystem'],
+        ['civ', '画期的量子エネルギーの実証', 'クリーンエネルギー技術の一大躍進。全体の資源問題に光明。', 'prosper'],
+        ['planet', '局所気候カタストロフ', '過度な大気改変と連動し、過去最悪のスーパー台風・大旱魃が頻発。', 'conflict']
       ];
 
       const e = pick(events);
       addLog(e[0], e[1], e[2]);
-      if (e[1].includes('極端気象')) triggerFx('hazard', 1);
-      if (e[1].includes('技術的跳躍')) triggerFx('space', .8);
+      if (e[1].includes('カタストロフ')) triggerFx('hazard', 1.1);
+      if (e[1].includes('画期的')) triggerFx('space', 0.9);
       markRegionEvent(pick(state.regions), e[3]);
 
       for (const r of state.regions) {
-        if (r.city || Math.random() < .26) {
-          r.pollution = clamp(r.pollution + .035 + Math.random() * .08, 0, 1);
+        if (r.city || Math.random() < 0.3) {
+          r.pollution = clamp(r.pollution + 0.04 + Math.random() * 0.08, 0, 1);
         }
       }
     }
 
     function naturalTectonicChance() {
-      const base = state.env.tectonics * 0.018;
-      const noRecent = state.age > 500_000_000 ? 0.004 : 0;
-      return base + noRecent;
+      return state.env.tectonics * 0.02 + (state.age > 400_000_000 ? 0.005 : 0);
     }
 
     function naturalMeteorChance() {
-      if (state.age < 900_000_000) return 0.01;
-      if (lifeLevel() >= 7 && !state.collapse) return 0.002;
-      return 0.0008;
+      if (state.age < 800_000_000) return 0.012;
+      if (lifeLevel() >= 7 && !state.collapse) return 0.0025;
+      return 0.0009;
     }
 
     function triggerTectonic(natural = false, target = null) {
       const r = target || pick(state.regions);
       r.uplift = true;
-      if (Math.random() < .45 || r.baseName.includes('火山')) r.volcano = true;
-      r.resources = clamp(r.resources + .18 + Math.random() * .2, 0, 1);
-      r.fertility = clamp(r.fertility + (Math.random() - .35) * .22, 0, 1);
-      r.biodiversity = clamp(r.biodiversity + (Math.random() - .45) * .18, 0, 1);
-      if (!r.historyNames.includes(r.currentName + '隆起帯')) {
-        r.currentName = r.rootName + pick(['隆起帯', '火山帯', '新山脈', '断層原']);
-        r.historyNames.push(r.currentName);
+      if (Math.random() < 0.5 || r.baseName.includes('火山')) r.volcano = true;
+      r.resources = clamp(r.resources + 0.2 + Math.random() * 0.25, 0, 1);
+      r.fertility = clamp(r.fertility + (Math.random() - 0.4) * 0.25, 0, 1);
+      r.biodiversity = clamp(r.biodiversity + (Math.random() - 0.45) * 0.2, 0, 1);
+      
+      const newName = r.rootName + pick(['造山褶曲帯', '大断層裂谷', '活火山隆起群', '大温泉郷地帯']);
+      if (!r.historyNames.includes(newName)) {
+        r.currentName = newName;
+        r.historyNames.push(newName);
       }
+      
       markRegionEvent(r, 'tectonic');
-      triggerFx('tectonic', 1);
-      addLog('planet', natural ? '自然地殻変動' : '観測介入：地殻変動', `${r.currentName} で地殻変動が発生。山脈・火山・資源分布が変化し、進化圧と文明圏に影響が出ます。`, true, { regionId: r.id, points: natural ? 45 : 20 });
+      triggerFx('tectonic', 1.1);
+      addLog('planet', natural ? '地質活動: 超巨大プレート変動' : '観測介入: 人為的テクトニクス', `【プレート活動】${r.currentName} で激甚地殻変動。資源と進化圧が再構築されます。`, true, { regionId: r.id, points: natural ? 45 : 20 });
       uiState.detailDirty = true;
     }
 
     function triggerMeteor(natural = false, target = null) {
       const r = target || pick(state.regions);
       r.crater = true;
-      r.fertility = clamp(r.fertility - .25, 0, 1);
-      r.biodiversity = clamp(r.biodiversity - .35, 0, 1);
-      r.pollution = clamp(r.pollution + .12, 0, 1);
+      r.fertility = clamp(r.fertility - 0.35, 0, 1);
+      r.biodiversity = clamp(r.biodiversity - 0.4, 0, 1);
+      r.pollution = clamp(r.pollution + 0.15, 0, 1);
       if (r.city) {
         r.city = false;
         r.ruin = true;
       }
-      r.currentName = '隕石孔' + r.rootName;
-      if (!r.historyNames.includes(r.currentName)) r.historyNames.push(r.currentName);
+      
+      const newName = r.rootName + '壊滅衝突孔';
+      r.currentName = newName;
+      if (!r.historyNames.includes(newName)) r.historyNames.push(newName);
+      
       markRegionEvent(r, 'meteor');
-      triggerFx('meteor', 1.25);
+      triggerFx('meteor', 1.4);
 
       if (lifeLevel() >= 7 && civLevel() < 2) {
-        state.env.disaster = clamp(state.env.disaster + .12, 0, 1);
-        state.env.stability = clamp(state.env.stability - .08, 0, 1);
+        state.env.disaster = clamp(state.env.disaster + 0.15, 0, 1);
+        state.env.stability = clamp(state.env.stability - 0.1, 0, 1);
       }
 
-      addLog('planet', natural ? '巨大隕石衝突' : '観測介入：巨大隕石', `${r.currentName} に巨大隕石が落下。大量絶滅、気候変動、クレーター地形が発生しました。`, true, { regionId: r.id, points: natural ? 90 : 15 });
+      addLog('planet', natural ? '深宇宙隕石衝突災害' : '観測介入: 質量爆撃投下', `【質量衝突】${r.currentName} に超高速隕石が直撃。巨大クレーター形成、激しい二次灰スモッグ。`, true, { regionId: r.id, points: natural ? 95 : 15 });
       uiState.detailDirty = true;
     }
 
-    function evolveRegionNames() {
-      const level = civLevel();
-      const species = state.intelligence;
-
-      for (const r of state.regions) {
-        const civilizationScore = r.origin + r.fertility * .5 + r.resources * .3 + Math.random() * .1;
-        if (level >= 2 && civilizationScore > .85 && !r.ruin && !r.crater) r.city = true;
-
-        let next = r.currentName;
-        if (level >= 2 && r.historyNames.length < 2 && r.city) next = r.rootName + (r.isOcean ? '湾岸' : '川流域');
-        if (level >= 3 && r.city && !/都市|王国|帝国|州|圏|特区|旧/.test(next)) next = r.rootName + pick(['河畔都市', '交易都市', '聖域', '城塞都市']);
-        if (level >= 4 && r.city && !/王国|帝国|州|連盟|旧/.test(next)) next = r.rootName + pick(['王国', '連盟領', '辺境州', '大公国']);
-        if (level >= 5 && r.city && !/工業|首都|第|特区|旧/.test(next)) next = r.rootName + pick(['工業ベルト', '首都圏', '第三区', '研究都市']);
-        if (level >= 7 && r.city && !/軌道|宇宙|特区|旧/.test(next)) next = r.rootName + pick(['軌道港特区', '宇宙港都市', '星間観測区']);
-
-        if (species && species.id === 'mycelial' && r.city && level >= 3) next = r.rootName + pick(['記憶林', '共生林都', '地下聖林']);
-        if (species && species.id === 'cephalo' && r.city && level >= 3) next = r.rootName + pick(['潮都', '浅海連邦', '珊瑚都市']);
-
-        if (next !== r.currentName) {
-          r.currentName = next;
-          if (!r.historyNames.includes(next)) r.historyNames.push(next);
-        }
-      }
-    }
-
-    function triggerCollapse(reason = '複合危機') {
+    function triggerCollapse(reason = '不測の大災害') {
       if (state.collapse) return;
 
       state.collapse = true;
       state.collapseAge = state.age;
-      triggerFx('collapse', 1.5);
-      addLog('civ', '文明崩壊', `${reason} により主要文明が崩壊。都市の一部は廃墟となり、生命圏の再編が始まります。`, true, { points: 70, subType: 'collapse' });
+      triggerFx('collapse', 1.6);
+      addLog('civ', '全天規模文明崩壊', `【大崩壊】「${reason}」により、グローバル都市ネットワークが瓦解。廃墟化による暗黒時代。`, true, { points: 80, subType: 'collapse' });
 
       for (const r of state.regions) {
-        if (r.city && Math.random() < .72) {
+        if (r.city && Math.random() < 0.8) {
           r.ruin = true;
           r.city = false;
           markRegionEvent(r, 'collapse');
-          r.currentName = '旧' + r.currentName + '跡';
+          r.currentName = '旧' + r.currentName + '遺構遺跡';
           r.historyNames.push(r.currentName);
         }
       }
 
-      addLog('life', '再野生化の進行', '崩壊圏の一部で植生と野生生態系の再拡大が確認されました。', true, { points: 35, subType: 'rewilding' });
+      addLog('life', '生態系の再野生化', 'かつてビルと煙突だった地域が急速にシダや森林に覆われつつあります。', true, { points: 40, subType: 'rewilding' });
     }
 
     function riskValue() {
       const cl = civLevel();
       const pollution = state.regions.reduce((a, r) => a + r.pollution, 0) / state.regions.length;
-      const base = state.env.disaster * 22 + cl * 5 + pollution * 45;
-      const stability = state.env.stability * 16;
-      const collapse = state.collapse ? 18 : 0;
-      const filter = state.greatFilter.status === 'warning' ? 12 : 0;
+      const base = state.env.disaster * 20 + cl * 6 + pollution * 40;
+      const stability = state.env.stability * 15;
+      const collapse = state.collapse ? 20 : 0;
+      const filter = state.greatFilter.status === 'warning' ? 15 : 0;
       return clamp(Math.round(base - stability + collapse + filter), 0, 99);
     }
 
@@ -1846,13 +1953,13 @@
         status: 'warning',
         type,
         warningAt: state.age,
-        resolveAt: state.age + 9_000_000 + Math.random() * 8_000_000,
+        resolveAt: state.age + 8_000_000 + Math.random() * 8_000_000,
         prep: 0,
         resolved: false
       };
 
-      triggerFx('filter', 1.4);
-      addLog('planet', 'グレートフィルター兆候', `${type.label} の兆候を検出。${type.sign}`, true, { points: 120, subType: 'greatFilter' });
+      triggerFx('filter', 1.5);
+      addLog('planet', '第1の難関: グレートフィルター顕在化', `【警告】文明の臨界点に到達。「${type.label}」を検出。`, true, { points: 150, subType: 'greatFilter' });
       autoSlowdownForImportantEvent();
       markAllDirty();
     }
@@ -1862,20 +1969,20 @@
 
       const type = state.greatFilter.type;
       const risk = riskValue();
-      const stabilityBonus = Math.round(state.env.stability * 120);
-      const biodiversityBonus = Math.round(avg(state.regions.map(r => r.biodiversity)) * 70);
+      const stabilityBonus = Math.round(state.env.stability * 130);
+      const biodiversityBonus = Math.round(avg(state.regions.map(r => r.biodiversity)) * 80);
       const prep = state.greatFilter.prep;
-      const score = prep + stabilityBonus + biodiversityBonus - risk * 2;
-
+      
+      const score = prep + stabilityBonus + biodiversityBonus - risk * 2.2;
       const success = score >= type.cost;
       state.greatFilter.status = 'resolved';
       state.greatFilter.resolved = true;
 
       if (success) {
-        endPlanet('breakthrough', `${type.label}突破`, `文明は ${type.label} の危機を越え、恒星間文明候補として生き延びました。`);
+        endPlanet('breakthrough', `【突破】${type.label}の完全超克`, `この文明は、長期的知恵と環境調整、そして十分な対策により「${type.label}」を乗り越え、恒星間航行種族へ進化しました。`);
       } else {
         triggerCollapse(type.label);
-        endPlanet('failedFilter', `${type.label}失敗`, `文明は ${type.label} を越えられず、惑星規模の崩壊へ向かいました。`);
+        endPlanet('failedFilter', `【失敗】${type.label}の破局直撃`, `文明は自らの成長限界である「${type.label}」の閾値を克服できず、沈黙しました。`);
       }
     }
 
@@ -1889,22 +1996,22 @@
         title,
         body,
         age: state.age,
-        filterType: state.greatFilter.type ? state.greatFilter.type.label : '未発生',
+        filterType: state.greatFilter.type ? state.greatFilter.type.label : '未検知',
         risk: riskValue(),
         pointsLeft: Math.floor(state.points)
       };
 
-      addLog('planet', 'エンディング到達', `${title}：${body}`, true, { points: 0, subType: 'ending' });
+      addLog('planet', 'シミュレーション完了', `${title}: ${body}`, true, { points: 0, subType: 'ending' });
 
       updateMetaByEnding(result);
       unlockObservers();
-      state.meta.carryPoints = Math.min(300, Math.floor(state.points * .25));
+      state.meta.carryPoints = Math.min(400, Math.floor(state.points * 0.35));
 
       markAllDirty();
       saveState(false);
       state.mode = 'record';
       updateAll(true);
-      toast('エンディング到達：創星日誌を生成できます');
+      toast('惑星観測を完結。創星日誌を出力可能です。');
     }
 
     function updateMetaByEnding(result) {
@@ -1940,7 +2047,6 @@
       if (meta.breakthroughCount >= 1 && meta.failCount >= 1) {
         add('net');
       }
-
       state.meta = meta;
     }
 
@@ -1948,7 +2054,7 @@
       if ((state.timeStyle === 'event' || state.timeStyle === 'idle' || state.timeStyle === 'civilization') && state.speedIndex > 3) {
         state.speedIndex = 3;
         state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex();
-        toast('重要イベント発生：観測速度を一時的に下げました');
+        toast('！危機／転換点を検出。観測周波数を一時低下させます。');
       }
     }
 
@@ -1960,8 +2066,8 @@
       if (style === 'calm') return ll < 5 ? 2 : 3;
       if (style === 'evolution') return ll < 8 ? 5 : 4;
       if (style === 'civilization') return cl < 2 ? 6 : cl < 5 ? 4 : 3;
-      if (style === 'event') return cl < 3 ? 6 : 5;
-      if (style === 'idle') return cl < 2 ? 7 : 6;
+      if (style === 'event') return cl < 3 ? 5 : 4;
+      if (style === 'idle') return cl < 2 ? 8 : 7;
       return 5;
     }
 
@@ -1977,16 +2083,16 @@
       const cl = civLevel();
 
       for (const r of state.regions) {
-        const bioTarget = ll < 2 ? 0 : clamp((ll - 1) / 8 + r.fertility * .22 - r.pollution * .25 - (r.crater ? .12 : 0), 0, 1);
-        r.biodiversity = lerp(r.biodiversity, bioTarget, .002);
+        const bioTarget = ll < 2 ? 0 : clamp((ll - 1) / 9 + r.fertility * 0.25 - r.pollution * 0.3 - (r.crater ? 0.15 : 0), 0, 1);
+        r.biodiversity = lerp(r.biodiversity, bioTarget, 0.003);
 
-        if (cl >= 5 && (r.city || Math.random() < .0004)) {
-          r.pollution = clamp(r.pollution + dtYears * 0.00000000008 * (cl - 4), 0, 1);
+        if (cl >= 5 && (r.city || Math.random() < 0.0005)) {
+          r.pollution = clamp(r.pollution + dtYears * 0.00000000012 * (cl - 4), 0, 1);
         }
 
         if (state.collapse) {
-          r.pollution = lerp(r.pollution, r.ruin ? .25 : .08, .0008);
-          r.biodiversity = lerp(r.biodiversity, .72 - r.pollution * .25, .0008);
+          r.pollution = lerp(r.pollution, r.ruin ? 0.2 : 0.05, 0.001);
+          r.biodiversity = lerp(r.biodiversity, 0.75 - r.pollution * 0.3, 0.001);
         }
       }
     }
@@ -1996,7 +2102,7 @@
 
       const now = performance.now();
 
-      if (now - state.lastStyleSyncAt > 1200 && !state.paused && (state.manualSpeedOffset || 0) === 0) {
+      if (now - state.lastStyleSyncAt > 1500 && !state.paused && (state.manualSpeedOffset || 0) === 0) {
         applyStyleSpeed(true);
         state.lastStyleSyncAt = now;
       }
@@ -2007,7 +2113,7 @@
         const dtYears = dt * speed;
         state.age += dtYears;
         state.rotY += state.autoSpin * dt;
-        state.points += dt * (0.16 + lifeLevel() * .025 + civLevel() * .04);
+        state.points += dt * (0.18 + lifeLevel() * 0.03 + civLevel() * 0.05);
         updateRegions(dtYears);
         updateMilestones();
         state.dirty = true;
@@ -2018,6 +2124,7 @@
       }
     }
 
+    // 球面座標射影
     function project(lon, lat, radius, cx, cy, extraRot = 0) {
       const L = lon + state.rotY + extraRot;
       const x0 = Math.cos(lat) * Math.sin(L);
@@ -2027,12 +2134,11 @@
       const sinX = Math.sin(state.rotX);
       const y = y0 * cosX - z0 * sinX;
       const z = y0 * sinX + z0 * cosX;
-      const x = x0;
       return {
-        x: cx + x * radius,
+        x: cx + x0 * radius,
         y: cy - y * radius,
         z,
-        visible: z > -0.04,
+        visible: z > -0.05,
         scale: (z + 1) / 2
       };
     }
@@ -2043,13 +2149,14 @@
       ctx.clearRect(0, 0, w, h);
 
       const cx = w / 2;
-      const cy = h * .505;
-      const radius = Math.min(w, h) * .36;
+      const cy = h * 0.505;
+      const radius = Math.min(w, h) * 0.36;
 
-      const bg = ctx.createRadialGradient(cx, cy, radius * .1, cx, cy, radius * 1.8);
-      bg.addColorStop(0, 'rgba(126,232,255,.13)');
-      bg.addColorStop(.38, 'rgba(65,95,185,.08)');
-      bg.addColorStop(1, 'rgba(0,0,0,0)');
+      // 宇宙の背景大気ガスグロウ
+      const bg = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.8);
+      bg.addColorStop(0, 'rgba(82, 227, 255, 0.15)');
+      bg.addColorStop(0.4, 'rgba(15, 27, 58, 0.1)');
+      bg.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
 
@@ -2058,11 +2165,12 @@
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.clip();
 
-      const oceanAgeBoost = clamp(lifeLevel() / 8, 0, 1);
-      const ocean = ctx.createRadialGradient(cx - radius * .32, cy - radius * .38, radius * .12, cx, cy, radius * 1.1);
-      ocean.addColorStop(0, `rgba(${42 + oceanAgeBoost * 20}, ${95 + oceanAgeBoost * 50}, ${170 + oceanAgeBoost * 38}, 1)`);
-      ocean.addColorStop(.55, '#173b78');
-      ocean.addColorStop(1, '#071735');
+      // 海洋球体グラデーション
+      const oceanAgeBoost = clamp(lifeLevel() / 9, 0, 1);
+      const ocean = ctx.createRadialGradient(cx - radius * 0.35, cy - radius * 0.4, radius * 0.1, cx, cy, radius * 1.15);
+      ocean.addColorStop(0, `rgba(${30 + oceanAgeBoost * 25}, ${85 + oceanAgeBoost * 60}, ${185 + oceanAgeBoost * 35}, 1)`);
+      ocean.addColorStop(0.6, '#0f2c5e');
+      ocean.addColorStop(1, '#040b1a');
       ctx.fillStyle = ocean;
       ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
 
@@ -2070,28 +2178,32 @@
       drawCities(cx, cy, radius);
       drawClouds(cx, cy, radius);
 
-      const shade = ctx.createRadialGradient(cx - radius * .35, cy - radius * .45, radius * .1, cx + radius * .35, cy + radius * .22, radius * 1.22);
-      shade.addColorStop(0, 'rgba(255,255,255,.20)');
-      shade.addColorStop(.45, 'rgba(255,255,255,0)');
-      shade.addColorStop(.75, 'rgba(0,0,0,.22)');
-      shade.addColorStop(1, 'rgba(0,0,0,.72)');
+      // 球体の疑似陰影シャドウ
+      const shade = ctx.createRadialGradient(cx - radius * 0.4, cy - radius * 0.5, radius * 0.05, cx + radius * 0.3, cy + radius * 0.3, radius * 1.25);
+      shade.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+      shade.addColorStop(0.45, 'rgba(255, 255, 255, 0)');
+      shade.addColorStop(0.75, 'rgba(0, 0, 0, 0.25)');
+      shade.addColorStop(1, 'rgba(1, 2, 6, 0.82)');
       ctx.fillStyle = shade;
       ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
 
       ctx.restore();
 
+      // 惑星輪郭ネオン線
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(126,232,255,.35)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(82, 227, 255, 0.45)';
+      ctx.lineWidth = 2.5;
       ctx.stroke();
 
-      const glow = ctx.createRadialGradient(cx, cy, radius * .95, cx, cy, radius * 1.12);
-      glow.addColorStop(0, 'rgba(126,232,255,0)');
-      glow.addColorStop(1, 'rgba(126,232,255,.28)');
+      // 大気外層グロウエフェクト
+      const glow = ctx.createRadialGradient(cx, cy, radius * 0.94, cx, cy, radius * 1.14);
+      glow.addColorStop(0, 'rgba(82, 227, 255, 0)');
+      glow.addColorStop(0.7, 'rgba(82, 227, 255, 0.25)');
+      glow.addColorStop(1, 'rgba(82, 227, 255, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.12, 0, Math.PI * 2);
+      ctx.arc(cx, cy, radius * 1.14, 0, Math.PI * 2);
       ctx.fill();
 
       drawRegionMarkers(cx, cy, radius);
@@ -2106,26 +2218,26 @@
         const p = project(d.lon, d.lat, radius, cx, cy);
         if (!p.visible) continue;
 
-        const alpha = clamp((p.z + .12) / 1.12, 0, 1);
-        const rr = d.r * radius * (0.55 + p.scale * .75);
-        const green = ll >= 5 ? 78 + d.fert * 70 : 58;
-        const brown = ll < 3 ? 110 : 76;
+        const alpha = clamp((p.z + 0.15) / 1.15, 0, 1);
+        const rr = d.r * radius * (0.6 + p.scale * 0.7);
+        const green = ll >= 6 ? 85 + d.fert * 80 : 55;
+        const brown = ll < 4 ? 115 : 70;
 
-        if (d.polar > .78) {
-          ctx.fillStyle = `rgba(210,235,255,${alpha * .72})`;
+        if (d.polar > 0.76) {
+          ctx.fillStyle = `rgba(225, 243, 255, ${alpha * 0.78})`;
         } else if (d.land) {
-          ctx.fillStyle = `rgba(${brown}, ${green}, ${ll >= 5 ? 68 : 64}, ${alpha * .86})`;
+          ctx.fillStyle = `rgba(${brown}, ${green}, ${ll >= 6 ? 60 : 50}, ${alpha * 0.88})`;
         } else {
-          ctx.fillStyle = `rgba(37, 108, 155, ${alpha * .20})`;
+          ctx.fillStyle = `rgba(32, 102, 160, ${alpha * 0.22})`;
         }
 
         ctx.beginPath();
-        ctx.ellipse(p.x, p.y, rr * 1.55, rr, 0, 0, Math.PI * 2);
+        ctx.ellipse(p.x, p.y, rr * 1.6, rr, 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
       if (state.collapse) {
-        ctx.fillStyle = 'rgba(120, 95, 78, .12)';
+        ctx.fillStyle = 'rgba(130, 85, 60, 0.15)';
         ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
       }
     }
@@ -2134,13 +2246,13 @@
       if (lifeLevel() < 1) return;
 
       for (const d of state.cloudDots) {
-        const p = project(d.lon, d.lat, radius, cx, cy, state.age * 0.0000000002);
+        const p = project(d.lon, d.lat, radius, cx, cy, state.age * 0.00000000035);
         if (!p.visible) continue;
 
-        const rr = d.r * radius * (1 + p.scale);
-        ctx.fillStyle = `rgba(255,255,255,${d.a * clamp((p.z + .15) / 1.15, 0, 1)})`;
+        const rr = d.r * radius * (1.1 + p.scale);
+        ctx.fillStyle = `rgba(255, 255, 255, ${d.a * clamp((p.z + 0.2) / 1.2, 0, 1) * 0.9})`;
         ctx.beginPath();
-        ctx.ellipse(p.x, p.y, rr * 2.2, rr, .2, 0, Math.PI * 2);
+        ctx.ellipse(p.x, p.y, rr * 2.3, rr * 0.9, 0.15, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -2155,36 +2267,47 @@
         const p = project(r.lon, r.lat, radius, cx, cy);
         if (!p.visible) continue;
 
-        const alpha = clamp((p.z + .05) / 1.05, 0, 1);
-        const size = radius * (r.ruin ? .014 : .018 + cl * .002);
+        const alpha = clamp((p.z + 0.08) / 1.08, 0, 1);
+        const size = radius * (r.ruin ? 0.013 : 0.017 + cl * 0.002);
 
         if (r.crater) {
-          ctx.strokeStyle = `rgba(255,160,105,${alpha * .6})`;
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = `rgba(255, 130, 70, ${alpha * 0.7})`;
+          ctx.lineWidth = 2.5;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, size * 2.1, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, size * 2.2, 0, Math.PI * 2);
           ctx.stroke();
         }
 
         if (r.volcano) {
-          ctx.fillStyle = `rgba(255,95,65,${alpha * .62})`;
+          ctx.fillStyle = `rgba(255, 80, 50, ${alpha * 0.8})`;
           ctx.beginPath();
-          ctx.arc(p.x + size * 1.2, p.y - size, size * .75, 0, Math.PI * 2);
+          ctx.arc(p.x + size * 1.1, p.y - size, size * 0.8, 0, Math.PI * 2);
           ctx.fill();
         }
 
         if (r.city || r.ruin) {
-          ctx.fillStyle = r.ruin ? `rgba(255,160,105,${alpha * .45})` : `rgba(255,218,118,${alpha * .75})`;
+          // 夜間都市グロウ
+          if (!r.ruin) {
+            const cityGlow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 3.5);
+            cityGlow.addColorStop(0, `rgba(255, 207, 86, ${alpha * 0.7})`);
+            cityGlow.addColorStop(1, 'rgba(255, 207, 86, 0)');
+            ctx.fillStyle = cityGlow;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size * 3.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.fillStyle = r.ruin ? `rgba(240, 130, 90, ${alpha * 0.55})` : `rgba(255, 220, 100, ${alpha * 0.85})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
           ctx.fill();
         }
 
         if (cl >= 6 && r.city && !r.ruin) {
-          ctx.strokeStyle = `rgba(255,218,118,${alpha * .22})`;
+          ctx.strokeStyle = `rgba(82, 227, 255, ${alpha * 0.35})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, size * 2.4, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, size * 2.8, 0, Math.PI * 2);
           ctx.stroke();
         }
       }
@@ -2199,15 +2322,33 @@
         const pinned = state.pinnedRegionIds.includes(r.id);
         if (!selected && !pinned) continue;
 
-        ctx.strokeStyle = selected ? 'rgba(126,232,255,.95)' : 'rgba(255,217,118,.8)';
-        ctx.fillStyle = selected ? 'rgba(126,232,255,.22)' : 'rgba(255,217,118,.18)';
-        ctx.lineWidth = selected ? 3 : 2;
+        // HUD照準風の脈動円演出
+        const t = performance.now() * 0.004;
+        const pulse = selected ? 1 + Math.sin(t) * 0.15 : 1.0;
 
-        const rad = selected ? 13 : 9;
+        ctx.strokeStyle = selected ? 'rgba(82, 227, 255, 0.95)' : 'rgba(255, 207, 86, 0.8)';
+        ctx.fillStyle = selected ? 'rgba(82, 227, 255, 0.15)' : 'rgba(255, 207, 86, 0.1)';
+        ctx.lineWidth = selected ? 3 : 1.5;
+
+        const rad = (selected ? 14 : 9) * pulse;
         ctx.beginPath();
         ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+
+        // 照準の十字角毛
+        if (selected) {
+          ctx.beginPath();
+          // 左
+          ctx.moveTo(p.x - rad - 4, p.y); ctx.lineTo(p.x - rad, p.y);
+          // 右
+          ctx.moveTo(p.x + rad, p.y); ctx.lineTo(p.x + rad + 4, p.y);
+          // 上
+          ctx.moveTo(p.x, p.y - rad - 4); ctx.lineTo(p.x, p.y - rad);
+          // 下
+          ctx.moveTo(p.x, p.y + rad); ctx.lineTo(p.x, p.y + rad + 4);
+          ctx.stroke();
+        }
       }
     }
 
@@ -2216,11 +2357,11 @@
 
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(-0.25);
-      ctx.strokeStyle = 'rgba(126,232,255,.26)';
-      ctx.lineWidth = 2;
+      ctx.rotate(-0.2);
+      ctx.strokeStyle = 'rgba(82, 227, 255, 0.28)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.ellipse(0, 0, radius * 1.24, radius * .32, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, radius * 1.3, radius * 0.35, 0, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
@@ -2240,43 +2381,43 @@
       ctx.save();
 
       if (state.fx.type === 'intelligence') {
-        ctx.strokeStyle = `rgba(126,232,255,${0.45 * a})`;
-        ctx.lineWidth = 2 + 6 * t;
+        ctx.strokeStyle = `rgba(82, 227, 255, ${0.5 * a})`;
+        ctx.lineWidth = 3 + 8 * t;
         ctx.beginPath();
-        ctx.arc(cx, cy, radius * (0.45 + 0.5 * t), 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius * (0.4 + 0.6 * t), 0, Math.PI * 2);
         ctx.stroke();
       } else if (state.fx.type === 'civilization') {
-        ctx.fillStyle = `rgba(255,218,118,${0.18 * a})`;
+        ctx.fillStyle = `rgba(255, 207, 86, ${0.15 * a})`;
         ctx.beginPath();
-        ctx.arc(cx, cy, radius * .9, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius * 0.95, 0, Math.PI * 2);
         ctx.fill();
       } else if (state.fx.type === 'hazard' || state.fx.type === 'meteor') {
         ctx.fillStyle = state.fx.type === 'meteor'
-          ? `rgba(255,190,90,${0.26 * a})`
-          : `rgba(255,90,90,${0.2 * a})`;
+          ? `rgba(255, 160, 60, ${0.3 * a})`
+          : `rgba(255, 80, 80, ${0.22 * a})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       } else if (state.fx.type === 'collapse') {
-        ctx.fillStyle = `rgba(40,0,0,${0.35 * a})`;
+        ctx.fillStyle = `rgba(50, 0, 0, ${0.4 * a})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = `rgba(255,120,120,${0.55 * a})`;
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = `rgba(255, 100, 100, ${0.6 * a})`;
+        ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.arc(cx, cy, radius * (0.95 + .08 * Math.sin(t * 20)), 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius * (0.95 + 0.08 * Math.sin(t * 22)), 0, Math.PI * 2);
         ctx.stroke();
       } else if (state.fx.type === 'space' || state.fx.type === 'filter') {
         ctx.strokeStyle = state.fx.type === 'filter'
-          ? `rgba(255,138,157,${0.55 * a})`
-          : `rgba(126,232,255,${0.5 * a})`;
-        ctx.lineWidth = 2;
+          ? `rgba(255, 95, 126, ${0.6 * a})`
+          : `rgba(82, 227, 255, ${0.55 * a})`;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.ellipse(cx, cy, radius * (1.24 + t * .08), radius * (.32 + t * .05), -0.25, 0, Math.PI * 2);
+        ctx.ellipse(cx, cy, radius * (1.3 + t * 0.12), radius * (0.35 + t * 0.08), -0.2, 0, Math.PI * 2);
         ctx.stroke();
       } else if (state.fx.type === 'tectonic') {
-        ctx.strokeStyle = `rgba(255,217,118,${0.45 * a})`;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `rgba(255, 207, 86, ${0.5 * a})`;
+        ctx.lineWidth = 2.5;
         for (let i = 0; i < 3; i++) {
           ctx.beginPath();
-          ctx.arc(cx, cy, radius * (.45 + .12 * i + t * .2), 0, Math.PI * 2);
+          ctx.arc(cx, cy, radius * (0.4 + 0.15 * i + t * 0.25), 0, Math.PI * 2);
           ctx.stroke();
         }
       }
@@ -2291,113 +2432,107 @@
 
       const sky = wctx.createLinearGradient(0, 0, 0, h);
       if (region.ruin) {
-        sky.addColorStop(0, '#2b2941');
-        sky.addColorStop(1, '#5a493a');
+        sky.addColorStop(0, '#2d2745');
+        sky.addColorStop(1, '#563e2e');
       } else if (region.isOcean) {
-        sky.addColorStop(0, '#315f99');
-        sky.addColorStop(1, '#0d4a70');
-      } else if (region.climate === '乾燥') {
-        sky.addColorStop(0, '#d08b53');
-        sky.addColorStop(1, '#5b3926');
-      } else if (region.climate === '寒冷') {
-        sky.addColorStop(0, '#9ec8ee');
-        sky.addColorStop(1, '#2e5578');
+        sky.addColorStop(0, '#28589c');
+        sky.addColorStop(1, '#0b375b');
+      } else if (region.climate.includes('乾燥')) {
+        sky.addColorStop(0, '#cc8449');
+        sky.addColorStop(1, '#52321c');
+      } else if (region.climate.includes('寒冷')) {
+        sky.addColorStop(0, '#93bce3');
+        sky.addColorStop(1, '#274b70');
       } else {
-        sky.addColorStop(0, '#315d8c');
-        sky.addColorStop(1, '#123c39');
+        sky.addColorStop(0, '#2b5282');
+        sky.addColorStop(1, '#0d322f');
       }
 
       wctx.fillStyle = sky;
       wctx.fillRect(0, 0, w, h);
 
       if (region.isOcean) {
-        wctx.fillStyle = 'rgba(20,80,120,.9)';
-        wctx.fillRect(0, h * .55, w, h * .45);
-        for (let i = 0; i < 7; i++) {
-          wctx.strokeStyle = `rgba(255,255,255,${.12 + i * .012})`;
+        wctx.fillStyle = 'rgba(15, 68, 110, 0.9)';
+        wctx.fillRect(0, h * 0.55, w, h * 0.45);
+        for (let i = 0; i < 8; i++) {
+          wctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + i * 0.015})`;
           wctx.beginPath();
-          const y = h * .62 + i * 8;
+          const y = h * 0.6 + i * 8;
           wctx.moveTo(0, y);
           for (let x = 0; x < w; x += 30) {
-            wctx.quadraticCurveTo(x + 15, y - 5 + (i % 2) * 4, x + 30, y);
+            wctx.quadraticCurveTo(x + 15, y - 6 + (i % 2) * 4, x + 30, y);
           }
           wctx.stroke();
         }
       } else {
-        wctx.fillStyle = region.climate === '乾燥' ? '#8d6338' : region.climate === '寒冷' ? '#d8ecff' : '#235b35';
-        wctx.fillRect(0, h * .62, w, h * .38);
-        if (region.climate !== '乾燥') {
-          for (let i = 0; i < 8; i++) drawTree(wctx, 18 + i * 46 + (i % 2) * 10, h * .68 + (i % 3) * 5, region.climate === '寒冷');
+        wctx.fillStyle = region.climate.includes('乾燥') ? '#80592e' : region.climate.includes('寒冷') ? '#cfe5ff' : '#1e522d';
+        wctx.fillRect(0, h * 0.62, w, h * 0.38);
+        if (!region.climate.includes('乾燥')) {
+          for (let i = 0; i < 8; i++) drawTree(wctx, 16 + i * 44 + (i % 2) * 12, h * 0.68 + (i % 3) * 4, region.climate.includes('寒冷'));
         } else {
-          for (let i = 0; i < 4; i++) drawCactus(wctx, 35 + i * 80, h * .70);
+          for (let i = 0; i < 4; i++) drawCactus(wctx, 30 + i * 85, h * 0.70);
         }
       }
 
-      if (region.volcano) drawVolcano(wctx, w * .23, h * .68, .65);
-      if (region.crater) drawCrater(wctx, w * .44, h * .70, .55);
-      if (region.city) drawCityIcon(wctx, w * .62, h * .61, state.intelligence ? state.intelligence.id : 'city');
-      if (region.ruin) drawCityIcon(wctx, w * .60, h * .62, 'ruin');
+      if (region.volcano) drawVolcano(wctx, w * 0.22, h * 0.68, 0.65);
+      if (region.crater) drawCrater(wctx, w * 0.45, h * 0.71, 0.55);
+      if (region.city) drawCityIcon(wctx, w * 0.64, h * 0.61, state.intelligence ? state.intelligence.id : 'city');
+      if (region.ruin) drawCityIcon(wctx, w * 0.62, h * 0.62, 'ruin');
       if (region.lastEventType) drawRecentEventOverlay(wctx, w, h, region);
 
-      wctx.fillStyle = 'rgba(0,0,0,.18)';
+      // SFスキャンライン加工
+      wctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
       wctx.fillRect(0, 0, w, h);
     }
 
     function drawTree(c, x, y, snow = false) {
-      c.fillStyle = '#5b3b24';
-      c.fillRect(x - 3, y - 16, 6, 18);
-      c.fillStyle = snow ? '#d8f1ff' : '#2e8a4a';
+      c.fillStyle = '#50331e';
+      c.fillRect(x - 2, y - 14, 4, 15);
+      c.fillStyle = snow ? '#ebf4ff' : '#277a3f';
       c.beginPath();
-      c.moveTo(x, y - 44);
-      c.lineTo(x - 18, y - 9);
-      c.lineTo(x + 18, y - 9);
-      c.closePath();
-      c.fill();
-      c.beginPath();
-      c.moveTo(x, y - 32);
-      c.lineTo(x - 15, y - 2);
-      c.lineTo(x + 15, y - 2);
+      c.moveTo(x, y - 38);
+      c.lineTo(x - 14, y - 8);
+      c.lineTo(x + 14, y - 8);
       c.closePath();
       c.fill();
     }
 
     function drawCactus(c, x, y) {
-      c.strokeStyle = '#6fb36a';
-      c.lineWidth = 7;
+      c.strokeStyle = '#5a9c56';
+      c.lineWidth = 5;
       c.lineCap = 'round';
       c.beginPath();
       c.moveTo(x, y);
-      c.lineTo(x, y - 38);
-      c.moveTo(x, y - 22);
-      c.lineTo(x - 16, y - 28);
-      c.moveTo(x, y - 27);
-      c.lineTo(x + 15, y - 35);
+      c.lineTo(x, y - 32);
+      c.moveTo(x, y - 20);
+      c.lineTo(x - 12, y - 25);
+      c.moveTo(x, y - 24);
+      c.lineTo(x + 12, y - 30);
       c.stroke();
     }
 
     function drawCityIcon(c, x, y, type) {
       c.save();
       c.translate(x, y);
-      if (type === 'ruin') c.fillStyle = 'rgba(80,75,70,.85)';
-      else if (type === 'cephalo') c.fillStyle = 'rgba(255,150,180,.82)';
-      else if (type === 'mycelial') c.fillStyle = 'rgba(160,255,170,.78)';
-      else c.fillStyle = 'rgba(255,218,118,.85)';
+      if (type === 'ruin') c.fillStyle = 'rgba(75, 70, 65, 0.88)';
+      else if (type === 'cephalo') c.fillStyle = 'rgba(255, 130, 170, 0.85)';
+      else if (type === 'mycelial') c.fillStyle = 'rgba(140, 255, 150, 0.82)';
+      else c.fillStyle = 'rgba(255, 207, 86, 0.9)';
 
-      for (let i = 0; i < 5; i++) {
-        const bw = 14 + (i % 2) * 8;
-        const bh = 24 + i * 8;
-        c.fillRect(-42 + i * 18, -bh, bw, bh);
+      for (let i = 0; i < 4; i++) {
+        const bw = 12 + (i % 2) * 6;
+        const bh = 22 + i * 6;
+        c.fillRect(-30 + i * 16, -bh, bw, bh);
       }
 
       if (type === 'ruin') {
-        c.strokeStyle = 'rgba(40,30,25,.65)';
-        c.lineWidth = 3;
+        c.strokeStyle = 'rgba(35, 25, 20, 0.7)';
+        c.lineWidth = 2.5;
         c.beginPath();
-        c.moveTo(-40, -30);
-        c.lineTo(34, -5);
+        c.moveTo(-35, -24);
+        c.lineTo(25, -4);
         c.stroke();
       }
-
       c.restore();
     }
 
@@ -2405,18 +2540,18 @@
       c.save();
       c.translate(x, y);
       c.scale(scale, scale);
-      c.fillStyle = '#4d352c';
+      c.fillStyle = '#442d25';
       c.beginPath();
-      c.moveTo(-36, 20);
-      c.lineTo(0, -46);
-      c.lineTo(38, 20);
+      c.moveTo(-32, 18);
+      c.lineTo(0, -40);
+      c.lineTo(34, 18);
       c.closePath();
       c.fill();
-      c.fillStyle = 'rgba(255,90,50,.82)';
+      c.fillStyle = 'rgba(255, 80, 40, 0.85)';
       c.beginPath();
-      c.moveTo(-8, -34);
-      c.lineTo(0, -47);
-      c.lineTo(10, -34);
+      c.moveTo(-7, -30);
+      c.lineTo(0, -41);
+      c.lineTo(9, -30);
       c.closePath();
       c.fill();
       c.restore();
@@ -2426,34 +2561,34 @@
       c.save();
       c.translate(x, y);
       c.scale(scale, scale);
-      c.strokeStyle = 'rgba(80,55,44,.75)';
-      c.lineWidth = 8;
+      c.strokeStyle = 'rgba(70, 48, 38, 0.8)';
+      c.lineWidth = 6;
       c.beginPath();
-      c.ellipse(0, 0, 44, 18, -0.08, 0, Math.PI * 2);
+      c.ellipse(0, 0, 38, 14, -0.05, 0, Math.PI * 2);
       c.stroke();
-      c.fillStyle = 'rgba(45,35,32,.34)';
+      c.fillStyle = 'rgba(40, 30, 26, 0.4)';
       c.beginPath();
-      c.ellipse(0, 0, 36, 12, -0.08, 0, Math.PI * 2);
+      c.ellipse(0, 0, 32, 10, -0.05, 0, Math.PI * 2);
       c.fill();
       c.restore();
     }
 
     function drawRecentEventOverlay(c, w, h, region) {
-      const fresh = region.lastEventAt != null ? clamp((state.age - region.lastEventAt) / 8_000_000, 0, 1) : 1;
-      const evA = (1 - fresh) * .9;
-      if (evA <= .05) return;
+      const fresh = region.lastEventAt != null ? clamp((state.age - region.lastEventAt) / 6_000_000, 0, 1) : 1;
+      const evA = (1 - fresh) * 0.85;
+      if (evA <= 0.05) return;
 
       if (['conflict', 'collapse', 'meteor'].includes(region.lastEventType)) {
-        c.fillStyle = `rgba(140,20,20,${0.22 * evA})`;
+        c.fillStyle = `rgba(150, 15, 15, ${0.25 * evA})`;
         c.fillRect(0, 0, w, h);
       } else if (['prosper', 'origin'].includes(region.lastEventType)) {
-        c.fillStyle = `rgba(255,220,120,${0.15 * evA})`;
+        c.fillStyle = `rgba(255, 215, 100, ${0.16 * evA})`;
         c.fillRect(0, 0, w, h);
       } else if (['expansion', 'ecosystem'].includes(region.lastEventType)) {
-        c.fillStyle = `rgba(120,255,160,${0.13 * evA})`;
+        c.fillStyle = `rgba(100, 255, 140, ${0.14 * evA})`;
         c.fillRect(0, 0, w, h);
       } else if (region.lastEventType === 'tectonic') {
-        c.fillStyle = `rgba(255,170,90,${0.15 * evA})`;
+        c.fillStyle = `rgba(255, 150, 70, ${0.16 * evA})`;
         c.fillRect(0, 0, w, h);
       }
     }
@@ -2465,31 +2600,27 @@
       const c = map.getContext('2d');
       const w = map.width;
       const h = map.height;
-      const rand = seeded(state.seed + region.id * 991);
+      const rand = seeded(state.seed + region.id * 887);
 
       c.clearRect(0, 0, w, h);
 
       const sky = c.createLinearGradient(0, 0, 0, h);
       if (region.isOcean) {
-        sky.addColorStop(0, '#3f79ad');
-        sky.addColorStop(.48, '#226b97');
-        sky.addColorStop(1, '#0d3d5f');
-      } else if (region.climate === '乾燥') {
-        sky.addColorStop(0, '#cf965f');
-        sky.addColorStop(.55, '#9a663f');
-        sky.addColorStop(1, '#55351f');
-      } else if (region.climate === '寒冷') {
-        sky.addColorStop(0, '#c9e9ff');
-        sky.addColorStop(.55, '#77a7cb');
-        sky.addColorStop(1, '#31506f');
-      } else if (region.climate === '湿潤' || region.climate === '熱帯') {
-        sky.addColorStop(0, '#3573a0');
-        sky.addColorStop(.5, '#246b58');
-        sky.addColorStop(1, '#173822');
+        sky.addColorStop(0, '#386fa4');
+        sky.addColorStop(0.5, '#1b5b82');
+        sky.addColorStop(1, '#09314f');
+      } else if (region.climate.includes('乾燥')) {
+        sky.addColorStop(0, '#c78a53');
+        sky.addColorStop(0.55, '#915a33');
+        sky.addColorStop(1, '#4e2f18');
+      } else if (region.climate.includes('寒冷')) {
+        sky.addColorStop(0, '#bfe1ff');
+        sky.addColorStop(0.55, '#6a9ac2');
+        sky.addColorStop(1, '#2a4866');
       } else {
-        sky.addColorStop(0, '#3e6d98');
-        sky.addColorStop(.55, '#3b7355');
-        sky.addColorStop(1, '#263f2d');
+        sky.addColorStop(0, '#33658a');
+        sky.addColorStop(0.5, '#2b6f4e');
+        sky.addColorStop(1, '#1b3d27');
       }
       c.fillStyle = sky;
       c.fillRect(0, 0, w, h);
@@ -2501,91 +2632,90 @@
       }
 
       if (region.uplift) {
-        for (let i = 0; i < 5; i++) drawMountain(c, 70 + i * 72 + rand() * 30, h * (.55 + rand() * .08), 1 + rand() * .5, region.climate === '寒冷');
+        for (let i = 0; i < 5; i++) {
+          drawMountain(c, 60 + i * 78 + rand() * 25, h * (0.54 + rand() * 0.08), 1.0 + rand() * 0.4, region.climate.includes('寒冷'));
+        }
       }
 
-      if (region.volcano) drawVolcano(c, w * .22, h * .56, 1.15);
-      if (region.crater) drawCrater(c, w * .48, h * .66, 1.18);
+      if (region.volcano) drawVolcano(c, w * 0.22, h * 0.55, 1.2);
+      if (region.crater) drawCrater(c, w * 0.48, h * 0.65, 1.2);
       if (region.city) drawLargeCity(c, w, h, region);
       if (region.ruin) drawRuinMap(c, w, h);
 
       if (civLevel() >= 7 && region.city) {
-        c.strokeStyle = 'rgba(126,232,255,.78)';
-        c.lineWidth = 4;
+        // 宇宙軌道シャトル港
+        c.strokeStyle = 'rgba(82, 227, 255, 0.8)';
+        c.lineWidth = 3.5;
         c.beginPath();
-        c.moveTo(w * .76, h * .62);
-        c.lineTo(w * .84, h * .16);
+        c.moveTo(w * 0.74, h * 0.6);
+        c.lineTo(w * 0.82, h * 0.15);
         c.stroke();
-        c.fillStyle = 'rgba(126,232,255,.95)';
+        c.fillStyle = 'rgba(82, 227, 255, 0.95)';
         c.beginPath();
-        c.arc(w * .84, h * .16, 7, 0, Math.PI * 2);
+        c.arc(w * 0.82, h * 0.15, 6, 0, Math.PI * 2);
         c.fill();
       }
 
-      c.fillStyle = 'rgba(0,0,0,.16)';
+      c.fillStyle = 'rgba(0, 0, 0, 0.15)';
       c.fillRect(0, 0, w, h);
     }
 
     function drawSeaMap(c, w, h, rand, region) {
-      c.fillStyle = 'rgba(21,89,130,.9)';
-      c.fillRect(0, h * .36, w, h * .64);
+      c.fillStyle = 'rgba(16, 76, 115, 0.9)';
+      c.fillRect(0, h * 0.35, w, h * 0.65);
 
-      for (let i = 0; i < 12; i++) {
-        c.strokeStyle = `rgba(255,255,255,${.10 + i * .005})`;
-        c.lineWidth = 2;
+      for (let i = 0; i < 11; i++) {
+        c.strokeStyle = `rgba(255, 255, 255, ${0.08 + i * 0.007})`;
+        c.lineWidth = 1.8;
         c.beginPath();
-        const y = h * .44 + i * 22;
+        const y = h * 0.42 + i * 24;
         c.moveTo(0, y);
-        for (let x = 0; x <= w; x += 40) {
-          c.quadraticCurveTo(x + 20, y - 7 + rand() * 14, x + 40, y);
+        for (let x = 0; x <= w; x += 45) {
+          c.quadraticCurveTo(x + 22, y - 6 + rand() * 12, x + 45, y);
         }
         c.stroke();
       }
 
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 3; i++) {
         const x = rand() * w;
-        const y = h * (.42 + rand() * .35);
-        c.fillStyle = region.climate === '寒冷' ? '#e8f7ff' : '#3b7d46';
+        const y = h * (0.4 + rand() * 0.35);
+        c.fillStyle = region.climate.includes('寒冷') ? '#ebf5ff' : '#33703d';
         c.beginPath();
-        c.ellipse(x, y, 46 + rand() * 42, 14 + rand() * 10, rand() * .4, 0, Math.PI * 2);
+        c.ellipse(x, y, 40 + rand() * 35, 12 + rand() * 8, rand() * 0.3, 0, Math.PI * 2);
         c.fill();
       }
     }
 
     function drawLandMap(c, w, h, rand, region) {
-      c.fillStyle = region.climate === '乾燥' ? '#9a6a3c'
-        : region.climate === '寒冷' ? '#d8ecff'
-        : region.climate === '湿潤' || region.climate === '熱帯' ? '#2d6f3f'
-        : '#4f7d3d';
-      c.fillRect(0, h * .45, w, h * .55);
+      c.fillStyle = region.climate.includes('乾燥') ? '#916336'
+        : region.climate.includes('寒冷') ? '#cfe5ff'
+        : '#3d6d33';
+      c.fillRect(0, h * 0.45, w, h * 0.55);
 
-      if (region.climate !== '乾燥' && region.climate !== '寒冷') {
-        for (let i = 0; i < 24; i++) {
-          drawTree(c, rand() * w, h * (.55 + rand() * .35), false);
+      if (!region.climate.includes('乾燥') && !region.climate.includes('寒冷')) {
+        for (let i = 0; i < 22; i++) {
+          drawTree(c, rand() * w, h * (0.54 + rand() * 0.34), false);
         }
       }
 
-      if (region.climate === '乾燥') {
-        for (let i = 0; i < 10; i++) {
-          drawCactus(c, rand() * w, h * (.62 + rand() * .28));
+      if (region.climate.includes('乾燥')) {
+        for (let i = 0; i < 11; i++) {
+          drawCactus(c, rand() * w, h * (0.6 + rand() * 0.3));
         }
       }
 
-      if (region.climate === '寒冷') {
-        for (let i = 0; i < 10; i++) {
-          drawMountain(c, rand() * w, h * (.55 + rand() * .18), .8 + rand() * .5, true);
+      if (region.climate.includes('寒冷')) {
+        for (let i = 0; i < 8; i++) {
+          drawMountain(c, rand() * w, h * (0.55 + rand() * 0.16), 0.7 + rand() * 0.4, true);
         }
       }
 
-      if (region.climate === '湿潤' || region.baseName.includes('河')) {
-        c.strokeStyle = 'rgba(80,190,230,.72)';
-        c.lineWidth = 16;
+      if (region.climate.includes('多湿') || region.baseName.includes('河')) {
+        c.strokeStyle = 'rgba(70, 175, 215, 0.72)';
+        c.lineWidth = 14;
         c.beginPath();
-        c.moveTo(-20, h * .58);
-        c.bezierCurveTo(w * .2, h * .50, w * .38, h * .78, w + 20, h * .66);
-        c.stroke();
-        c.strokeStyle = 'rgba(220,255,255,.35)';
-        c.lineWidth = 4;
+        c.moveTo(-20, h * 0.58);
+        c.bezierCurveTo(w * 0.22, h * 0.48, w * 0.36, h * 0.76, w + 20, h * 0.65);
         c.stroke();
       }
     }
@@ -2594,19 +2724,19 @@
       c.save();
       c.translate(x, y);
       c.scale(scale, scale);
-      c.fillStyle = '#51483e';
+      c.fillStyle = '#4c433b';
       c.beginPath();
-      c.moveTo(-45, 25);
-      c.lineTo(0, -60);
-      c.lineTo(48, 25);
+      c.moveTo(-40, 22);
+      c.lineTo(0, -55);
+      c.lineTo(42, 22);
       c.closePath();
       c.fill();
       if (snow) {
-        c.fillStyle = '#ecf8ff';
+        c.fillStyle = '#ebf6ff';
         c.beginPath();
-        c.moveTo(-14, -35);
-        c.lineTo(0, -60);
-        c.lineTo(16, -34);
+        c.moveTo(-12, -30);
+        c.lineTo(0, -55);
+        c.lineTo(14, -30);
         c.closePath();
         c.fill();
       }
@@ -2615,33 +2745,33 @@
 
     function drawLargeCity(c, w, h, region) {
       c.save();
-      c.translate(w * .62, h * .65);
-      const color = region.ruin ? 'rgba(90,80,72,.86)' : 'rgba(255,218,118,.86)';
+      c.translate(w * 0.62, h * 0.65);
+      const color = region.ruin ? 'rgba(85, 75, 68, 0.88)' : 'rgba(255, 207, 86, 0.88)';
       c.fillStyle = color;
-      for (let i = 0; i < 8; i++) {
-        const x = -100 + i * 24;
-        const bh = 38 + (i % 3) * 22 + Math.random() * 8;
-        c.fillRect(x, -bh, 18 + (i % 2) * 6, bh);
+      for (let i = 0; i < 7; i++) {
+        const x = -90 + i * 24;
+        const bh = 34 + (i % 3) * 20 + Math.random() * 8;
+        c.fillRect(x, -bh, 16 + (i % 2) * 4, bh);
       }
-      c.fillStyle = 'rgba(255,240,160,.34)';
-      c.fillRect(-112, 0, 220, 12);
+      c.fillStyle = 'rgba(255, 235, 140, 0.3)';
+      c.fillRect(-100, 0, 200, 10);
       c.restore();
     }
 
     function drawRuinMap(c, w, h) {
       c.save();
-      c.translate(w * .60, h * .67);
-      c.fillStyle = 'rgba(76,70,66,.9)';
-      for (let i = 0; i < 7; i++) {
-        const x = -95 + i * 28;
-        const bh = 30 + (i % 4) * 16;
-        c.fillRect(x, -bh, 18, bh);
+      c.translate(w * 0.58, h * 0.66);
+      c.fillStyle = 'rgba(70, 65, 60, 0.9)';
+      for (let i = 0; i < 6; i++) {
+        const x = -85 + i * 26;
+        const bh = 26 + (i % 4) * 14;
+        c.fillRect(x, -bh, 16, bh);
       }
-      c.strokeStyle = 'rgba(20,20,20,.55)';
-      c.lineWidth = 4;
+      c.strokeStyle = 'rgba(20, 18, 15, 0.6)';
+      c.lineWidth = 3;
       c.beginPath();
-      c.moveTo(-105, -20);
-      c.lineTo(95, 8);
+      c.moveTo(-95, -18);
+      c.lineTo(85, 6);
       c.stroke();
       c.restore();
     }
@@ -2654,8 +2784,8 @@
       const py = (y - rect.top) * scaleY;
 
       const cx = canvas.width / 2;
-      const cy = canvas.height * .505;
-      const radius = Math.min(canvas.width, canvas.height) * .36;
+      const cy = canvas.height * 0.505;
+      const radius = Math.min(canvas.width, canvas.height) * 0.36;
       const nx = (px - cx) / radius;
       const ny = -(py - cy) / radius;
 
@@ -2675,13 +2805,12 @@
       for (const r of state.regions) {
         const dLon = Math.atan2(Math.sin(r.lon - lon), Math.cos(r.lon - lon));
         const dLat = r.lat - lat;
-        const d = dLon * dLon + dLat * dLat * 1.6;
+        const d = dLon * dLon + dLat * dLat * 1.5;
         if (d < bestD) {
           bestD = d;
           best = r;
         }
       }
-
       return best;
     }
 
@@ -2689,31 +2818,31 @@
       const ll = lifeLevel();
       const cl = civLevel();
 
-      if (region.crater) return '巨大隕石孔 / 生態系再編中';
-      if (state.collapse && region.ruin) return '旧都市跡 / 再野生化と再興候補';
-      if (region.volcano) return '火山帯 / 地殻変動の影響あり';
-      if (cl >= 7 && region.city) return '宇宙港・軌道施設あり';
-      if (cl >= 5 && region.city) return '高密度都市圏 / 環境負荷あり';
-      if (cl >= 3 && region.city) return '都市文明圏 / 交易と政治の中心';
-      if (cl >= 2 && region.city) return '初期定住地 / 農耕と集落';
-      if (ll >= 8) return '知性候補の活動圏';
-      if (ll >= 6) return '大型生物が繁栄';
-      if (ll >= 3) return region.isOcean ? '微生物・海洋生命が拡大' : '地衣類と初期陸上生命';
-      return '生命の兆候は薄い';
+      if (region.crater) return '質量衝突遺跡 / 回復・遷移生態系';
+      if (state.collapse && region.ruin) return '旧文明都市廃墟 / 生態系再浸食区';
+      if (region.volcano) return '変動火山帯 / 地熱・重元素湧出区';
+      if (cl >= 7 && region.city) return '軌道エレベーター港・直轄首都圏';
+      if (cl >= 5 && region.city) return '高密度情報産業都市圏 / 熱負荷';
+      if (cl >= 3 && region.city) return '広域交易都市国家 / 青銅鉄器中心';
+      if (cl >= 2 && region.city) return '原初農業定住圏 / 神殿共同体';
+      if (ll >= 8) return '知的系統の重要適応領域';
+      if (ll >= 6) return '巨大脊椎亜群の活動ニッチ';
+      if (ll >= 3) return region.isOcean ? '有機高分子多細胞発生海原' : '地衣類・初期地表上陸領域';
+      return '化学有機スープ走査対象';
     }
 
     function regionDetails(region) {
       const species = state.intelligence;
-      const speciesLine = species ? `${species.speciesName}（${species.name}）` : '未出現';
+      const speciesLine = species ? `${species.speciesName}（${species.name}）` : '自意識系統未確立';
 
       let note = '';
-      if (region.crater) note = '巨大隕石によるクレーターが残っています。生態系は一度大きく崩れ、別の系統が台頭する可能性があります。';
-      else if (region.ruin) note = 'かつて文明の中心地でしたが、崩壊後は廃墟と二次生態系が混在しています。';
-      else if (region.volcano || region.uplift) note = '地殻変動の影響で地形が大きく変化しています。新しい資源や隔離環境が進化に影響します。';
-      else if (region.city) note = '文明都市が形成されています。地名も文明段階に応じて更新されています。';
-      else if (lifeLevel() >= 8) note = '道具使用や群れ行動を持つ生物が観測される可能性があります。';
-      else if (lifeLevel() >= 5) note = '生命圏が厚くなり、捕食・防御・繁殖戦略の競争が進んでいます。';
-      else note = 'まだ文明の気配はありません。地形と気候が今後の進化圧になります。';
+      if (region.crater) note = '大衝突クレーターが残存。荒廃から回復する新種系統の爆発的適応が観測されます。';
+      else if (region.ruin) note = 'かつてのグローバル主要ハブ遺構。自壊したテクノロジーと自然環境が入り混じるエントロピー地帯。';
+      else if (region.volcano || region.uplift) note = '強固な地殻隆起による急峻な土地。特殊資源と高低差が知的種の地理的隔離を生み、独自文化を促進。';
+      else if (region.city) note = '文明主要都市圏が構築完了。情報トラフィック、構造物の集中。';
+      else if (lifeLevel() >= 8) note = '道具保持、学習伝播の兆候を示す原始亜群の濃厚な観測ポイント。';
+      else if (lifeLevel() >= 5) note = '生命圏が完全に地表を被覆。生存戦略（擬態、防壁、毒など）が交錯。';
+      else note = '未だ原始的な微生物圏。独自の微気候特性が将来の進化トリガー。';
 
       return { speciesLine, note };
     }
@@ -2751,7 +2880,7 @@
       if (state.pinnedRegionIds.includes(id)) return;
 
       if (state.pinnedRegionIds.length >= 3) {
-        alert('ピン留めは最大3つまでです。新しく追加するには、どれか1つを閉じてください。');
+        toast('スロット超過：追跡ピン留めは最大3つまで。');
         return;
       }
 
@@ -2760,6 +2889,7 @@
       uiState.pinsDirty = true;
       saveState(false);
       updateAll(true);
+      toast(`追跡登録：${state.regions.find(r => r.id === id).currentName}`);
     }
 
     function unpin(id) {
@@ -2772,7 +2902,7 @@
 
     function spendPoints(cost) {
       if (state.points < cost) {
-        toast(`観測点が足りません：必要 ${cost}`);
+        toast(`！ Pt不足：必要 Pt ${cost}`);
         return false;
       }
       state.points -= cost;
@@ -2782,7 +2912,7 @@
 
     function runIntervention(kind) {
       if (state.ended) {
-        toast('エンディング後は介入できません');
+        toast('星系完結後は介入できません。');
         return;
       }
 
@@ -2794,49 +2924,49 @@
       }
 
       if (kind === 'meteor') {
-        if (!confirm('巨大隕石は生態系や文明を大きく破壊します。本当に介入しますか？')) return;
-        if (!spendPoints(280)) return;
+        if (!confirm('【警告】局所質量落下は壊滅的な気候荒廃を招きます。実施しますか？')) return;
+        if (!spendPoints(260)) return;
         triggerMeteor(false, region);
       }
 
       if (kind === 'stabilize') {
-        if (!spendPoints(130)) return;
-        state.env.stability = clamp(state.env.stability + .14, 0, 1);
-        state.env.disaster = clamp(state.env.disaster - .08, 0, 1);
-        addLog('planet', '観測介入：気候安定化', '観測点を使い、惑星環境の急変を抑えました。', true, { points: 0 });
-        triggerFx('civilization', .8);
+        if (!spendPoints(120)) return;
+        state.env.stability = clamp(state.env.stability + 0.16, 0, 1);
+        state.env.disaster = clamp(state.env.disaster - 0.1, 0, 1);
+        addLog('planet', '介入: 惑星環境気候調律', 'エネルギーシールド散布により、全球大気対流を強制安定化。', true, { points: 0 });
+        triggerFx('civilization', 0.85);
       }
 
       if (kind === 'preserve') {
-        if (!spendPoints(110)) return;
+        if (!spendPoints(100)) return;
         for (const r of state.regions) {
-          r.biodiversity = clamp(r.biodiversity + .06, 0, 1);
-          r.pollution = clamp(r.pollution - .03, 0, 1);
+          r.biodiversity = clamp(r.biodiversity + 0.08, 0, 1);
+          r.pollution = clamp(r.pollution - 0.05, 0, 1);
         }
-        addLog('life', '観測介入：生命圏保護', '複数地域で生態系の回復力を高めました。', true, { points: 0 });
-        triggerFx('intelligence', .7);
+        addLog('life', '介入: 有機生態保護フィールド', '活性化酵素および胞子の広域放射により生命抵抗力を一時支援。', true, { points: 0 });
+        triggerFx('intelligence', 0.75);
       }
 
       if (kind === 'guideCiv') {
-        if (!spendPoints(170)) return;
-        state.env.socialPressure = clamp(state.env.socialPressure + .04, 0, 1);
+        if (!spendPoints(150)) return;
+        state.env.socialPressure = clamp(state.env.socialPressure + 0.05, 0, 1);
         for (const r of state.regions) {
-          if (r.city) r.pollution = clamp(r.pollution - .04, 0, 1);
+          if (r.city) r.pollution = clamp(r.pollution - 0.06, 0, 1);
         }
-        addLog('civ', '観測介入：文明助言', '文明に間接的な助言を送り、都市圏の破局リスクを少し抑えました。', true, { points: 0 });
-        triggerFx('space', .7);
+        addLog('civ', '介入: 認知ミーム波形送信', '精神ネットに間接的な協調ミームを投射し、自滅衝動を抑止。', true, { points: 0 });
+        triggerFx('space', 0.8);
       }
 
       if (kind === 'filterPrep') {
         if (state.greatFilter.status !== 'warning') {
-          toast('グレートフィルター兆候がまだ出ていません');
+          toast('グレートフィルター兆候が未検知です。');
           return;
         }
-        const cost = 180;
+        const cost = 160;
         if (!spendPoints(cost)) return;
         state.greatFilter.prep += 140;
-        addLog('planet', '観測介入：フィルター対策', `${state.greatFilter.type.label} への対策を進めました。`, true, { points: 0 });
-        triggerFx('filter', 1);
+        addLog('planet', '介入: フィルター直面対策', `グレートフィルター【${state.greatFilter.type.label}】に抗するプロジェクトを直接支援。`, true, { points: 0 });
+        triggerFx('filter', 1.1);
       }
 
       markAllDirty();
@@ -2845,23 +2975,23 @@
 
     function updateStats() {
       $('planetName').textContent = state.name;
-      $('ageText').textContent = '経過 ' + formatAge(state.age);
+      $('ageText').textContent = '経過時間 ' + formatAge(state.age);
       $('lifeStageText').textContent = getStage(LIFE_STAGES, state.age).label;
-      $('civStageText').textContent = state.collapse ? '文明崩壊後' : getStage(CIV_STAGES, state.age).label;
+      $('civStageText').textContent = state.collapse ? '文明崩壊・エントロピー期' : getStage(CIV_STAGES, state.age).label;
       $('pointText').textContent = Math.floor(state.points).toLocaleString();
 
       const gf = state.greatFilter;
-      if (state.ended) $('filterText').textContent = '決着済み';
-      else if (gf.status === 'warning') $('filterText').textContent = gf.type.label;
-      else if (gf.status === 'resolved') $('filterText').textContent = '通過済み';
-      else $('filterText').textContent = '未発生';
+      if (state.ended) $('filterText').textContent = '判定収束';
+      else if (gf.status === 'warning') $('filterText').textContent = `★ 進行：${gf.type.label}`;
+      else if (gf.status === 'resolved') $('filterText').textContent = '第1フィルター突破済';
+      else $('filterText').textContent = '未検知';
 
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
 
       const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
-      const manual = state.manualSpeedOffset ? '（手動調整中）' : '';
-      $('styleState').textContent = `現在: ${styleName}${manual}`;
+      const manual = state.manualSpeedOffset ? ' (手動調律中)' : '';
+      $('styleState').textContent = `進行プリセット: ${styleName}${manual}`;
     }
 
     function updateAll(forceHeavy = false) {
@@ -2902,9 +3032,9 @@
         const div = document.createElement('div');
         div.className = 'pinCard';
         div.innerHTML = `
-          <div class="pinName">${escapeHtml(r.currentName)}</div>
+          <div class="pinName">📌 ${escapeHtml(r.currentName)}</div>
           <div class="pinState">${escapeHtml(regionSummary(r))}</div>
-          <button data-unpin="${r.id}">閉じる</button>
+          <button data-unpin="${r.id}">解除</button>
         `;
 
         div.addEventListener('click', (e) => {
@@ -2934,24 +3064,24 @@
         const env = state.env;
         const gf = state.greatFilter;
         panel.innerHTML = `
-          <div class="detailHeader"><h2>惑星観察</h2><span class="tag">星全体</span></div>
-          <p class="modeHint">惑星全体の環境・危機・グレートフィルターを見る画面です。個別の土地を見るなら「地域」、生物の系統を見るなら「生命圏」。</p>
+          <div class="detailHeader"><h2>惑星系統合情報</h2><span class="tag">星体全体</span></div>
+          <p class="modeHint">星全体の物理環境、グレートフィルターの対策進行率、全球介入コマンドです。</p>
 
           <div class="modeGuide">
-            <div class="guideCard"><b>🌍 惑星</b><small>海洋率、重力、気候、地殻活動、全体リスク。</small></div>
-            <div class="guideCard"><b>📍 地域</b><small>タップした土地のエリアマップ、都市、廃墟、火山、クレーター。</small></div>
-            <div class="guideCard"><b>🧬 生命圏</b><small>進化元、知的生命体、特徴、文明への影響。</small></div>
+            <div class="guideCard"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
+            <div class="guideCard"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
+            <div class="guideCard"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
           </div>
 
           ${greatFilterHtml()}
 
           <div class="infoGrid">
-            <div class="infoItem"><small>海洋率</small><b>${Math.round(env.ocean * 100)}%</b></div>
-            <div class="infoItem"><small>重力</small><b>${env.gravity.toFixed(2)}G</b></div>
-            <div class="infoItem"><small>気候傾向</small><b>${env.temperature > .66 ? '高温' : env.temperature < .33 ? '寒冷' : '温和'}・${env.humidity > .62 ? '湿潤' : env.humidity < .35 ? '乾燥' : '中庸'}</b></div>
-            <div class="infoItem"><small>地殻活動</small><b>${env.tectonics > .65 ? '活発' : env.tectonics < .3 ? '静穏' : '中程度'}</b></div>
-            <div class="infoItem"><small>全体リスク</small><b>${riskValue()}%</b></div>
-            <div class="infoItem"><small>残り観測点</small><b>${Math.floor(state.points)}</b></div>
+            <div class="infoItem"><small>全球海洋率</small><b>${Math.round(env.ocean * 100)}%</b></div>
+            <div class="infoItem"><small>平均表面重力</small><b>${env.gravity.toFixed(2)}G</b></div>
+            <div class="infoItem"><small>主要気候帯</small><b>${env.temperature > 0.65 ? '高温多熱' : env.temperature < 0.35 ? '寒冷氷結' : '温暖安定'} ｜ ${env.humidity > 0.6 ? '多湿雲密' : env.humidity < 0.3 ? '荒涼乾燥' : '標準降水'}</b></div>
+            <div class="infoItem"><small>マントル活動</small><b>${env.tectonics > 0.65 ? '地殻流動活発' : env.tectonics < 0.3 ? '死滅固体化' : '標準活動'}</b></div>
+            <div class="infoItem"><small>自壊シミュリスク</small><b class="${riskValue() > 65 ? 'red' : 'green'}">${riskValue()}%</b></div>
+            <div class="infoItem"><small>備蓄観測点</small><b class="cyan">${Math.floor(state.points)} Pt</b></div>
           </div>
 
           ${interventionHtml()}
@@ -2965,33 +3095,33 @@
 
         const d = regionDetails(r);
         panel.innerHTML = `
-          <div class="detailHeader"><h2>${escapeHtml(r.currentName)}</h2><span class="tag">地域</span></div>
-          <p class="modeHint">選択した土地のエリアマップです。「詳しく」を押したときもここが開きます。火山・都市・廃墟・クレーターなどを地形として確認できます。</p>
+          <div class="detailHeader"><h2>📍 ${escapeHtml(r.currentName)}</h2><span class="tag">地域走査</span></div>
+          <p class="modeHint">タップ地点の地形投影です。地形、旧名履歴、文明種の活動適性などを確認できます。</p>
 
           <div class="areaMapWrap">
-            <canvas id="areaMapCanvas" width="720" height="430" aria-label="地域エリアマップ"></canvas>
+            <canvas id="areaMapCanvas" width="720" height="430" aria-label="詳細マップ"></canvas>
             <div class="mapLegend">
-              <span>🌲植生</span>
-              <span>⛰地形</span>
-              <span>🏛都市/廃墟</span>
-              <span>☄クレーター</span>
-              <span>🌋火山</span>
+              <span>🌲 植生群落</span>
+              <span>⛰ 造山隆起</span>
+              <span>🏛 建造物遺構</span>
+              <span>☄ クレーター</span>
+              <span>🌋 活動火山</span>
             </div>
           </div>
 
           <div class="infoGrid">
-            <div class="infoItem"><small>旧名履歴</small><b>${escapeHtml(r.historyNames.slice(-3).join(' → '))}</b></div>
-            <div class="infoItem"><small>気候/地形</small><b>${escapeHtml(r.climate)}・${r.isOcean ? '海洋/沿岸' : '陸域'}</b></div>
-            <div class="infoItem"><small>支配文明種</small><b>${escapeHtml(d.speciesLine)}</b></div>
-            <div class="infoItem"><small>状態</small><b>${escapeHtml(regionSummary(r))}</b></div>
-            <div class="infoItem wide"><small>地域メモ</small><p class="desc">${escapeHtml(d.note)}</p></div>
+            <div class="infoItem wide"><small>年代記・地名遷移履歴</small><b>${escapeHtml(r.historyNames.slice(-3).join(' ➔ '))}</b></div>
+            <div class="infoItem"><small>局所気候・水圏</small><b>${escapeHtml(r.climate)} ｜ ${r.isOcean ? '水圏沿岸' : '陸圏内陸'}</b></div>
+            <div class="infoItem"><small>地域支配種</small><b>${escapeHtml(d.speciesLine)}</b></div>
+            <div class="infoItem wide"><small>局所状況</small><b>${escapeHtml(regionSummary(r))}</b></div>
+            <div class="infoItem wide"><small>地域走査メモ</small><p class="desc" style="font-size:11px;">${escapeHtml(d.note)}</p></div>
           </div>
 
           ${interventionHtml(true)}
 
           <details class="fold">
-            <summary>地域名履歴の詳細</summary>
-            <div class="foldBody"><p class="desc">${escapeHtml(r.historyNames.join(' → '))}</p></div>
+            <summary>全歴史レイヤー地名遷移一覧</summary>
+            <div class="foldBody"><p class="desc" style="font-family: monospace;">${escapeHtml(r.historyNames.join(' ➔ '))}</p></div>
           </details>
         `;
 
@@ -3002,34 +3132,44 @@
       if (state.mode === 'biosphere') {
         const species = state.intelligence;
         panel.innerHTML = `
-          <div class="detailHeader"><h2>生命圏観察</h2><span class="tag">進化</span></div>
-          <p class="modeHint">この画面は「土地」ではなく、星全体の生命進化と知的生命体の系統を見る場所です。</p>
+          <div class="detailHeader"><h2>生命圏・遺伝情報</h2><span class="tag">進化系統</span></div>
+          <p class="modeHint">星全体の適応指数、生態的多様性、自意識種の詳細情報です。</p>
 
           <div class="bars">
-            ${barHtml('生物多様性', avg(state.regions.map(r => r.biodiversity)))}
-            ${barHtml('環境安定度', state.env.stability)}
-            ${barHtml('社会性圧', state.env.socialPressure)}
-            ${barHtml('災害圧', state.env.disaster)}
+            ${barHtml('全球生命多様性', avg(state.regions.map(r => r.biodiversity)))}
+            ${barHtml('全球気候安定度', state.env.stability)}
+            ${barHtml('社会的淘汰圧', state.env.socialPressure)}
+            ${barHtml('外生ハザード圧', state.env.disaster)}
           </div>
 
-          <div class="infoGrid" style="margin-top:10px">
-            <div class="infoItem wide"><small>進化元系統 / 出現種</small><b>${species ? `${escapeHtml(species.base)} → ${escapeHtml(species.speciesName)}` : 'まだ知性候補の選抜前です。'}</b></div>
-            <div class="infoItem wide"><small>主要特徴</small><b>${species ? escapeHtml(species.traits.join('・')) : '惑星環境の偏りに応じて系統が選抜されます。'}</b></div>
-            <div class="infoItem wide"><small>文明への影響</small><p class="desc">${species ? escapeHtml(species.culture) : '哺乳系・爬虫系・鳥類系・節足系・海洋頭足系・菌類群体などから候補が出ます。'}</p></div>
+          <div class="infoGrid" style="margin-top:12px">
+            <div class="infoItem wide"><small>現在支配知性系統種</small><b class="gold">${species ? `${escapeHtml(species.base)} ➔ ${escapeHtml(species.speciesName)}` : '自意識の爆発的適応は未検出'}</b></div>
+            <div class="infoItem wide"><small>獲得固有形質</small><b class="cyan">${species ? escapeHtml(species.traits.join(' ・ ')) : '自然選択の適応過程です'}</b></div>
+            <div class="infoItem wide"><small>認知・文化傾向メモ</small><p class="desc" style="font-size:11px;">${species ? escapeHtml(species.culture) : '哺乳・爬虫・鳥・節足・頭足・菌類ネットワーク等、物理重力や湿度によって支配的系統が分岐します。'}</p></div>
           </div>
 
           <details class="fold">
-            <summary>生命圏詳細</summary>
+            <summary>適応気候トランスフォーム遺伝子配列</summary>
             <div class="foldBody">
               <div class="chipRow">
-                <span class="chip">海洋率 ${Math.round(state.env.ocean * 100)}%</span>
-                <span class="chip">湿度 ${Math.round(state.env.humidity * 100)}%</span>
-                <span class="chip">森林適性 ${Math.round(state.env.forest * 100)}%</span>
-                <span class="chip">安定度 ${Math.round(state.env.stability * 100)}%</span>
+                <span class="chip">海洋進出適性 ${Math.round(state.env.ocean * 100)}%</span>
+                <span class="chip">湿度順応力 ${Math.round(state.env.humidity * 100)}%</span>
+                <span class="chip">森林共生遺伝子 ${Math.round(state.env.forest * 100)}%</span>
+                <span class="chip">ハザード抵抗力 ${Math.round(state.env.stability * 100)}%</span>
               </div>
             </div>
           </details>
         `;
+        
+        // 進化率ゲージをアニメーション駆動するために値遅延描画
+        setTimeout(() => {
+          const fills = panel.querySelectorAll('.barFill');
+          fills.forEach(f => {
+            const w = f.style.width;
+            f.style.width = '0%';
+            setTimeout(() => f.style.width = w, 50);
+          });
+        }, 10);
         return;
       }
 
@@ -3043,31 +3183,32 @@
       if (gf.status === 'none') {
         return `
           <div class="endingBanner">
-            <b>グレートフィルター：未発生</b>
-            <p class="desc">文明が成熟すると、惑星全体の最終試練として兆候が出ます。対策には観測点が必要です。</p>
+            <b>グレートフィルター：未顕在</b>
+            <p class="desc">文明が成熟し宇宙に手を伸ばす時、自壊または外生的な最終試練に直面します。介入によって対策率を高める必要があります。</p>
           </div>
         `;
       }
 
       if (gf.status === 'warning') {
         const remain = Math.max(0, gf.resolveAt - state.age);
+        const ratio = clamp(gf.prep / gf.type.cost, 0, 1.5);
         return `
-          <div class="endingBanner">
-            <b>グレートフィルター兆候：${escapeHtml(gf.type.label)}</b>
-            <p class="desc">${escapeHtml(gf.type.sign)}</p>
-            <div class="chipRow">
-              <span class="chip">対策値 ${Math.floor(gf.prep)} / 推奨 ${gf.type.cost}</span>
-              <span class="chip">決着まで 約${formatAge(remain)}</span>
-              <span class="chip">リスク ${riskValue()}%</span>
+          <div class="endingBanner" style="border-color: var(--red); background: linear-gradient(135deg, rgba(255, 95, 126, 0.15), rgba(0,0,0,0.3));">
+            <b class="red" style="font-size:14px; text-shadow:0 0 10px rgba(255,95,126,0.3);">⚠️ 警告：グレートフィルター「${escapeHtml(gf.type.label)}」</b>
+            <p class="desc" style="color:var(--text); font-weight:700;">${escapeHtml(gf.type.sign)}</p>
+            <div class="chipRow" style="margin-top:8px;">
+              <span class="chip" style="color:var(--gold); border-color:var(--gold);">予測決着まで: 約 ${formatAge(remain)}</span>
+              <span class="chip" style="color:var(--cyan); border-color:var(--cyan);">累積対策値: ${Math.floor(gf.prep)} / 突破推奨: ${gf.type.cost} (${Math.round(ratio*100)}%)</span>
+              <span class="chip" style="color:var(--red); border-color:var(--red);">破滅寄与度: ${riskValue()}%</span>
             </div>
           </div>
         `;
       }
 
       return `
-        <div class="endingBanner">
-          <b>グレートフィルター：決着済み</b>
-          <p class="desc">${state.ending ? escapeHtml(state.ending.title) : '記録済み'}</p>
+        <div class="endingBanner" style="border-color: var(--green); background: linear-gradient(135deg, rgba(78, 255, 138, 0.1), rgba(0,0,0,0.3));">
+          <b class="green">✔ グレートフィルター：通過判定完了</b>
+          <p class="desc">${state.ending ? escapeHtml(state.ending.title) : '通過成功の歴史がアーカイブされました。'}</p>
         </div>
       `;
     }
@@ -3075,15 +3216,15 @@
     function interventionHtml(regionOnly = false) {
       return `
         <details class="interventionBox">
-          <summary>観測介入 / 観測点を使う</summary>
-          <p class="styleState">観測点を消費して、惑星史に限定介入できます。グレートフィルター対策用に温存する判断も重要です。</p>
+          <summary>🛠 観測介入装置（Pt消費）</summary>
+          <p class="styleState">観測Ptを消費し、歴史の流れを矯正または変化させます。グレートフィルター対策に温存すべきかどうかも戦略の一部です。</p>
           <div class="interventionGrid">
-            <button data-action="tectonic">地殻変動 90</button>
-            <button data-action="meteor">巨大隕石 280</button>
-            <button data-action="stabilize">気候安定化 130</button>
-            <button data-action="preserve">生命圏保護 110</button>
-            <button data-action="guideCiv">文明助言 170</button>
-            <button data-action="filterPrep">GF対策 180</button>
+            <button data-action="tectonic" title="造山隆起・火山噴火・重元素調達">地殻強制変動 [90 Pt]</button>
+            <button data-action="meteor" class="warn" title="壊滅衝突・不毛化変異圧">質量爆撃落下 [260 Pt]</button>
+            <button data-action="stabilize" title="災害危険度の低下">全球気候調律 [120 Pt]</button>
+            <button data-action="preserve" title="全土の多様性向上と汚染除去">有機多様性保護 [100 Pt]</button>
+            <button data-action="guideCiv" title="自壊リスクの低減">認知ミーム送信 [150 Pt]</button>
+            <button data-action="filterPrep" class="primary" title="グレートフィルター対抗値を獲得">フィルター緊急対策 [160 Pt]</button>
           </div>
         </details>
       `;
@@ -3096,12 +3237,12 @@
 
       const ending = state.ended ? `
         <div class="endingBanner">
-          <b>創星日誌：${escapeHtml(state.ending.title)}</b>
-          <p class="desc">この惑星の観測は一区切りです。観測者タイプを変えると、同じ歴史を別の語り口で再読できます。</p>
+          <b>創星日誌：観測結果出力可能</b>
+          <p class="desc">この惑星の歴史は結末に達しました。観測者（アーカイブAI）のペルソナ（解釈）を選択し、その筆跡で歴史日誌を再合成できます。</p>
         </div>
 
         <details class="fold" open>
-          <summary>観測者タイプを選ぶ</summary>
+          <summary>ペルソナ（観測記録者）の変更</summary>
           <div class="foldBody">
             <div class="observerGrid">
               ${Object.entries(OBSERVERS).map(([id, o]) => {
@@ -3109,79 +3250,96 @@
                 return `<button class="${unlocked ? '' : 'locked'}" data-observer="${id}" ${unlocked ? '' : 'disabled'}>${escapeHtml(o.label)}${unlocked ? '' : ' 🔒'}</button>`;
               }).join('')}
             </div>
-            <p class="styleState">現在：${escapeHtml(OBSERVERS[state.journalObserver]?.label || '通常観測者')}</p>
+            <p class="styleState">現在選択中: <b>${escapeHtml(OBSERVERS[state.journalObserver]?.label || '標準')}</b></p>
           </div>
         </details>
 
-        <div class="journalBox">${escapeHtml(generateJournal(state.journalObserver))}</div>
+        <div class="journalBox" id="journalContent">${escapeHtml(generateJournal(state.journalObserver))}</div>
 
-        <div class="quickRow" style="margin-top:10px">
-          <button data-action="nextPlanet">次の惑星へ</button>
-          <button data-action="saveJournal">日誌を保存</button>
-          <button data-action="copyJournal">日誌コピー</button>
+        <div class="quickRow" style="margin-top:12px">
+          <button data-action="nextPlanet" class="primary">次の惑星を特定へ</button>
+          <button data-action="saveJournal">ファイル保存 (.txt)</button>
+          <button data-action="copyJournal">クリップボードコピー</button>
+        </div>
+        
+        <div class="fallbackArea" id="fallbackArea">
+          <p class="styleState" style="margin: 4px 0;">ブラウザ制限のため自動コピーが失敗しました。以下のテキストを直接コピーしてください：</p>
+          <textarea id="fallbackText" readonly></textarea>
         </div>
       ` : `
         <div class="endingBanner">
           <b>創星日誌：未完成</b>
-          <p class="desc">エンディング到達後、この惑星が辿った歴史が観測日誌として生成されます。</p>
+          <p class="desc">シミュレーションが完結（グレートフィルター決着または全壊滅）すると、ここに歴史を物語にした観測日誌が出力されます。</p>
         </div>
       `;
 
       return `
-        <div class="detailHeader"><h2>観測記録</h2><span class="tag">日誌</span></div>
+        <div class="detailHeader"><h2>創星日誌・記録室</h2><span class="tag">アーカイブ</span></div>
 
         <div class="infoGrid">
-          <div class="infoItem"><small>生命ログ</small><b>${lifeLogs}件</b></div>
-          <div class="infoItem"><small>文明ログ</small><b>${civLogs}件</b></div>
-          <div class="infoItem"><small>惑星ログ</small><b>${planetLogs}件</b></div>
-          <div class="infoItem"><small>解放観測者</small><b>${state.meta.unlockedObservers.length}タイプ</b></div>
-          <div class="infoItem wide"><small>現在の読みどころ</small><p class="desc">${escapeHtml(currentHighlight())}</p></div>
+          <div class="infoItem"><small>記録生命事象</small><b>${lifeLogs} 記録</b></div>
+          <div class="infoItem"><small>記録文明事象</small><b>${civLogs} 記録</b></div>
+          <div class="infoItem"><small>地質環境事象</small><b>${planetLogs} 記録</b></div>
+          <div class="infoItem"><small>解放ペルソナ</small><b>${state.meta.unlockedObservers.length} / ${Object.keys(OBSERVERS).length}</b></div>
+          <div class="infoItem wide"><small>統合アーカイブの注目点</small><p class="desc" style="font-size:11px;">${escapeHtml(currentHighlight())}</p></div>
         </div>
 
         ${ending}
 
         <details class="fold">
-          <summary>重要イベント一覧</summary>
-          <div class="foldBody">
-            ${state.logs.filter(l => l.important).slice(0, 18).map((l, i) => `
+          <summary>重要アーカイブ歴史イベント一覧</summary>
+          <div class="foldBody" style="max-height: 250px; overflow-y: auto;">
+            ${state.logs.filter(l => l.important).slice(0, 25).map((l, i) => `
               <div class="logItem" data-important-index="${i}">
                 <div class="logAge">${formatAge(l.age)}</div>
                 <div class="logText"><span class="logType">${typeLabel(l.type)}</span><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
               </div>
-            `).join('') || '<p class="desc">まだ重要イベントがありません。</p>'}
+            `).join('') || '<p class="desc">重要事象は未記録です。</p>'}
           </div>
         </details>
       `;
     }
 
     function currentHighlight() {
-      if (state.ended) return 'エンディング到達済みです。観測者タイプを変えて創星日誌を再読できます。';
-      if (state.greatFilter.status === 'warning') return `${state.greatFilter.type.label} が進行中です。観測点を使うか、温存してきた結果を見届けるかの分岐です。`;
-      if (state.collapse) return '文明崩壊後の再野生化と旧都市跡の変化を観測できます。';
-      if (civLevel() >= 7) return '宇宙進出段階です。グレートフィルターの兆候に注意してください。';
-      if (civLevel() >= 3) return '地域名・都市圏・勢力圏が変化しています。地名履歴を見ると土地の年代記が見えます。';
-      if (state.intelligence) return '知的生命体が出現しました。文明発祥地になりそうな地域を探してみてください。';
-      if (lifeLevel() >= 6) return '大型生物と知性候補の前段階です。地域ごとの生物相が変化しています。';
-      return '生命誕生前後の長期観測中です。時間速度を上げると進化イベントが見えやすくなります。';
+      if (state.ended) return '観測は収束しました。ペルソナを変更し、観測記録を再確認・出力できます。';
+      if (state.greatFilter.status === 'warning') return `グレートフィルター【${state.greatFilter.type.label}】が展開中。対策を施して生存率を高めるか、星の自律能力を信じるかの分岐点です。`;
+      if (state.collapse) return '文明自壊後の野生化と、二次遷移生態系の形成に注目して観測を継続できます。';
+      if (civLevel() >= 7) return '超高速宇宙船と人工軌道港が、惑星重力の軛から解き放たれつつあります。';
+      if (civLevel() >= 3) return '都市の勃興と農耕圏の激突。地名が古代神話名から帝国州名へ書き換わりつつあります。';
+      if (state.intelligence) return '知的生命体の自意識が目覚めました。環境適性度の高い発祥地域が特定されます。';
+      if (lifeLevel() >= 6) return '大型脊椎生命の跋扈。地表緑化が進み、適応放散が加速。';
+      return '全球化学スープから原始原核生命の自己複製システム構築を監視中。スピードアップを推奨。';
     }
 
     function barHtml(label, v) {
       const pct = Math.round(clamp(v, 0, 1) * 100);
-      return `<div class="barLine"><span>${label}</span><div class="barTrack"><div class="barFill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`;
+      return `
+        <div class="barLine">
+          <span>${label}</span>
+          <div class="barTrack">
+            <div class="barFill" style="width:${pct}%"></div>
+          </div>
+          <span style="font-family:monospace; text-align:right;">${pct}%</span>
+        </div>
+      `;
     }
 
     function updateLogs() {
       const list = $('logList');
-      const logs = state.logs.filter(l => state.logFilter === 'all' || l.type === state.logFilter).slice(0, state.mode === 'record' ? 90 : 22);
+      const logs = state.logs.filter(l => state.logFilter === 'all' || l.type === state.logFilter).slice(0, state.mode === 'record' ? 100 : 25);
 
-      $('logCount').textContent = `${state.logs.length}件`;
+      $('logCount').textContent = `${state.logs.length} 件`;
 
       list.innerHTML = logs.map((l, i) => `
         <div class="logItem" data-log-index="${i}">
           <div class="logAge">${formatAge(l.age)}</div>
-          <div class="logText"><span class="logType">${typeLabel(l.type)}</span><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
+          <div class="logText">
+            <span class="logType">${typeLabel(l.type)}</span>
+            <b>${escapeHtml(l.title)}</b><br>
+            <span style="color:var(--muted);">${escapeHtml(l.text)}</span>
+          </div>
         </div>
-      `).join('') || '<div class="logText">まだ記録がありません。</div>';
+      `).join('') || '<div class="logText">アーカイブされたシグナルはありません。</div>';
 
       document.querySelectorAll('.logFilters button').forEach(b => b.classList.toggle('active', b.dataset.log === state.logFilter));
 
@@ -3196,7 +3354,7 @@
 
       applyModalPauseIfNeeded();
 
-      $('modalTitle').textContent = log.title || 'イベント';
+      $('modalTitle').textContent = log.title || '事象記録';
       $('modalType').textContent = typeLabel(log.type);
       $('modalAge').textContent = formatAge(log.age || 0);
       $('modalBody').textContent = log.text || '';
@@ -3247,240 +3405,238 @@
     function generateJournal(observerId) {
       const obs = observerId || 'normal';
       const ending = state.ending || {
-        title: '観測未完了',
-        body: 'この星の物語はまだ途中です。',
-        filterType: '未発生',
+        title: '不完全観測',
+        body: 'この星の歴史はまだ流動的である。',
+        filterType: '未到達',
         risk: riskValue()
       };
 
       const species = state.intelligence
         ? `${state.intelligence.speciesName}（${state.intelligence.name}）`
-        : '知的生命体は未出現';
+        : '有機生命が自意識を獲得するに至らず';
 
       const major = state.logs
         .filter(l => l.important)
-        .slice(0, 9)
+        .slice(0, 10)
         .reverse()
-        .map(l => `・${formatAge(l.age)}：${l.title}`)
+        .map(l => `・ ${formatAge(l.age)} ｜ ${l.title}（${l.text.slice(0,35)}...）`)
         .join('\n');
 
       const base = {
-        title: `創星日誌：${state.name}`,
-        env: `海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。${getStage(LIFE_STAGES, state.age).label}を経て、文明段階は「${state.collapse ? '文明崩壊後' : getStage(CIV_STAGES, state.age).label}」に到達した。`,
-        species: `この星の知的生命体は、${species}。`,
-        events: major || '重要イベントはまだ少ない。',
-        ending: `${ending.title}。${ending.body}`,
-        thought: `観測者所見：この星は、偶然と選択と災害の重なりの中で、ひとつの結末へ到達した。`
+        title: `■ 創星観測日誌：${state.name} 編`,
+        env: `海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。${getStage(LIFE_STAGES, state.age).label}を通過。`,
+        species: `観測された知的生命：${species}。`,
+        events: major || '特筆すべき重大な適応の記録はなし。',
+        ending: `結末：${ending.title} \n${ending.body}`,
+        thought: `【星系調査員所見】偶然と災害、そして観測介入が織りなした歴史。一つの結論が確定した。`
       };
 
+      // 各ペルソナごとのユニークな翻訳表現
       if (obs === 'childGirl') {
-        return `${base.title}
+        return `🌟 ${base.title}
 
-この星は、ながいながい時間をかけて変わっていったのです。
+ねえ、知ってる？
+星が生まれて、ゆっくりゆっくり変わっていくの。
+とってもきれいな歴史だった。
+
 ${base.env}
-
 ${base.species}
-小さな命たちは、何度もこわいことに出会ったの。
-でも、そのたびに、次の命がちゃんと続きを受け取っていたのです。
 
-おぼえておきたいこと：
+大きなできごと：
 ${base.events}
 
-さいご：
+さいごはどうなったのかな：
 ${base.ending}
 
-所見：
-星の歴史は、うれしいことだけじゃなかったのです。
-でも、消えてしまった命も、残った命も、ちゃんとこの日誌の中にいるの。`;
+星見の少女のひとりごと：
+星の歩みは、楽しいことだけじゃなかった。
+途中で消えちゃった生き物たちのことも、わたしの目とこの日誌の中に、ずーっと残しておくよ。`;
       }
 
       if (obs === 'childBoy') {
-        return `${base.title}
+        return `🚀 ${base.title}
 
-この星、すごかった。
-最初はただの星だったのに、海ができて、命が出て、文明まで進んだ。
+この星、めっちゃ面白かった！
+はじめは海しかなかったのに、変な虫が出てきて、最後は宇宙船まで飛ばしたんだ！
 
 ${base.env}
 ${base.species}
 
-大きな出来事：
+歴史のビッグイベント：
 ${base.events}
 
-さいごは「${ending.title}」。
-${ending.body}
+さいごの瞬間：
+${base.ending}
 
-所見：
-正直、途中で何回もダメかと思った。
-でも、星ってけっこうしぶとい。そこが一番すごいと思う。`;
+少年のひとりごと：
+途中で隕石が落ちた時は「終わったな」と思ったけど、星の生き物って想像以上にしぶといね！`;
       }
 
       if (obs === 'foreigner') {
-        return `${base.title}
+        return `👽 ${base.title}
 
-ワタシ、この星を長く見ました。
+ワタシ、この次元の星を、長く、静かに測定しました。
 ${base.env}
 
 ${base.species}
-命、小さいところから始まりました。でも、とても強かったです。
+そのカタチ、小さかったです、不完全でした。でも、前に、前にと、進むのです。
 
-記録した大きな変化：
+記述データ（事象）：
 ${base.events}
 
-最後：
+最後の結果：
 ${base.ending}
 
-所見：
-ワタシ、少し泣きました。
-この星、ただのデータではありません。がんばった星です。`;
+異界の観測者の独白：
+ワタシのセンサーが、少し熱い。これは「感動」ですか。
+ただの数値じゃない、彼らがそこに生きた証拠が、ここに熱となって残っています。`;
       }
 
       if (obs === 'north') {
-        return `${base.title}
+        return `❄️ ${base.title}
 
-いやぁ、長い観測だったなぁ。
+いやぁ、長旅のような観測が終わった。
 ${base.env}
 
 ${base.species}
-小さい命からここまで来たんだから、たいしたもんだべ。
+あの吹雪の日、最初に小さな芽が出てから、よくぞここまで星系を広げたものだ。
 
-大きな出来事：
+覚えておきたい、星の足跡：
 ${base.events}
 
-結末：
+結びの記録：
 ${base.ending}
 
-所見：
-いいことばっかりじゃなかった。
-でも、よく耐えたなぁ。この星の歩み、ちゃんと残しておきたいべ。`;
+辺境観測士の独白：
+過酷な星だったが、生き物の持つ底力を見せてもらった。
+誰もいない星空の記録、ここに置いていくよ。`;
       }
 
       if (obs === 'samurai') {
-        return `${base.title}
+        return `⚔️ ${base.title}
 
-この星の歩み、まこと長き戦にござった。
+この星の歩み、真に見事なる戦にござった。
 ${base.env}
 
 ${base.species}
-小さき命より始まり、やがて文明の旗を掲げるに至る。
+小さき生命の火、過酷なる風雨に耐え、己が志を研ぎ澄まし文明の旗を掲げた。
 
-主なる出来事：
+主なる戦の記録（事象）：
 ${base.events}
 
-終幕：
+星の終幕：
 ${base.ending}
 
-所見：
-滅びも栄えも、星の道なれば。
-されど、ここまで歩みし命たちの志、見事なり。`;
+星見の武士の独白：
+盛者必衰、滅びもまた星の理なれば。
+されど、最後まで道を切り拓こうとしたあの志、しかと拙者の胸に刻み申した。`;
       }
 
       if (obs === 'kyoto') {
-        return `${base.title}
+        return `🌸 ${base.title}
 
-ほんに、長いお話どしたなぁ。
+ほんに、長い長い夢物語を見ているようどしたなぁ。
 ${base.env}
 
 ${base.species}
-小さな命が積み重なって、いつしか文明の灯りになりました。
+小さな露が、いつしか満ち溢れて、大きな知恵の灯りになりましたえ。
 
-覚えておきたい出来事：
+心に留めておきたい事柄：
+${base.events}
+
+結びの言葉：
+${base.ending}
+
+陰陽術師の独白：
+文明が輝くほど、その影に潜む危うさも濃うなるもの。
+それでも歩みを止めなんだこと、その雅な歩みを、ここに書き留めておきます。`;
+      }
+
+      if (obs === 'gal') {
+        return `✨ ${base.title}
+
+この星、マジでドラマ多すぎ、普通に神すぎ。
+${base.env}
+
+${base.species}
+最初の細胞から、文明が盛り上がるまでのストーリーがエモい！
+
+重要イベント：
+${base.events}
+
+気になるラスト：
+${base.ending}
+
+ギャルのひとりごと：
+途中で滅びかけたり、失敗したりしたのも含めて、マジで「生きてた！」って感じがして超刺さる。一生忘れんわ！`;
+      }
+
+      if (obs === 'oldGirl') {
+        return `🔮 ${base.title}
+
+ほう、またひとつ、星の長い長い夢が紡がれたようじゃのう。
+${base.env}
+
+${base.species}
+最初はなにもない泥にすぎなんだものが、傷を負い、迷い、それでも美しい知性に育った。
+
+星に刻まれし神話の出来事：
 ${base.events}
 
 結び：
 ${base.ending}
 
-所見：
-灯りが増えるほど、影も濃うなります。
-それでも歩みを止めへんかったこと、それがこの星の美しさやと思いますえ。`;
+古き精霊の独白：
+よう頑張ったな。よう迷いながらも進んだ。
+この美しい歴史の記述、風の歌に乗せて遠い宇宙へ届けよう。`;
       }
 
-      if (obs === 'gal') {
-        return `${base.title}
+      if (obs === 'net') {
+        return `💻 ${base.title}
 
-この星、マジで波乱万丈。
+星の観測おわった。結果は「${ending.result === 'breakthrough' ? '生存ルート突破' : '全滅自壊エンド'}」でした。
+まあそうなるよね。
+
 ${base.env}
-
 ${base.species}
-生命の立ち上がりから文明の盛り上がりまで、普通にドラマ強すぎ。
 
-重要イベント：
+スレに貼られた重要な出来事：
 ${base.events}
 
 ラスト：
 ${base.ending}
 
-所見：
-いや、星ってこんなにエモいんだ。
-滅びかけても、ちゃんと次に繋がってるの、かなり刺さる。`;
-      }
-
-      if (obs === 'oldGirl') {
-        return `${base.title}
-
-ほう、またひとつ星の物語が閉じたのじゃ。
-${base.env}
-
-${base.species}
-小さき命は、何度も試練を受け、それでも枝を伸ばしたのじゃ。
-
-星に刻まれし出来事：
-${base.events}
-
-結末：
-${base.ending}
-
-所見：
-よう耐えた。よう迷いながら進んだ。
-この星は、もうただの観測対象ではないのう。`;
-      }
-
-      if (obs === 'net') {
-        return `${base.title}
-
-星、無事${ending.result === 'breakthrough' ? '突破' : '死亡'}。
-いや無事かどうかは諸説ある。
-
-${base.env}
-${base.species}
-
-ログ的にデカかったやつ：
-${base.events}
-
-結末：
-${base.ending}
-
-所見：
-ワイくん、途中で何回か「終わったわこれ」って言った。
-でもこの星、想定より粘る。そこは普通に草、いや普通にすごい。`;
+ネット観測民の独白：
+ワイ、途中で何度も「これは全滅だろｗｗ」ってスレ立てたわ。
+でも想定の3倍は粘ってて、なんか普通に感動した。生き物スゲーわ。`;
       }
 
       if (obs === 'transfer') {
-        return `${base.title}
+        return `🎓 ${base.title}
 
-このルート、前世で見たやつに似ている。
+このデータパターン、前世の研究室で見たプロトタイプにそっくりだ。
 ${base.env}
 
 ${base.species}
-進化元と環境条件を見る限り、文明化まではかなり順当。ただし危機フラグも早い段階で立っていた。
+環境変数（重力・湿度）から推測して、自意識発生までは論理的帰結。しかし、フィルター対策率のコントロールが重要だった。
 
-主要ログ：
+時系列ログ（重要イベント）：
 ${base.events}
 
-エンディング：
+結末：
 ${base.ending}
 
-所見：
-今回はここに着地した。
-次周では、観測点の切り方を変えれば別ルートに入れるかもしれない。`;
+転生研究員の独白：
+シミュレーション上の1周期が終了。
+次は観測点の消費比率を「気候調律」に回して、生存確率の再現性を検証する。`;
       }
 
-      return `${base.title}
+      return `📄 ${base.title}
 
 ${base.env}
-
 ${base.species}
 
-主要観測記録：
+主要観測履歴：
 ${base.events}
 
 結末：
@@ -3499,12 +3655,36 @@ ${base.thought}`;
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     }
 
-    async function copyJournal() {
+    function copyJournal() {
+      const text = generateJournal(state.journalObserver);
+      // document.execCommand('copy') によるiFrame制限フォールバック対応
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.top = '0';
+      area.style.left = '0';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      
+      let success = false;
       try {
-        await navigator.clipboard.writeText(generateJournal(state.journalObserver));
-        toast('創星日誌をコピーしました');
-      } catch {
-        alert(generateJournal(state.journalObserver));
+        success = document.execCommand('copy');
+      } catch (err) {
+        success = false;
+      }
+      document.body.removeChild(area);
+
+      if (success) {
+        toast('クリップボードに日誌をコピーしました！');
+      } else {
+        // さらにフォールバック表示（手動エリア展開）
+        $('fallbackArea').style.display = 'block';
+        $('fallbackText').value = text;
+        $('fallbackText').focus();
+        $('fallbackText').select();
+        toast('手動コピー用のテキストエリアを表示しました');
       }
     }
 
@@ -3526,9 +3706,9 @@ ${base.thought}`;
         localStorage.setItem(SAVE_KEY, JSON.stringify(data));
         state.lastSave = performance.now();
         state.dirty = false;
-        if (showToast) toast('保存しました');
+        if (showToast) toast('シミュレーション進捗をセーブしました。');
       } catch {
-        if (showToast) alert('保存に失敗しました。ブラウザの保存領域が使えない可能性があります。');
+        if (showToast) alert('保存できませんでした。ブラウザのストレージ制限をご確認ください。');
       }
     }
 
@@ -3582,10 +3762,10 @@ ${base.thought}`;
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
 
-        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 10) moved = true;
+        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 8) moved = true;
 
-        state.rotY += dx * 0.008;
-        state.rotX = clamp(state.rotX + dy * 0.006, -Math.PI / 4, Math.PI / 4);
+        state.rotY += dx * 0.007;
+        state.rotX = clamp(state.rotX + dy * 0.005, -Math.PI / 4, Math.PI / 4);
 
         lastX = e.clientX;
         lastY = e.clientY;
@@ -3662,11 +3842,10 @@ ${base.thought}`;
       });
 
       $('closeWipeBtn').addEventListener('click', hideWipe);
-
       $('saveBtn').addEventListener('click', () => saveState(true));
 
       $('resetBtn').addEventListener('click', () => {
-        if (confirm('新しい惑星で観測を開始しますか？現在の自動保存は上書きされます。')) {
+        if (confirm('現在の惑星進捗を破棄し、新しい星系のシミュレーションを開始しますか？')) {
           makePlanet();
         }
       });
@@ -3681,7 +3860,7 @@ ${base.thought}`;
             $('fullscreenBtn').textContent = '全画面';
           }
         } catch {
-          toast('このブラウザでは全画面にできません');
+          toast('！お使いの環境では全画面表示が制限されています。');
         }
       });
 
@@ -3707,7 +3886,7 @@ ${base.thought}`;
           state.manualSpeedOffset = 0;
           applyStyleSpeed(true);
           state.paused = false;
-          toast(`時間進行スタイル：${TIME_STYLES[state.timeStyle]}`);
+          toast(`進行調律：${TIME_STYLES[state.timeStyle]}`);
           updateAll(false);
         });
       });
@@ -3717,7 +3896,7 @@ ${base.thought}`;
         if (action) {
           const kind = action.dataset.action;
           if (kind === 'nextPlanet') {
-            if (confirm('次の惑星へ進みますか？未使用観測点の一部は引き継がれます。')) makePlanet();
+            if (confirm('現在の成果を引き継ぎ、新しい惑星の探索に移りますか？')) makePlanet();
             return;
           }
           if (kind === 'saveJournal') {
@@ -3741,7 +3920,7 @@ ${base.thought}`;
 
         const important = e.target.closest('[data-important-index]');
         if (important && state.mode === 'record') {
-          const logs = state.logs.filter(l => l.important).slice(0, 18);
+          const logs = state.logs.filter(l => l.important).slice(0, 25);
           const log = logs[Number(important.dataset.importantIndex)];
           if (log) openEventModal(log);
         }
@@ -3764,6 +3943,7 @@ ${base.thought}`;
       tick(dt);
       drawPlanet();
 
+      // ワイプ表示の常時同期
       if (state.selectedRegionId != null && $('wipe').classList.contains('show')) {
         const r = state.regions.find(x => x.id === state.selectedRegionId);
         if (r) {
@@ -3773,7 +3953,7 @@ ${base.thought}`;
         }
       }
 
-      if (now - lastUiUpdate > 500) {
+      if (now - lastUiUpdate > 450) {
         updateStats();
         lastUiUpdate = now;
       }
@@ -3788,6 +3968,7 @@ ${base.thought}`;
       if (r) selectRegion(r, false);
     }
 
+    // エントリー
     setupEvents();
     if (!loadState()) makePlanet();
     else initialUiRefresh();
@@ -3795,3 +3976,5 @@ ${base.thought}`;
   </script>
 </body>
 </html>
+
+```
