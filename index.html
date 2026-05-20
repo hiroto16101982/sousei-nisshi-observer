@@ -114,7 +114,7 @@
       border-radius: 30px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 390px;
+      min-height: 356px;
     }
 
     .planetCard::after {
@@ -130,7 +130,7 @@
     #planetCanvas {
       display: block;
       width: 100%;
-      height: 390px;
+      height: 356px;
       touch-action: none;
       user-select: none;
     }
@@ -238,8 +238,15 @@
     .speedDisplay small { margin-top: 3px; color: var(--subtle); font-size: 10px; }
     .quickRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .quickRow button { padding: 10px 6px; font-size: 12px; }
+    .timeStyleBox { border: 1px solid rgba(255,255,255,.10); border-radius: 14px; background: rgba(255,255,255,.03); padding: 8px; }
+    .timeStyleBox summary { cursor: pointer; color: var(--muted); font-size: 11px; }
+    .styleRow { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .styleRow button { padding: 7px 6px; font-size: 11px; box-shadow: none; }
+    .styleState { margin-top: 7px; font-size: 10px; color: var(--subtle); }
+    .modalPauseNote { margin-top: 5px; font-size: 10px; color: var(--gold); display: none; }
+    .modalPauseNote.show { display: block; }
 
-    .modePanel { padding: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .modePanel { padding: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; position: sticky; top: calc(8px + env(safe-area-inset-top)); z-index: 8; background: rgba(8, 15, 34, .92); border: 1px solid var(--line); border-radius: 18px; backdrop-filter: blur(12px); }
     .modePanel button { padding: 10px 4px; font-size: 12px; border-radius: 15px; box-shadow: none; }
     .modePanel button.active { background: linear-gradient(135deg, rgba(255,217,118,.22), rgba(126,232,255,.16)); border-color: rgba(255,217,118,.38); color: #fff5d6; }
 
@@ -261,6 +268,14 @@
     .pinCard button { margin-top: 7px; width: 100%; padding: 5px; font-size: 10px; }
 
     .detailPanel { padding: 13px; min-height: 184px; }
+    .modeHint { color: var(--muted); font-size: 11px; margin: 0 0 8px; }
+    .chipRow { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
+    .chip { font-size: 10px; color: var(--cyan); border: 1px solid rgba(126,232,255,.3); border-radius: 999px; padding: 3px 7px; }
+    .fold { margin-top: 8px; border: 1px solid rgba(255,255,255,.10); border-radius: 12px; background: rgba(255,255,255,.03); }
+    .fold summary { cursor: pointer; padding: 8px 10px; color: var(--muted); font-size: 11px; }
+    .fold .foldBody { padding: 0 10px 10px; }
+    .assistBtns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .assistBtns button { padding: 7px 6px; font-size: 11px; box-shadow: none; }
     .detailHeader { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
     .detailHeader h2 { margin: 0; font-size: 16px; line-height: 1.25; }
     .tag {
@@ -300,14 +315,25 @@
     .logList { display: grid; gap: 8px; max-height: 310px; overflow: auto; padding-right: 2px; }
     .logItem {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: 72px 52px 1fr;
       gap: 9px;
       border-bottom: 1px solid rgba(255,255,255,.08);
       padding-bottom: 8px;
     }
     .logAge { color: var(--gold); font-size: 10px; line-height: 1.25; }
+    .logType { display:inline-block; font-size:9px; color: var(--subtle); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 1px 5px; margin-right: 5px; vertical-align: 1px; }
     .logText { color: var(--muted); font-size: 12px; line-height: 1.42; }
     .logText b { color: var(--text); }
+    .logThumb { width: 48px; height: 48px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: linear-gradient(135deg,#233b67,#18243f); overflow: hidden; position: relative; }
+    .logThumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+    .thumbFallback { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; font-size: 14px; color:#d8e6ff; }
+    .eventModal { position: fixed; inset: 0; background: rgba(2,6,16,.72); display: none; align-items: center; justify-content: center; z-index: 40; padding: 12px; }
+    .eventModal.show { display: flex; }
+    .eventCard { width:min(100%,430px); background: rgba(10,18,40,.95); border:1px solid var(--line); border-radius: 16px; padding: 10px; }
+    .eventPreview { height: 180px; border-radius: 12px; overflow: hidden; border:1px solid rgba(255,255,255,.15); margin-bottom: 8px; }
+    .eventPreview img { width:100%; height:100%; object-fit:cover; display:block; }
+    .eventActions { display:flex; gap:8px; margin-top:8px; }
+    .eventActions button { flex:1; padding:8px; }
 
     .footerNote {
       color: rgba(159,178,216,.65);
@@ -316,18 +342,38 @@
       padding: 2px 8px 0;
       line-height: 1.5;
     }
+    .eventToast {
+      position: fixed;
+      left: 50%;
+      top: calc(56px + env(safe-area-inset-top));
+      transform: translate(-50%, -8px);
+      z-index: 30;
+      background: rgba(6, 11, 26, .88);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 12px;
+      padding: 8px 10px;
+      min-width: 180px;
+      max-width: min(92vw, 360px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .eventToast.show { opacity: 1; transform: translate(-50%, 0); }
+    .eventToast .k { color: var(--cyan); font-size: 10px; margin-right: 6px; }
 
     @media (min-width: 760px) {
       .app { width: min(100%, 760px); }
       .lowerGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
-      .planetCard { min-height: 460px; }
-      #planetCanvas { height: 460px; }
+      .planetCard { min-height: 430px; }
+      #planetCanvas { height: 430px; }
     }
 
     @media (max-width: 380px) {
       .appTitle { font-size: 19px; }
-      .planetCard { min-height: 350px; }
-      #planetCanvas { height: 350px; }
+      .planetCard { min-height: 336px; }
+      #planetCanvas { height: 336px; }
       .wipe { width: 52%; }
       .infoGrid { grid-template-columns: 1fr; }
       .wide { grid-column: auto; }
@@ -337,12 +383,26 @@
 </head>
 <body>
   <main class="app">
+    <div class="eventToast" id="eventToast"></div>
+    <div class="eventModal" id="eventModal">
+      <div class="eventCard">
+        <div class="eventPreview" id="eventPreview"></div>
+        <div class="logText"><span class="logType" id="eventType"></span><b id="eventTitle"></b></div>
+        <div class="logAge" id="eventAge"></div>
+        <p class="desc" id="eventBody"></p>
+        <div class="eventActions">
+          <button id="eventRegionBtn">地域を見る</button>
+          <button id="eventCloseBtn">閉じる</button>
+        </div>
+      </div>
+    </div>
     <header class="topbar">
       <div class="titleBlock">
         <h1 class="appTitle">創星日誌</h1>
         <div class="appSub">生命圏・知的生命・文明興亡を放置観測</div>
       </div>
       <div class="miniBtns">
+        <button id="resetViewBtn" title="視点リセット">視点</button>
         <button id="saveBtn" title="保存">保存</button>
         <button id="resetBtn" class="warn" title="新しい惑星">新星</button>
       </div>
@@ -350,7 +410,7 @@
 
     <section class="planetCard">
       <canvas id="planetCanvas" width="900" height="760" aria-label="回転できる惑星"></canvas>
-      <div class="planetHint">↔ スワイプで回転　◎ タップで観測</div>
+      <div class="planetHint">↔ 横回転　↕ 傾き変更　◎ タップで観測</div>
       <div class="ageBadge">
         <div class="planetName" id="planetName">---</div>
         <div class="age" id="ageText">---</div>
@@ -399,13 +459,26 @@
         <button id="normalBtn">通常速度</button>
         <button id="fastBtn">観測早送り</button>
       </div>
+      <details class="timeStyleBox">
+        <summary>時間進行スタイル</summary>
+        <div class="styleRow">
+          <button data-style="calm">じっくり観測</button>
+          <button data-style="evolution">生命進化重視</button>
+          <button data-style="civilization">文明観察重視</button>
+          <button data-style="event">イベント重視</button>
+          <button data-style="idle" style="grid-column:1/-1">長期放置</button>
+        </div>
+        <div class="styleState" id="styleState">---</div>
+        <div class="styleState"><label><input type="checkbox" id="pauseOnModalToggle" checked> イベント閲覧中は時間を止める</label></div>
+        <div class="modalPauseNote" id="modalPauseNote">観測停止中：イベント閲覧</div>
+      </details>
     </section>
 
     <nav class="modePanel" aria-label="観察モード">
-      <button data-mode="planet" class="active">惑星</button>
-      <button data-mode="region">地域</button>
-      <button data-mode="biosphere">生命圏</button>
-      <button data-mode="record">記録</button>
+      <button data-mode="planet" class="active">🌍惑星</button>
+      <button data-mode="region">📍地域</button>
+      <button data-mode="biosphere">🧬生命圏</button>
+      <button data-mode="record">📜記録</button>
     </nav>
 
     <section class="pinTray" id="pinTray">
@@ -446,6 +519,21 @@
     const SPEEDS = [0, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000];
     const SPEED_LABELS = ['停止', '×1年/秒', '×10年/秒', '×100年/秒', '×1千年/秒', '×1万年/秒', '×10万年/秒', '×100万年/秒', '×1000万年/秒'];
     const SPEED_HELP = ['観測停止', '細かく観察', '文明史向き', '文明史早送り', '生態系早送り', '進化観察', '長期進化', '惑星史', '超高速'];
+    const TIME_STYLES = {
+      calm: 'じっくり観測',
+      evolution: '生命進化重視',
+      civilization: '文明観察重視',
+      event: 'イベント重視',
+      idle: '長期放置'
+    };
+    const EVENT_IMAGES = {
+      intelligence_birth: 'assets/intelligence_birth.webp',
+      civilization_proto: 'assets/civilization_proto.webp',
+      civilization_city: 'assets/civilization_city.webp',
+      civilization_space: 'assets/civilization_space.webp',
+      civilization_collapse: 'assets/civilization_collapse.webp',
+      rewilding: 'assets/rewilding.webp'
+    };
 
     const LIFE_STAGES = [
       { key: 'sterile', at: 0, label: '無生命惑星' },
@@ -538,6 +626,8 @@
       name: '',
       age: 0,
       speedIndex: 5,
+      timeStyle: 'evolution',
+      manualSpeedOffset: 0,
       lastSpeedIndex: 5,
       paused: false,
       rotY: 0,
@@ -558,8 +648,36 @@
       nextRandomEvent: 260_000_000,
       env: null,
       dirty: true,
-      lastSave: 0
+      lastSave: 0,
+      fx: null,
+      lastStyleSyncAt: 0,
+      modalLogIndex: null,
+      pauseOnEventModal: true,
+      modalPauseBackup: null
     };
+    const uiState = {
+      detailDirty: true,
+      logsDirty: true,
+      pinsDirty: true,
+      modeDirty: true
+    };
+    const SAVE_KEY = 'sousei-nisshi-save-v2';
+    const LEGACY_SAVE_KEY = 'sousei-nisshi-save-v1';
+
+    function lineageOriginText(species) {
+      if (!species) return '未確定';
+      return `${species.base} → ${species.speciesName}`;
+    }
+
+    function civPhaseText() {
+      if (!state.intelligence) return '文明未発生';
+      if (state.collapse) return '崩壊後の再興段階';
+      const cl = civLevel();
+      if (cl >= 7) return '宇宙進出・星間準備';
+      if (cl >= 5) return '工業/情報文明の拡張';
+      if (cl >= 3) return '都市国家と交易圏';
+      return '定住と農耕の拡大';
+    }
 
     function randomName(prefix = '') {
       const n = 2 + Math.floor(Math.random() * 2);
@@ -590,10 +708,121 @@
       return LIFE_STAGES.findIndex(s => s.key === key);
     }
 
-    function addLog(type, title, text, important = false) {
-      state.logs.unshift({ type, title, text, age: state.age, important });
+    function addLog(type, title, text, important = false, meta = {}) {
+      state.logs.unshift({ type, title, text, age: state.age, important, imageKey: meta.imageKey || null, subType: meta.subType || null, regionId: Number.isInteger(meta.regionId) ? meta.regionId : null });
       if (state.logs.length > 180) state.logs.length = 180;
       state.dirty = true;
+      uiState.logsDirty = true;
+      if (state.mode === 'record') uiState.detailDirty = true;
+      if (important) showEventToast(type, title);
+    }
+
+    function showEventToast(type, title) {
+      const el = $('eventToast');
+      if (!el) return;
+      const kind = type === 'life' ? '生命' : type === 'civ' ? '文明' : '惑星';
+      el.innerHTML = `<span class="k">${kind}</span>${escapeHtml(title)}`;
+      el.classList.add('show');
+      clearTimeout(showEventToast._t);
+      showEventToast._t = setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    function triggerFx(type, power = 1) {
+      state.fx = { type, start: performance.now(), duration: 1400 + power * 500, power };
+    }
+
+    function desiredSpeedIndex() {
+      const ll = lifeLevel(), cl = civLevel();
+      const style = state.timeStyle || 'evolution';
+      if (style === 'calm') return ll < 5 ? 2 : 3;
+      if (style === 'evolution') return ll < 8 ? 5 : 4;
+      if (style === 'civilization') return cl < 2 ? 6 : cl < 5 ? 4 : 3;
+      if (style === 'event') return cl < 3 ? 6 : 5;
+      if (style === 'idle') return cl < 2 ? 7 : 6;
+      return 5;
+    }
+
+    function applyStyleSpeed(silent = false) {
+      const base = desiredSpeedIndex();
+      const next = clamp(base + (state.manualSpeedOffset || 0), 0, SPEEDS.length - 1);
+      state.speedIndex = next;
+      if (!silent) uiState.detailDirty = state.mode === 'record';
+    }
+
+    function autoSlowdownForImportantEvent() {
+      if ((state.timeStyle === 'event' || state.timeStyle === 'idle' || state.timeStyle === 'civilization') && state.speedIndex > 3) {
+        state.speedIndex = 3;
+        state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex();
+        showEventToast('planet', '重要イベント発生：観測速度を一時的に下げました');
+      }
+    }
+
+    function applyModalPauseIfNeeded() {
+      if (!state.pauseOnEventModal || state.modalPauseBackup) return;
+      state.modalPauseBackup = { paused: state.paused, speedIndex: state.speedIndex, lastSpeedIndex: state.lastSpeedIndex };
+      state.paused = true;
+      const note = $('modalPauseNote'); if (note) note.classList.add('show');
+      updateAll(false);
+    }
+
+    function restoreModalPauseIfNeeded() {
+      if (!state.modalPauseBackup) return;
+      const b = state.modalPauseBackup;
+      state.paused = b.paused;
+      state.speedIndex = b.speedIndex;
+      state.lastSpeedIndex = b.lastSpeedIndex;
+      state.modalPauseBackup = null;
+      const note = $('modalPauseNote'); if (note) note.classList.remove('show');
+      updateAll(false);
+    }
+
+    function markRegionEvent(region, eventType) {
+      if (!region) return;
+      region.lastEventType = eventType;
+      region.lastEventAt = state.age;
+      uiState.detailDirty = state.mode === 'region' || state.mode === 'record';
+    }
+
+    function ensureAssistRegion() {
+      return state.regions.find(r => r.id === state.selectedRegionId) || pick(state.regions);
+    }
+
+    function runAssistEvent(kind) {
+      const region = ensureAssistRegion();
+      if (kind === 'life') {
+        addLog('life', '観測補助: 生命イベント確認', '生態系拡大イベントの視覚演出を確認しました。', true);
+        triggerFx('hazard', 0.55);
+        markRegionEvent(region, 'expansion');
+      } else if (kind === 'intelligence') {
+        if (!state.intelligence) chooseIntelligence();
+        addLog('life', '観測補助: 知的生命誕生確認', '知的生命誕生演出を再確認しました。', true);
+        triggerFx('intelligence', 1.1);
+        markRegionEvent(region, 'origin');
+      } else if (kind === 'civilization') {
+        addLog('civ', '観測補助: 文明成立確認', '文明成立時の演出を確認しました。', true);
+        triggerFx('civilization', 1);
+        markRegionEvent(region, 'prosper');
+      } else if (kind === 'hazard') {
+        addLog('planet', '観測補助: 危機イベント確認', '危機イベントのフラッシュ演出を確認しました。', true);
+        triggerFx('hazard', 1);
+        markRegionEvent(region, 'conflict');
+      } else if (kind === 'collapse') {
+        if (!state.collapse) {
+          triggerCollapse();
+        } else {
+          addLog('civ', '観測補助: 崩壊後演出確認', '文明崩壊後の警告演出を再確認しました。', true);
+          triggerFx('collapse', 1.1);
+          markRegionEvent(region, 'collapse');
+        }
+      } else if (kind === 'space') {
+        addLog('civ', '観測補助: 宇宙進出演出確認', '宇宙進出段階の軌道演出を確認しました。', true);
+        triggerFx('space', 1.2);
+        markRegionEvent(region, 'prosper');
+      }
+      uiState.logsDirty = true;
+      uiState.detailDirty = true;
+      updateAll(true);
+      if (region) selectRegion(region, true);
     }
 
     function makePlanet() {
@@ -601,6 +830,8 @@
       state.name = randomName('惑星') + '-' + (2 + Math.floor(Math.random() * 8));
       state.age = 0;
       state.speedIndex = 5;
+      state.timeStyle = state.timeStyle || 'evolution';
+      state.manualSpeedOffset = 0;
       state.lastSpeedIndex = 5;
       state.paused = false;
       state.rotY = Math.random() * Math.PI * 2;
@@ -631,9 +862,14 @@
       state.cloudDots = makeCloudDots();
       state.regions = makeRegions();
       addLog('planet', '観測開始', `${state.name} の長期観測を開始。海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。`, true);
+      applyStyleSpeed(true);
       hideWipe();
       saveState();
-      updateAll();
+      uiState.detailDirty = true;
+      uiState.logsDirty = true;
+      uiState.pinsDirty = true;
+      uiState.modeDirty = true;
+      updateAll(true);
     }
 
     function makeLandDots() {
@@ -701,6 +937,8 @@
           historyNames: [base],
           currentName: base,
           note: ''
+          ,lastEventType: null,
+          lastEventAt: null
         };
       });
     }
@@ -738,7 +976,7 @@
       const chosen = scores[0].l;
       const speciesName = randomName('') + (chosen.id === 'cephalo' ? '潮族' : chosen.id === 'avian' ? '翼人種' : chosen.id === 'mycelial' ? '記憶林' : chosen.id === 'arthropod' ? '群族' : chosen.id === 'reptile' ? '竜人種' : chosen.id === 'amphibian' ? '水棲族' : '獣人種');
       state.intelligence = { ...chosen, speciesName, score: scores[0].score };
-      addLog('life', '知的生命体の出現', `${chosen.base} から ${speciesName} が出現。特徴は「${chosen.traits.slice(0,2).join('・')}」。この惑星の文明担当になりそうです。`, true);
+      addLog('life', '知的生命体の出現', `${chosen.base} から ${speciesName} が出現。特徴は「${chosen.traits.slice(0,2).join('・')}」。この惑星の文明担当になりそうです。`, true, { imageKey: 'intelligence_birth', subType: 'intelligence' });
       const candidates = state.regions
         .map(r => ({ r, score: r.fertility + r.resources * .35 + (r.isOcean && chosen.id === 'cephalo' ? .6 : 0) + (!r.isOcean && chosen.id !== 'cephalo' ? .25 : 0) - Math.abs(r.lat) * .1 + Math.random() * .3 }))
         .sort((a,b) => b.score - a.score)
@@ -785,6 +1023,8 @@
         intelligence: ['知性の火花', '一部の生物系統で記号・道具・世代間学習が成立し始めました。']
       };
       addLog('life', msgs[st.key][0], msgs[st.key][1], true);
+      if (st.key === 'intelligence') triggerFx('intelligence', 1.1);
+      if (st.key === 'intelligence') autoSlowdownForImportantEvent();
       for (const r of state.regions) r.biodiversity = clamp(r.biodiversity + .08 + Math.random() * .12, 0, 1);
     }
 
@@ -801,7 +1041,10 @@
         space: ['宇宙進出開始', '軌道施設と宇宙港が建設されました。グレートフィルター突破の候補段階です。'],
         stellar: ['恒星間文明候補', '惑星文明の一部が恒星間進出を試みています。滅亡か継承か、分岐点です。']
       };
-      addLog('civ', msgs[st.key][0], msgs[st.key][1], true);
+      addLog('civ', msgs[st.key][0], msgs[st.key][1], true, { imageKey: st.key === 'proto' ? 'civilization_proto' : st.key === 'city' ? 'civilization_city' : st.key === 'space' ? 'civilization_space' : null, subType: st.key });
+      if (st.key === 'proto') triggerFx('civilization', 1);
+      if (st.key === 'space') triggerFx('space', 1.2);
+      if (['proto','city','industrial','space'].includes(st.key)) autoSlowdownForImportantEvent();
       evolveRegionNames();
     }
 
@@ -828,6 +1071,8 @@
           ['life', '形質の獲得', '視覚・群れ行動・外骨格などの形質が複数地域で発達しました。']
         ];
         const e = pick(events); addLog(e[0], e[1], e[2]);
+        if (e[1].includes('小規模絶滅') || e[1].includes('気候振動')) triggerFx('hazard', .9);
+        markRegionEvent(pick(state.regions), e[1].includes('放散') ? 'expansion' : 'ecosystem');
         for (const r of state.regions) r.biodiversity = clamp(r.biodiversity + (Math.random() - .35) * .08, 0, 1);
         return;
       }
@@ -839,6 +1084,7 @@
           ['civ', '文字記録の発展', '地域史と神話が記録され、土地の名前が固定化され始めました。']
         ];
         const e = pick(events); addLog(e[0], e[1], e[2]);
+        markRegionEvent(pick(state.regions), e[1].includes('紛争') ? 'conflict' : e[1].includes('交易') ? 'prosper' : 'origin');
         evolveRegionNames();
         return;
       }
@@ -849,6 +1095,9 @@
         ['planet', '極端気象', '気候システムの変動が激しくなり、文明圏と生態系の両方に影響が出ています。']
       ];
       const e = pick(events); addLog(e[0], e[1], e[2]);
+      if (e[1].includes('極端気象')) triggerFx('hazard', 1);
+      if (e[1].includes('技術的跳躍')) triggerFx('space', .8);
+      markRegionEvent(pick(state.regions), e[1].includes('環境負荷') ? 'conflict' : 'prosper');
       for (const r of state.regions) {
         if (r.city || Math.random() < .26) r.pollution = clamp(r.pollution + .035 + Math.random() * .08, 0, 1);
       }
@@ -857,15 +1106,19 @@
     function triggerCollapse() {
       state.collapse = true;
       state.collapseAge = state.age;
-      addLog('civ', '文明崩壊', '惑星規模の複合危機により主要文明が崩壊。都市の一部は廃墟となり、生命圏の再編が始まります。', true);
+      addLog('civ', '文明崩壊', '惑星規模の複合危機により主要文明が崩壊。都市の一部は廃墟となり、生命圏の再編が始まります。', true, { imageKey: 'civilization_collapse', subType: 'collapse' });
+      triggerFx('collapse', 1.6);
+      autoSlowdownForImportantEvent();
       for (const r of state.regions) {
         if (r.city && Math.random() < .7) {
           r.ruin = true;
           r.city = false;
+          markRegionEvent(r, 'collapse');
           r.currentName = '旧' + r.currentName + '跡';
           r.historyNames.push(r.currentName);
         }
       }
+      addLog('life', '再野生化の進行', '崩壊圏の一部で植生と野生生態系の再拡大が確認されました。', true, { imageKey: 'rewilding', subType: 'rewilding' });
     }
 
     function evolveRegionNames() {
@@ -915,6 +1168,10 @@
     }
 
     function tick(dt) {
+      if (performance.now() - state.lastStyleSyncAt > 1200 && !state.paused && (state.manualSpeedOffset || 0) === 0) {
+        applyStyleSpeed(true);
+        state.lastStyleSyncAt = performance.now();
+      }
       const speed = state.paused ? 0 : SPEEDS[state.speedIndex];
       if (speed > 0) {
         const dtYears = dt * speed;
@@ -942,8 +1199,8 @@
     function drawPlanet() {
       const w = canvas.width, h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2, cy = h * .49;
-      const radius = Math.min(w, h) * .34;
+      const cx = w / 2, cy = h * .505;
+      const radius = Math.min(w, h) * .36;
 
       const bg = ctx.createRadialGradient(cx, cy, radius * .1, cx, cy, radius * 1.8);
       bg.addColorStop(0, 'rgba(126,232,255,.13)');
@@ -991,6 +1248,38 @@
 
       drawRegionMarkers(cx, cy, radius);
       drawOrbitIfNeeded(cx, cy, radius);
+      drawEventFx(cx, cy, radius);
+    }
+
+    function drawEventFx(cx, cy, radius) {
+      if (!state.fx) return;
+      const now = performance.now();
+      const t = (now - state.fx.start) / state.fx.duration;
+      if (t >= 1) { state.fx = null; return; }
+      const a = (1 - t) * state.fx.power;
+      ctx.save();
+      if (state.fx.type === 'intelligence') {
+        ctx.strokeStyle = `rgba(126,232,255,${0.45*a})`;
+        ctx.lineWidth = 2 + 6 * t;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * (0.45 + 0.5*t), 0, Math.PI*2); ctx.stroke();
+      } else if (state.fx.type === 'civilization') {
+        ctx.fillStyle = `rgba(255,218,118,${0.18*a})`;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * .9, 0, Math.PI*2); ctx.fill();
+      } else if (state.fx.type === 'hazard') {
+        ctx.fillStyle = `rgba(255,90,90,${0.2*a})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (state.fx.type === 'collapse') {
+        ctx.fillStyle = `rgba(40,0,0,${0.35*a})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = `rgba(255,120,120,${0.55*a})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * (0.95 + .08*Math.sin(t*20)), 0, Math.PI*2); ctx.stroke();
+      } else if (state.fx.type === 'space') {
+        ctx.strokeStyle = `rgba(126,232,255,${0.5*a})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.ellipse(cx, cy, radius * (1.24 + t*.08), radius * (.32 + t*.05), -0.25, 0, Math.PI*2); ctx.stroke();
+      }
+      ctx.restore();
     }
 
     function drawLand(cx, cy, radius) {
@@ -1115,6 +1404,20 @@
         wctx.beginPath(); wctx.moveTo(w*.78,h*.60); wctx.lineTo(w*.84,h*.12); wctx.stroke();
         wctx.fillStyle = 'rgba(126,232,255,.9)'; wctx.beginPath(); wctx.arc(w*.84,h*.12,5,0,Math.PI*2); wctx.fill();
       }
+      if (region.lastEventType) {
+        const fresh = region.lastEventAt != null ? clamp((state.age - region.lastEventAt) / 8_000_000, 0, 1) : 1;
+        const evA = (1 - fresh) * .9;
+        if (evA > .05) {
+          if (region.lastEventType === 'conflict' || region.lastEventType === 'collapse') {
+            wctx.fillStyle = `rgba(140,20,20,${0.22*evA})`; wctx.fillRect(0,0,w,h);
+            wctx.fillStyle = `rgba(50,50,50,${0.28*evA})`; wctx.fillRect(w*.58,h*.45,w*.28,h*.2);
+          } else if (region.lastEventType === 'prosper' || region.lastEventType === 'origin') {
+            wctx.fillStyle = `rgba(255,220,120,${0.15*evA})`; wctx.fillRect(0,0,w,h);
+          } else if (region.lastEventType === 'expansion' || region.lastEventType === 'ecosystem') {
+            wctx.fillStyle = `rgba(120,255,160,${0.13*evA})`; wctx.fillRect(0,0,w,h);
+          }
+        }
+      }
       wctx.fillStyle = 'rgba(0,0,0,.20)'; wctx.fillRect(0,0,w,h);
     }
 
@@ -1173,8 +1476,8 @@
       const scaleY = canvas.height / rect.height;
       const px = (x - rect.left) * scaleX;
       const py = (y - rect.top) * scaleY;
-      const cx = canvas.width / 2, cy = canvas.height * .49;
-      const radius = Math.min(canvas.width, canvas.height) * .34;
+      const cx = canvas.width / 2, cy = canvas.height * .505;
+      const radius = Math.min(canvas.width, canvas.height) * .36;
       const nx = (px - cx) / radius;
       const ny = -(py - cy) / radius;
       if (nx*nx + ny*ny > 1) return null;
@@ -1196,7 +1499,7 @@
 
     function regionSummary(region) {
       const ll = lifeLevel(), cl = civLevel();
-      if (state.collapse && region.ruin) return '旧文明の痕跡あり / 再野生化進行';
+      if (state.collapse && region.ruin) return '旧都市跡 / 再野生化と再興候補';
       if (cl >= 7 && region.city) return '宇宙港・軌道施設あり';
       if (cl >= 5 && region.city) return '高密度都市圏 / 環境負荷あり';
       if (cl >= 3 && region.city) return '都市文明圏 / 交易と政治の中心';
@@ -1223,7 +1526,8 @@
       if (!region) return;
       state.selectedRegionId = region.id;
       if (show) showWipe(region);
-      updateAll();
+      uiState.detailDirty = true;
+      updateAll(true);
     }
 
     function showWipe(region) {
@@ -1247,18 +1551,20 @@
       }
       state.pinnedRegionIds.push(id);
       state.dirty = true;
-      updatePins();
+      uiState.pinsDirty = true;
       saveState(false);
+      updateAll(true);
     }
 
     function unpin(id) {
       state.pinnedRegionIds = state.pinnedRegionIds.filter(x => x !== id);
       state.dirty = true;
-      updatePins();
+      uiState.pinsDirty = true;
       saveState(false);
+      updateAll(true);
     }
 
-    function updateAll() {
+    function updateStats() {
       $('planetName').textContent = state.name;
       $('ageText').textContent = '経過 ' + formatAge(state.age);
       $('lifeStageText').textContent = getStage(LIFE_STAGES, state.age).label;
@@ -1268,10 +1574,29 @@
       $('riskText').textContent = risk < 30 ? `低 ${risk}%` : risk < 62 ? `中 ${risk}%` : `高 ${risk}%`;
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
-      document.querySelectorAll('.modePanel button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.mode));
-      updatePins();
-      updateDetailPanel();
-      updateLogs();
+      const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
+      const manual = state.manualSpeedOffset ? '（手動調整中）' : '';
+      const st = $('styleState'); if (st) st.textContent = `現在: ${styleName}${manual}`;
+    }
+
+    function updateAll(forceHeavy = false) {
+      updateStats();
+      if (forceHeavy || uiState.modeDirty) {
+        document.querySelectorAll('.modePanel button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.mode));
+        uiState.modeDirty = false;
+      }
+      if (forceHeavy || uiState.pinsDirty) {
+        updatePins();
+        uiState.pinsDirty = false;
+      }
+      if (forceHeavy || uiState.detailDirty) {
+        updateDetailPanel();
+        uiState.detailDirty = false;
+      }
+      if (forceHeavy || uiState.logsDirty) {
+        updateLogs();
+        uiState.logsDirty = false;
+      }
     }
 
     function updatePins() {
@@ -1290,7 +1615,9 @@
           if (e.target.dataset.unpin != null) return;
           selectRegion(r);
           state.mode = 'region';
-          updateAll();
+          uiState.modeDirty = true;
+          uiState.detailDirty = true;
+          updateAll(true);
         });
         list.appendChild(div);
       }
@@ -1303,13 +1630,15 @@
         const env = state.env;
         panel.innerHTML = `
           <div class="detailHeader"><h2>惑星観察モード</h2><span class="tag">全体</span></div>
+          <p class="modeHint">惑星全体を俯瞰します。詳細は折りたたみで確認できます。</p>
           <div class="infoGrid">
             <div class="infoItem"><small>海洋率</small><b>${Math.round(env.ocean*100)}%</b></div>
             <div class="infoItem"><small>重力</small><b>${env.gravity.toFixed(2)}G</b></div>
             <div class="infoItem"><small>気候傾向</small><b>${env.temperature > .66 ? '高温' : env.temperature < .33 ? '寒冷' : '温和'}・${env.humidity > .62 ? '湿潤' : env.humidity < .35 ? '乾燥' : '中庸'}</b></div>
             <div class="infoItem"><small>地殻活動</small><b>${env.tectonics > .65 ? '活発' : env.tectonics < .3 ? '静穏' : '中程度'}</b></div>
-            <div class="infoItem wide"><small>観測メモ</small><p class="desc">惑星をスワイプで回転、表面をタップすると地域ワイプが開きます。気になる場所は最大3つまでピン留めできます。</p></div>
-          </div>`;
+            <div class="infoItem wide"><small>観測メモ</small><p class="desc">スワイプで回転、タップで地域ワイプ表示。気になる地点は3件までピン留めできます。</p></div>
+          </div>
+          <details class="fold"><summary>環境詳細を表示</summary><div class="foldBody"><div class="chipRow"><span class="chip">酸素ポテンシャル ${Math.round(env.oxygenPotential*100)}%</span><span class="chip">森林適性 ${Math.round(env.forest*100)}%</span><span class="chip">山岳率 ${Math.round(env.mountains*100)}%</span></div></div></details>`;
         return;
       }
       if (state.mode === 'region') {
@@ -1318,19 +1647,22 @@
         const d = regionDetails(r);
         panel.innerHTML = `
           <div class="detailHeader"><h2>${escapeHtml(r.currentName)}</h2><span class="tag">地域</span></div>
+          <p class="modeHint">タップ地点の状態です。ワイプのピン留めで最大3地域を比較できます。</p>
           <div class="infoGrid">
             <div class="infoItem"><small>旧名履歴</small><b>${escapeHtml(r.historyNames.slice(-3).join(' → '))}</b></div>
             <div class="infoItem"><small>気候/地形</small><b>${escapeHtml(r.climate)}・${r.isOcean ? '海洋/沿岸' : '陸域'}</b></div>
             <div class="infoItem"><small>支配文明種</small><b>${escapeHtml(d.speciesLine)}</b></div>
             <div class="infoItem"><small>状態</small><b>${escapeHtml(regionSummary(r))}</b></div>
             <div class="infoItem wide"><small>地域メモ</small><p class="desc">${escapeHtml(d.note)}</p></div>
-          </div>`;
+          </div>
+          <details class="fold"><summary>地域名履歴の詳細</summary><div class="foldBody"><p class="desc">${escapeHtml(r.historyNames.join(' → '))}</p></div></details>`;
         return;
       }
       if (state.mode === 'biosphere') {
         const species = state.intelligence;
         panel.innerHTML = `
           <div class="detailHeader"><h2>生命圏観察モード</h2><span class="tag">進化</span></div>
+          <p class="modeHint">進化系統と環境圧、文明への接続を確認します。</p>
           <div class="bars">
             ${barHtml('生物多様性', avg(state.regions.map(r=>r.biodiversity)))}
             ${barHtml('環境安定度', state.env.stability)}
@@ -1338,9 +1670,12 @@
             ${barHtml('災害圧', state.env.disaster)}
           </div>
           <div class="infoGrid" style="margin-top:10px">
-            <div class="infoItem wide"><small>文明種候補/出現種</small><b>${species ? `${escapeHtml(species.speciesName)}：${escapeHtml(species.traits.join('・'))}` : 'まだ知性候補の選抜前です。生命圏が進むと、惑星環境に応じて文明担当が決まります。'}</b></div>
+            <div class="infoItem wide"><small>進化元系統 / 出現種</small><b>${species ? `${escapeHtml(lineageOriginText(species))}` : 'まだ知性候補の選抜前です。'}</b></div>
+            <div class="infoItem wide"><small>主要特徴</small><b>${species ? `${escapeHtml(species.traits.join('・'))}` : '惑星環境の偏りに応じて系統が選抜されます。'}</b></div>
             <div class="infoItem wide"><small>文明への影響</small><p class="desc">${species ? escapeHtml(species.culture) : '哺乳系・爬虫系・鳥類系・節足系・海洋頭足系・菌類群体などから候補が出ます。'}</p></div>
-          </div>`;
+          </div>
+          <details class="fold"><summary>生命圏詳細</summary><div class="foldBody"><div class="chipRow"><span class="chip">海洋率 ${Math.round(state.env.ocean*100)}%</span><span class="chip">湿度 ${Math.round(state.env.humidity*100)}%</span><span class="chip">安定度 ${Math.round(state.env.stability*100)}%</span></div></div></details>
+          <details class="fold"><summary>文明観察の要点</summary><div class="foldBody"><p class="desc">${escapeHtml(civPhaseText())}</p></div></details>`;
         return;
       }
       if (state.mode === 'record') {
@@ -1355,7 +1690,9 @@
             <div class="infoItem"><small>惑星ログ</small><b>${planetLogs}件</b></div>
             <div class="infoItem"><small>命名済地域</small><b>${state.regions.filter(r=>r.historyNames.length>1).length}地域</b></div>
             <div class="infoItem wide"><small>現在の読みどころ</small><p class="desc">${escapeHtml(currentHighlight())}</p></div>
-          </div>`;
+          </div>
+          <details class="fold"><summary>重要イベントアルバム</summary><div class="foldBody">${state.logs.filter(l => l.important || l.imageKey).slice(0, 12).map((l, i) => `<div class="logItem" data-album="${i}"><div class="logAge">${formatAge(l.age)}</div>${eventThumbHtml(l)}<div class="logText"><span class="logType">${l.type === 'life' ? '生命' : l.type === 'civ' ? '文明' : '惑星'}</span><b>${escapeHtml(l.title)}</b></div></div>`).join('') || '<div class="logText">対象イベントがありません。</div>'}</div></details>
+          <details class="fold"><summary>観測補助（演出確認用）</summary><div class="foldBody"><p class="desc">通常観測はそのままに、重要イベント演出だけを手動確認できます。</p><div class="assistBtns"><button data-assist="life">生命イベントを試す</button><button data-assist="intelligence">知的生命誕生を試す</button><button data-assist="civilization">文明成立を試す</button><button data-assist="hazard">危機イベントを試す</button><button data-assist="collapse">文明崩壊を試す</button><button data-assist="space">宇宙進出を試す</button></div></div></details>`;
       }
     }
 
@@ -1373,6 +1710,13 @@
       return `<div class="barLine"><span>${label}</span><div class="barTrack"><div class="barFill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`;
     }
 
+    function eventThumbHtml(log) {
+      if (!log.imageKey) return `<div class="logThumb"><div class="thumbFallback">${log.type === 'life' ? '🧬' : log.type === 'civ' ? '🏛️' : '🪐'}</div></div>`;
+      const src = EVENT_IMAGES[log.imageKey];
+      if (!src) return `<div class="logThumb"><div class="thumbFallback">✨</div></div>`;
+      return `<div class="logThumb"><img src="${src}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumbFallback',textContent:'✨'}))"></div>`;
+    }
+
     function updateLogs() {
       const list = $('logList');
       const logs = state.logs.filter(l => state.logFilter === 'all' || l.type === state.logFilter).slice(0, state.mode === 'record' ? 80 : 18);
@@ -1380,9 +1724,42 @@
       list.innerHTML = logs.map(l => `
         <div class="logItem">
           <div class="logAge">${formatAge(l.age)}</div>
-          <div class="logText"><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
+          ${eventThumbHtml(l)}
+          <div class="logText"><span class="logType">${l.type === 'life' ? '生命' : l.type === 'civ' ? '文明' : '惑星'}</span><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
         </div>`).join('') || '<div class="logText">まだ記録がありません。</div>';
       document.querySelectorAll('.logFilters button').forEach(b => b.classList.toggle('active', b.dataset.log === state.logFilter));
+      list.querySelectorAll('.logItem').forEach((el, i) => {
+        const log = logs[i];
+        const thumb = el.querySelector('.logThumb');
+        if (!thumb || (!log.imageKey && !log.important)) return;
+        thumb.style.cursor = 'pointer';
+        thumb.addEventListener('click', (e) => { e.stopPropagation(); openEventModal(log); });
+      });
+    }
+
+    function openEventModal(log) {
+      const modal = $('eventModal');
+      applyModalPauseIfNeeded();
+      const preview = $('eventPreview');
+      const src = log.imageKey ? EVENT_IMAGES[log.imageKey] : null;
+      preview.innerHTML = src ? `<img src="${src}" alt="">` : `<div class="thumbFallback" style="height:100%;background:linear-gradient(135deg,#283c6a,#1b2d4a)">${log.type === 'life' ? '🧬' : log.type === 'civ' ? '🏛️' : '🪐'}</div>`;
+      $('eventType').textContent = log.type === 'life' ? '生命' : log.type === 'civ' ? '文明' : '惑星';
+      $('eventTitle').textContent = log.title || '';
+      $('eventAge').textContent = formatAge(log.age || 0);
+      $('eventBody').textContent = log.text || '';
+      const rb = $('eventRegionBtn');
+      rb.style.display = Number.isInteger(log.regionId) ? 'inline-block' : 'none';
+      rb.onclick = () => {
+        const region = state.regions.find(r => r.id === log.regionId);
+        if (region) { selectRegion(region, true); state.mode = 'region'; uiState.modeDirty = true; uiState.detailDirty = true; updateAll(true); }
+        modal.classList.remove('show');
+      };
+      modal.classList.add('show');
+    }
+
+    function closeEventModal() {
+      $('eventModal').classList.remove('show');
+      restoreModalPauseIfNeeded();
     }
 
     function avg(arr) { return arr.reduce((a,b)=>a+b,0) / Math.max(1, arr.length); }
@@ -1400,10 +1777,14 @@
           ...state,
           milestones: Array.from(state.milestones)
         };
-        localStorage.setItem('sousei-nisshi-save-v1', JSON.stringify(data));
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
         state.lastSave = performance.now();
         state.dirty = false;
-        if (showToast) updateAll();
+        if (showToast) {
+          uiState.logsDirty = true;
+          if (state.mode === 'record') uiState.detailDirty = true;
+          updateAll(true);
+        }
       } catch (e) {
         if (showToast) alert('保存に失敗しました。ブラウザの保存領域が使えない可能性があります。');
       }
@@ -1411,12 +1792,20 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem('sousei-nisshi-save-v1');
+        const raw = localStorage.getItem(SAVE_KEY) || localStorage.getItem(LEGACY_SAVE_KEY);
         if (!raw) return false;
         const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.regions) || !Array.isArray(data.logs) || !data.env || (!Array.isArray(data.milestones) && !(data.milestones instanceof Set))) return false;
         Object.assign(state, data);
+        state.timeStyle = state.timeStyle || 'evolution';
+        state.manualSpeedOffset = Number.isFinite(state.manualSpeedOffset) ? state.manualSpeedOffset : 0;
+        state.pauseOnEventModal = state.pauseOnEventModal !== false;
         state.milestones = new Set(data.milestones || []);
         state.dirty = false;
+        uiState.detailDirty = true;
+        uiState.logsDirty = true;
+        uiState.pinsDirty = true;
+        uiState.modeDirty = true;
         return true;
       } catch (e) { return false; }
     }
@@ -1435,9 +1824,9 @@
         if (!dragging) return;
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
-        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 8) moved = true;
+        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 10) moved = true;
         state.rotY += dx * 0.008;
-        state.rotX = clamp(state.rotX + dy * 0.005, -0.75, 0.75);
+        state.rotX = clamp(state.rotX + dy * 0.006, -Math.PI / 4, Math.PI / 4);
         lastX = e.clientX; lastY = e.clientY;
       }
       function pointerUp(e) {
@@ -1453,24 +1842,60 @@
       canvas.addEventListener('pointerup', pointerUp);
       canvas.addEventListener('pointercancel', () => dragging = false);
 
-      $('speedDown').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex - 1, 0, SPEEDS.length - 1); state.paused = state.speedIndex === 0; updateAll(); });
-      $('speedUp').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex + 1, 0, SPEEDS.length - 1); state.paused = false; updateAll(); });
+      $('speedDown').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex - 1, 0, SPEEDS.length - 1); state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = state.speedIndex === 0; updateAll(false); });
+      $('speedUp').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex + 1, 0, SPEEDS.length - 1); state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; updateAll(false); });
       $('pauseBtn').addEventListener('click', () => {
         if (state.paused || state.speedIndex === 0) { state.speedIndex = state.lastSpeedIndex || 5; state.paused = false; }
         else { state.lastSpeedIndex = state.speedIndex; state.paused = true; }
-        updateAll();
+        updateAll(false);
       });
-      $('normalBtn').addEventListener('click', () => { state.speedIndex = 4; state.paused = false; updateAll(); });
-      $('fastBtn').addEventListener('click', () => { state.speedIndex = 7; state.paused = false; updateAll(); });
+      $('normalBtn').addEventListener('click', () => { state.speedIndex = 4; state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; updateAll(false); });
+      $('fastBtn').addEventListener('click', () => { state.speedIndex = 7; state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; updateAll(false); });
       $('pinBtn').addEventListener('click', pinSelected);
-      $('detailBtn').addEventListener('click', () => { state.mode = 'region'; updateAll(); });
+      $('detailBtn').addEventListener('click', () => { state.mode = 'region'; uiState.modeDirty = true; uiState.detailDirty = true; updateAll(true); });
       $('closeWipeBtn').addEventListener('click', hideWipe);
       $('saveBtn').addEventListener('click', () => saveState(true));
-      $('resetBtn').addEventListener('click', () => {
-        if (confirm('新しい惑星で観測を開始しますか？現在の自動保存は上書きされます。')) makePlanet();
+      $('resetViewBtn').addEventListener('click', () => {
+        state.rotX = -0.08;
+        uiState.detailDirty = false;
+        updateStats();
       });
-      document.querySelectorAll('.modePanel button').forEach(btn => btn.addEventListener('click', () => { state.mode = btn.dataset.mode; updateAll(); }));
-      document.querySelectorAll('.logFilters button').forEach(btn => btn.addEventListener('click', () => { state.logFilter = btn.dataset.log; updateLogs(); }));
+      $('resetBtn').addEventListener('click', () => {
+        if (confirm('新しい惑星で観測を開始しますか？現在の自動保存は上書きされます。')) {
+          localStorage.removeItem(SAVE_KEY);
+          localStorage.removeItem(LEGACY_SAVE_KEY);
+          makePlanet();
+        }
+      });
+      document.querySelectorAll('.modePanel button').forEach(btn => btn.addEventListener('click', () => { state.mode = btn.dataset.mode; uiState.modeDirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true); }));
+      document.querySelectorAll('.logFilters button').forEach(btn => btn.addEventListener('click', () => { state.logFilter = btn.dataset.log; uiState.logsDirty = true; updateAll(true); }));
+      document.querySelectorAll('[data-style]').forEach(btn => btn.addEventListener('click', () => {
+        state.timeStyle = btn.dataset.style;
+        state.manualSpeedOffset = 0;
+        applyStyleSpeed(true);
+        state.paused = false;
+        showEventToast('planet', `時間進行スタイル: ${TIME_STYLES[state.timeStyle]}`);
+        updateAll(false);
+      }));
+      $('pauseOnModalToggle').addEventListener('change', (e) => {
+        state.pauseOnEventModal = !!e.target.checked;
+        if (!state.pauseOnEventModal && $('eventModal').classList.contains('show')) restoreModalPauseIfNeeded();
+      });
+      $('detailPanel').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-assist]');
+        if (btn) {
+          runAssistEvent(btn.dataset.assist);
+          return;
+        }
+        const album = e.target.closest('[data-album]');
+        if (album && state.mode === 'record') {
+          const logs = state.logs.filter(l => l.important || l.imageKey).slice(0, 12);
+          const log = logs[Number(album.dataset.album)];
+          if (log) openEventModal(log);
+        }
+      });
+      $('eventCloseBtn').addEventListener('click', closeEventModal);
+      $('eventModal').addEventListener('click', (e) => { if (e.target.id === 'eventModal') closeEventModal(); });
     }
 
     let last = performance.now();
@@ -1490,14 +1915,19 @@
       }
       // 低頻度のUI更新。毎フレームDOM更新するとスマホで重くなるため。
       if (now - lastUiUpdate > 500) {
-        updateAll();
+        updateStats();
         lastUiUpdate = now;
       }
       requestAnimationFrame(loop);
     }
 
     function initialUiRefresh() {
-      updateAll();
+      uiState.detailDirty = true;
+      uiState.logsDirty = true;
+      uiState.pinsDirty = true;
+      uiState.modeDirty = true;
+      updateAll(true);
+      const t = $('pauseOnModalToggle'); if (t) t.checked = !!state.pauseOnEventModal;
       const r = state.regions[0];
       if (r) selectRegion(r, false);
     }
