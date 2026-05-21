@@ -7,14 +7,14 @@
   <style>
     :root {
       --bg0: #02040a;
-      --panel: rgba(8, 14, 32, 0.88);
-      --panel2: rgba(15, 27, 58, 0.78);
-      --line: rgba(126, 232, 255, 0.25);
+      --panel: rgba(6, 12, 30, 0.94);
+      --panel2: rgba(11, 22, 48, 0.9);
+      --line: rgba(170, 228, 245, 0.34);
       --line-active: rgba(126, 232, 255, 0.6);
-      --line2: rgba(255, 255, 255, 0.08);
-      --text: #f0f6fc;
-      --muted: #8b9ebf;
-      --subtle: #56688a;
+      --line2: rgba(255, 255, 255, 0.16);
+      --text: #f4f8ff;
+      --muted: #c3d0e8;
+      --subtle: #9fb2d3;
       --gold: #ffcf56;
       --cyan: #52e3ff;
       --green: #4eff8a;
@@ -36,6 +36,9 @@
       margin: 0;
       color: var(--text);
       font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.55;
       overflow-x: hidden;
       background:
         radial-gradient(circle at 10% 10%, rgba(82, 227, 255, 0.15), transparent 35%),
@@ -54,7 +57,7 @@
         linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
       background-size: 100% 4px, 6px 100%;
       z-index: 100;
-      opacity: 0.4;
+      opacity: 0.12;
     }
 
     /* 星屑背景 */
@@ -74,7 +77,7 @@
     }
 
     .app {
-      width: min(100%, 560px);
+      width: min(100%, 640px);
       min-height: 100dvh;
       margin: 0 auto;
       padding: calc(16px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));
@@ -197,7 +200,7 @@
       border-radius: 28px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 380px;
+      min-height: clamp(340px, 72vw, 420px);
     }
 
     .planetCard::before {
@@ -212,7 +215,7 @@
     #planetCanvas {
       display: block;
       width: 100%;
-      height: 380px;
+      height: clamp(340px, 72vw, 420px);
       touch-action: none;
       user-select: none;
       cursor: grab;
@@ -411,7 +414,7 @@
 
     .statLabel {
       color: var(--subtle);
-      font-size: 10px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin-bottom: 4px;
@@ -472,7 +475,7 @@
     .speedDisplay small {
       margin-top: 2px;
       color: var(--subtle);
-      font-size: 9px;
+      font-size: 11px;
     }
 
     .quickRow {
@@ -483,7 +486,7 @@
 
     .quickRow button {
       padding: 10px 4px;
-      font-size: 11px;
+      font-size: 13px;
       border-radius: 10px;
     }
 
@@ -499,10 +502,25 @@
     .interventionBox summary {
       cursor: pointer;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       user-select: none;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
     }
+    .collapsiblePanel summary {
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      color: var(--muted);
+      list-style: none;
+    }
+    .collapsiblePanel summary::-webkit-details-marker { display: none; }
+    .collapsibleBody { margin-top: 8px; }
 
     .styleRow,
     .interventionGrid,
@@ -517,14 +535,14 @@
     .interventionGrid button,
     .observerGrid button {
       padding: 8px 6px;
-      font-size: 11px;
+      font-size: 13px;
       border-radius: 8px;
       box-shadow: none;
     }
 
     .styleState {
       margin-top: 8px;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--subtle);
       line-height: 1.4;
     }
@@ -545,7 +563,7 @@
 
     .modePanel button {
       padding: 10px 2px;
-      font-size: 11px;
+      font-size: 13px;
       border-radius: 12px;
       box-shadow: none;
       border-color: transparent;
@@ -563,7 +581,7 @@
     /* ピン留めトレイ */
     .pinTray {
       padding: 12px;
-      display: none;
+      display: block;
     }
 
     .pinTray.show {
@@ -688,6 +706,17 @@
       border-radius: 12px;
       padding: 8px 10px;
       background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.12s ease;
+    }
+
+    .guideCard:hover {
+      border-color: rgba(82, 227, 255, 0.4);
+      background: rgba(82, 227, 255, 0.08);
+    }
+
+    .guideCard:active {
+      transform: scale(0.98);
     }
 
     .guideCard b {
@@ -700,13 +729,13 @@
     .guideCard small {
       color: var(--muted);
       line-height: 1.4;
-      font-size: 10px;
+      font-size: 12px;
       display: block;
     }
 
     .modeHint {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 13px;
       margin: 0 0 10px;
       line-height: 1.5;
     }
@@ -728,7 +757,7 @@
     .infoItem small {
       display: block;
       color: var(--subtle);
-      font-size: 9px;
+      font-size: 11px;
       margin-bottom: 2px;
       text-transform: uppercase;
     }
@@ -747,7 +776,7 @@
 
     .desc {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 13px;
       line-height: 1.5;
       margin: 0;
     }
@@ -858,6 +887,9 @@
     .logPanel {
       padding: 14px;
     }
+    .logPanel.collapsiblePanel {
+      padding: 10px 12px;
+    }
 
     .logFilters {
       display: flex;
@@ -916,14 +948,14 @@
 
     .logAge {
       color: var(--gold);
-      font-size: 10px;
+      font-size: 12px;
       font-family: monospace;
       line-height: 1.4;
     }
 
     .logType {
       display: inline-block;
-      font-size: 9px;
+      font-size: 11px;
       color: var(--subtle);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 4px;
@@ -934,7 +966,7 @@
 
     .logText {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 13px;
       line-height: 1.4;
     }
 
@@ -1042,11 +1074,36 @@
     }
 
     .footerNote {
-      color: rgba(159, 178, 216, 0.45);
-      font-size: 9px;
+      color: rgba(195, 208, 232, 0.72);
+      font-size: 11px;
       text-align: center;
       padding: 6px 8px 0;
       line-height: 1.4;
+    }
+
+    .floatHud {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: calc(8px + env(safe-area-inset-bottom));
+      z-index: 50;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: rgba(3, 8, 22, 0.72);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      opacity: 0.72;
+      pointer-events: none;
+    }
+    .floatHudItem { min-width: 0; }
+    .floatHudLabel { font-size: 10px; color: var(--subtle); line-height: 1.2; }
+    .floatHudValue { font-size: 11px; color: var(--text); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app.fullscreenCompact .floatHud,
+    :fullscreen .floatHud {
+      opacity: 0.95;
     }
 
     @media (max-width: 380px) {
@@ -1060,7 +1117,79 @@
       #areaMapCanvas { height: 210px; }
     }
 
-    @media (orientation: landscape) and (min-width: 768px) {
+
+    @media (max-width: 768px) {
+      .app {
+        width: 100%;
+        max-width: none;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .controlPanel,
+      .detailPanel,
+      .logPanel {
+        padding: 14px;
+      }
+
+      .modePanel {
+        padding: 8px;
+      }
+      .collapsibleBody {
+        margin-top: 6px;
+      }
+      .floatHud {
+        left: 8px;
+        right: 8px;
+        bottom: calc(6px + env(safe-area-inset-bottom));
+        padding: 7px;
+      }
+
+      body::before {
+        opacity: 0.08;
+      }
+
+      .desc,
+      .logText,
+      .modeHint,
+      .guideCard small,
+      .styleState {
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .statLabel,
+      .infoItem small,
+      .speedDisplay small,
+      .logType {
+        font-size: 11px;
+      }
+
+      button,
+      .modePanel button,
+      .quickRow button,
+      .styleRow button,
+      .interventionGrid button,
+      .observerGrid button {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .quickRow button,
+      .styleRow button,
+      .interventionGrid button,
+      .observerGrid button,
+      .modePanel button {
+        min-height: 44px;
+      }
+
+      .footerNote {
+        font-size: 11px;
+        color: rgba(195, 208, 232, 0.72);
+      }
+    }
+
+    @media (orientation: landscape) and (min-width: 900px) and (min-height: 640px) {
       .app {
         width: min(100%, 1100px);
         min-height: 100dvh;
@@ -1194,7 +1323,10 @@
             <button id="normalBtn">等速</button>
             <button id="fastBtn">早送り</button>
           </div>
-          <details class="timeStyleBox" open>
+          <div class="quickRow">
+            <button id="autoPauseInterventionBtn">介入チャンスで自動停止: ON</button>
+          </div>
+          <details class="timeStyleBox" id="timeStyleBox" open>
             <summary>進行スタイルプリセット</summary>
             <div class="styleRow">
               <button data-style="calm">じっくり</button>
@@ -1218,26 +1350,38 @@
         </nav>
 
         <!-- ピン留めされた追跡地域（登録時のみ自動展開） -->
-        <section class="pinTray" id="pinTray">
-          <div class="sectionTitle"><b>追跡観測スロット</b><span id="pinCount">0/3</span></div>
-          <div class="pinList" id="pinList"></div>
-        </section>
+        <details class="pinTray collapsiblePanel" id="pinTray" open>
+          <summary>追跡観測スロット <span id="pinCount">0/3</span></summary>
+          <div class="collapsibleBody">
+            <div class="pinList" id="pinList"></div>
+          </div>
+        </details>
 
         <!-- 詳細パネル（モード切替により書き換え） -->
         <section class="detailPanel" id="detailPanel"></section>
 
         <!-- 簡易ログリスト -->
-        <section class="logPanel">
-          <div class="sectionTitle"><b>統合ログフィード</b><span id="logCount">0件</span></div>
-          <div class="logFilters">
-            <button data-log="all" class="active">ALL</button>
-            <button data-log="life">生命</button>
-            <button data-log="civ">文明</button>
-            <button data-log="planet">惑星</button>
+        <details class="logPanel collapsiblePanel" id="logPanel" open>
+          <summary>統合ログフィード <span id="logCount">0件</span></summary>
+          <div class="collapsibleBody">
+            <div class="logFilters">
+              <button data-log="all" class="active">ALL</button>
+              <button data-log="life">生命</button>
+              <button data-log="civ">文明</button>
+              <button data-log="planet">惑星</button>
+            </div>
+            <div class="logList" id="logList"></div>
           </div>
-          <div class="logList" id="logList"></div>
-        </section>
+        </details>
       </section>
+    </div>
+
+    <div class="floatHud" id="floatHud" aria-hidden="true">
+      <div class="floatHudItem"><div class="floatHudLabel">生命</div><div class="floatHudValue" id="hudLife">---</div></div>
+      <div class="floatHudItem"><div class="floatHudLabel">文明</div><div class="floatHudValue" id="hudCiv">---</div></div>
+      <div class="floatHudItem"><div class="floatHudLabel">フィルター</div><div class="floatHudValue" id="hudFilter">---</div></div>
+      <div class="floatHudItem"><div class="floatHudLabel">Pt</div><div class="floatHudValue" id="hudPoints">---</div></div>
+      <div class="floatHudItem"><div class="floatHudLabel">速度</div><div class="floatHudValue" id="hudSpeed">---</div></div>
     </div>
 
     <div class="footerNote">※本装置は観測用シミュレーターです。科学的近似をベースに、宇宙の知的生命と文明がグレートフィルターを突破する物語性を最優先に再構築されています。</div>
@@ -1257,6 +1401,9 @@
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     const SAVE_KEY = 'sousei-nisshi-full-prototype-v2';
+    const APP_CONFIG = {
+      autoPauseOnInterventionChanceDefault: true
+    };
 
     const SPEEDS = [0, 1, 15, 150, 1500, 15000, 150000, 1500000, 15000000];
     const SPEED_LABELS = ['一時停止', '×1年/秒', '×15年/秒', '×150年/秒', '×1.5千年/秒', '×1.5万年/秒', '×15万年/秒', '×150万年/秒', '×1500万年/秒'];
@@ -1374,6 +1521,7 @@
       dominantIntelligenceId: null,
       interventionNoticeState: 'idle',
       notifyInterventionChance: false,
+      autoPauseOnInterventionChance: APP_CONFIG.autoPauseOnInterventionChanceDefault,
       aiObserverMode: 'normal',
       bgSpeedMode: 'auto',
       intelligence: null,
@@ -1403,8 +1551,24 @@
       if (state.bgSpeedMode !== 'auto') return;
       if (state.paused || state.speedIndex === 0) return;
       const gfStatus = state.greatFilter?.status;
-state.notifyInterventionChance = gfStatus === 'sign' || gfStatus === 'crisis';
-      state.interventionNoticeState = state.notifyInterventionChance ? 'ready' : 'idle';
+      const isChance = gfStatus === 'sign' || gfStatus === 'crisis';
+      state.notifyInterventionChance = isChance;
+
+      if (!isChance) {
+        state.interventionNoticeState = 'idle';
+        return;
+      }
+
+      if (state.interventionNoticeState !== 'ready') {
+        state.interventionNoticeState = 'ready';
+        if (state.autoPauseOnInterventionChance && !state.paused) {
+          state.lastSpeedIndex = state.speedIndex;
+          state.paused = true;
+          addLog('planet', '介入チャンス自動停止', '介入チャンスを検知。自動一時停止しました。', false, { subType: 'autopause' });
+          toast('介入チャンスを検知。自動一時停止しました。');
+          saveState(false);
+        }
+      }
     }
 
     function syncEvolutionStatus() {
@@ -1452,8 +1616,24 @@ function syncEvolutionStatus() {
       detailDirty: true,
       logsDirty: true,
       pinsDirty: true,
-      modeDirty: true
+      modeDirty: true,
+      compactMode: false,
+      fullscreenCompact: false
     };
+
+    function setCompactPanels(compact) {
+      uiState.compactMode = compact;
+      uiState.fullscreenCompact = compact;
+      document.querySelector('.app')?.classList.toggle('fullscreenCompact', compact);
+
+      const ids = ['timeStyleBox', 'pinTray', 'logPanel', 'interventionBox', 'guideFold'];
+      ids.forEach(id => {
+        const el = $(id);
+        if (!el || typeof el.open === 'undefined') return;
+        el.open = compact ? false : el.open;
+        if (compact) el.open = false;
+      });
+    }
 
     function seeded(seed) {
       let t = seed >>> 0;
@@ -1567,6 +1747,7 @@ function syncEvolutionStatus() {
       state.lastSpeedIndex = 5;
       state.manualSpeedOffset = 0;
       state.paused = false;
+      state.autoPauseOnInterventionChance = APP_CONFIG.autoPauseOnInterventionChanceDefault;
       state.rotY = Math.random() * Math.PI * 2;
       state.rotX = -0.06;
       state.env = {
@@ -3056,10 +3237,16 @@ function syncEvolutionStatus() {
 
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
+      $('autoPauseInterventionBtn').textContent = `介入チャンスで自動停止: ${state.autoPauseOnInterventionChance ? 'ON' : 'OFF'}`;
 
       const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
       const manual = state.manualSpeedOffset ? ' (手動調律中)' : '';
       $('styleState').textContent = `進行プリセット: ${styleName}${manual}`;
+      $('hudLife').textContent = $('lifeStageText').textContent;
+      $('hudCiv').textContent = $('civStageText').textContent;
+      $('hudFilter').textContent = $('filterText').textContent;
+      $('hudPoints').textContent = `${Math.floor(state.points)}Pt`;
+      $('hudSpeed').textContent = state.paused || state.speedIndex === 0 ? '停止中' : SPEED_LABELS[state.speedIndex];
     }
 
     function updateAll(forceHeavy = false) {
@@ -3137,11 +3324,14 @@ function syncEvolutionStatus() {
           <div class="detailHeader"><h2>惑星系統合情報</h2><span class="tag">星体全体</span></div>
           <p class="modeHint">星全体の物理環境、グレートフィルターの対策進行率、全球介入コマンドです。</p>
 
-          <div class="modeGuide">
-            <div class="guideCard"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
-            <div class="guideCard"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
-            <div class="guideCard"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
-          </div>
+          <details class="modeGuide collapsiblePanel" id="guideFold" open>
+            <summary>表示ガイドショートカット</summary>
+            <div class="collapsibleBody">
+              <div class="guideCard" data-mode-jump="planet"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
+              <div class="guideCard" data-mode-jump="region"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
+              <div class="guideCard" data-mode-jump="biosphere"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
+            </div>
+          </details>
 
           ${greatFilterHtml()}
 
@@ -3285,7 +3475,7 @@ function syncEvolutionStatus() {
 
     function interventionHtml(regionOnly = false) {
       return `
-        <details class="interventionBox">
+        <details class="interventionBox" id="interventionBox">
           <summary>🛠 観測介入装置（Pt消費）</summary>
           <p class="styleState">観測Ptを消費し、歴史の流れを矯正または変化させます。グレートフィルター対策に温存すべきかどうかも戦略の一部です。</p>
           <div class="interventionGrid">
@@ -3802,6 +3992,9 @@ ${base.thought}`;
           resolved: false,
           ...(data.state.greatFilter || {})
         };
+        if (typeof state.autoPauseOnInterventionChance === 'undefined') {
+          state.autoPauseOnInterventionChance = APP_CONFIG.autoPauseOnInterventionChanceDefault;
+        }
         state.dirty = false;
         markAllDirty();
         return true;
@@ -3899,6 +4092,12 @@ ${base.thought}`;
         updateAll(false);
       });
 
+      $('autoPauseInterventionBtn').addEventListener('click', () => {
+        state.autoPauseOnInterventionChance = !state.autoPauseOnInterventionChance;
+        saveState(false);
+        updateAll(false);
+      });
+
       $('pinBtn').addEventListener('click', pinSelected);
 
       $('detailBtn').addEventListener('click', () => {
@@ -3925,13 +4124,21 @@ ${base.thought}`;
           if (!document.fullscreenElement) {
             await document.documentElement.requestFullscreen();
             $('fullscreenBtn').textContent = '解除';
+            setCompactPanels(true);
           } else {
             await document.exitFullscreen();
             $('fullscreenBtn').textContent = '全画面';
+            setCompactPanels(false);
           }
         } catch {
           toast('！お使いの環境では全画面表示が制限されています。');
         }
+      });
+
+      document.addEventListener('fullscreenchange', () => {
+        const isFs = !!document.fullscreenElement;
+        $('fullscreenBtn').textContent = isFs ? '解除' : '全画面';
+        setCompactPanels(isFs);
       });
 
       document.querySelectorAll('.modePanel button').forEach(btn => {
@@ -3986,6 +4193,19 @@ ${base.thought}`;
           state.journalObserver = observer.dataset.observer;
           uiState.detailDirty = true;
           updateAll(true);
+          return;
+        }
+
+        const modeJump = e.target.closest('[data-mode-jump]');
+        if (modeJump) {
+          const nextMode = modeJump.dataset.modeJump;
+          if (nextMode === 'region' && state.selectedRegionId == null && state.regions[0]) {
+            state.selectedRegionId = state.regions[0].id;
+          }
+          state.mode = nextMode;
+          markAllDirty();
+          updateAll(true);
+          return;
         }
 
         const important = e.target.closest('[data-important-index]');
