@@ -1367,6 +1367,15 @@
       mode: 'planet',
       logFilter: 'all',
       points: 0,
+      evolutionStage: 'proto',
+      forceEvolutionStage: null,
+      evolutionStatus: '観測中',
+      intelligenceCandidates: [],
+      dominantIntelligenceId: null,
+      interventionNoticeState: 'idle',
+      notifyInterventionChance: false,
+      aiObserverMode: 'normal',
+      bgSpeedMode: 'auto',
       intelligence: null,
       collapse: false,
       collapseAge: null,
@@ -1389,6 +1398,22 @@
       modalPauseBackup: null,
       meta: defaultMeta()
     };
+
+    function applyBackgroundCatchup() {
+      if (state.bgSpeedMode !== 'auto') return;
+      if (state.paused || state.speedIndex === 0) return;
+      state.notifyInterventionChance = state.greatFilter.status === 'warning';
+      state.interventionNoticeState = state.notifyInterventionChance ? 'ready' : 'idle';
+    }
+
+    function syncEvolutionStatus() {
+      const current = getStage(LIFE_STAGES, state.age);
+      state.evolutionStage = state.forceEvolutionStage || current.key;
+      state.evolutionStatus = `${current.label} / ${state.collapse ? '文明崩壊' : '進行中'}`;
+      state.aiObserverMode = state.journalObserver;
+      state.intelligenceCandidates = state.intelligence ? [state.intelligence] : [];
+      state.dominantIntelligenceId = state.intelligence ? state.intelligence.id : null;
+    }
 
     const uiState = {
       detailDirty: true,
@@ -2206,8 +2231,19 @@
       ctx.fill();
 
       drawRegionMarkers(cx, cy, radius);
+      drawIntelligenceGlyph(cx, cy, radius);
       drawOrbitIfNeeded(cx, cy, radius);
       drawEventFx(cx, cy, radius);
+    }
+
+    function drawIntelligenceGlyph(cx, cy, radius) {
+      if (!state.dominantIntelligenceId) return;
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 207, 86, 0.9)';
+      ctx.font = `700 ${Math.max(12, Math.round(radius * 0.11))}px system-ui`;
+      ctx.textAlign = 'center';
+      ctx.fillText('✧', cx, cy - radius * 0.72);
+      ctx.restore();
     }
 
     function drawLand(cx, cy, radius) {
@@ -2994,6 +3030,8 @@
     }
 
     function updateAll(forceHeavy = false) {
+      applyBackgroundCatchup();
+      syncEvolutionStatus();
       updateStats();
 
       if (forceHeavy || uiState.modeDirty) {
