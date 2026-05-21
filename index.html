@@ -1402,7 +1402,8 @@
     function applyBackgroundCatchup() {
       if (state.bgSpeedMode !== 'auto') return;
       if (state.paused || state.speedIndex === 0) return;
-      state.notifyInterventionChance = state.greatFilter.status === 'warning';
+      const gfStatus = state.greatFilter?.status;
+state.notifyInterventionChance = gfStatus === 'sign' || gfStatus === 'crisis';
       state.interventionNoticeState = state.notifyInterventionChance ? 'ready' : 'idle';
     }
 
@@ -1414,7 +1415,39 @@
       state.intelligenceCandidates = state.intelligence ? [state.intelligence] : [];
       state.dominantIntelligenceId = state.intelligence ? state.intelligence.id : null;
     }
+function syncEvolutionStatus() {
+  const current = getStage(LIFE_STAGES, state.age);
+  const currentKey = current?.key || 'sterile';
 
+  let mappedStage = 'life_base';
+  if (state.intelligence) {
+    mappedStage = 'intelligence_fixed';
+  } else if (currentKey === 'preIntelligence' || currentKey === 'intelligence') {
+    mappedStage = 'candidates';
+  }
+
+  state.evolutionStage = state.forceEvolutionStage || mappedStage;
+  state.evolutionStatus = `${current?.label || '観測中'} / ${state.collapse ? '文明崩壊' : '進行中'}`;
+
+  if (typeof state.journalObserver === 'string' && state.journalObserver.trim()) {
+    state.aiObserverMode = state.journalObserver;
+  } else {
+    state.aiObserverMode = state.aiObserverMode || 'normal';
+  }
+
+  if (state.intelligence) {
+    state.intelligenceCandidates = [state.intelligence];
+    state.dominantIntelligenceId = state.intelligence.id || null;
+  } else if (state.evolutionStage === 'candidates') {
+    state.intelligenceCandidates = [
+      { id: 'candidate-main', name: '主流候補', stage: 'candidates' }
+    ];
+    state.dominantIntelligenceId = 'candidate-main';
+  } else {
+    state.intelligenceCandidates = [];
+    state.dominantIntelligenceId = null;
+  }
+}
     const uiState = {
       detailDirty: true,
       logsDirty: true,
