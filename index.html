@@ -57,7 +57,7 @@
       width: min(100%, 520px);
       min-height: 100dvh;
       margin: 0 auto;
-      padding: calc(12px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));
+      padding: calc(12px + env(safe-area-inset-top)) 12px calc(92px + env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -114,7 +114,7 @@
       border-radius: 30px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 390px;
+      min-height: 356px;
     }
 
     .planetCard::after {
@@ -130,7 +130,7 @@
     #planetCanvas {
       display: block;
       width: 100%;
-      height: 390px;
+      height: 356px;
       touch-action: none;
       user-select: none;
     }
@@ -238,8 +238,15 @@
     .speedDisplay small { margin-top: 3px; color: var(--subtle); font-size: 10px; }
     .quickRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .quickRow button { padding: 10px 6px; font-size: 12px; }
+    .timeStyleBox { border: 1px solid rgba(255,255,255,.10); border-radius: 14px; background: rgba(255,255,255,.03); padding: 8px; }
+    .timeStyleBox summary { cursor: pointer; color: var(--muted); font-size: 11px; }
+    .styleRow { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .styleRow button { padding: 7px 6px; font-size: 11px; box-shadow: none; }
+    .styleState { margin-top: 7px; font-size: 10px; color: var(--subtle); }
+    .modalPauseNote { margin-top: 5px; font-size: 10px; color: var(--gold); display: none; }
+    .modalPauseNote.show { display: block; }
 
-    .modePanel { padding: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .modePanel { padding: 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; position: sticky; top: calc(8px + env(safe-area-inset-top)); z-index: 8; background: rgba(8, 15, 34, .92); border: 1px solid var(--line); border-radius: 18px; backdrop-filter: blur(12px); }
     .modePanel button { padding: 10px 4px; font-size: 12px; border-radius: 15px; box-shadow: none; }
     .modePanel button.active { background: linear-gradient(135deg, rgba(255,217,118,.22), rgba(126,232,255,.16)); border-color: rgba(255,217,118,.38); color: #fff5d6; }
 
@@ -261,6 +268,21 @@
     .pinCard button { margin-top: 7px; width: 100%; padding: 5px; font-size: 10px; }
 
     .detailPanel { padding: 13px; min-height: 184px; }
+    .modeHint { color: var(--muted); font-size: 11px; margin: 0 0 8px; }
+    .chipRow { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
+    .chip { font-size: 10px; color: var(--cyan); border: 1px solid rgba(126,232,255,.3); border-radius: 999px; padding: 3px 7px; }
+    .fold { margin-top: 8px; border: 1px solid rgba(255,255,255,.10); border-radius: 12px; background: rgba(255,255,255,.03); }
+    .fold summary { cursor: pointer; padding: 8px 10px; color: var(--muted); font-size: 11px; }
+    .fold .foldBody { padding: 0 10px 10px; }
+    .modeGuideCard { border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); border-radius: 12px; padding: 8px 10px; margin-bottom: 10px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .areaMapWrap { border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); border-radius: 14px; padding: 8px; margin-bottom: 10px; }
+    .areaMapCanvas { width: 100%; height: 210px; border-radius: 10px; background: linear-gradient(180deg, #4d6f8b, #2f4f67); border: 1px solid rgba(255,255,255,.1); display:block; }
+    .areaLayerRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 7px; }
+    .areaLayerRow button { padding: 6px 4px; font-size: 10px; box-shadow: none; }
+    .areaLayerRow button.active { background: rgba(126,232,255,.18); border-color: rgba(126,232,255,.34); }
+    .areaSel { margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .assistBtns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .assistBtns button { padding: 7px 6px; font-size: 11px; box-shadow: none; }
     .detailHeader { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
     .detailHeader h2 { margin: 0; font-size: 16px; line-height: 1.25; }
     .tag {
@@ -300,14 +322,26 @@
     .logList { display: grid; gap: 8px; max-height: 310px; overflow: auto; padding-right: 2px; }
     .logItem {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: 72px 52px 1fr;
       gap: 9px;
       border-bottom: 1px solid rgba(255,255,255,.08);
       padding-bottom: 8px;
     }
     .logAge { color: var(--gold); font-size: 10px; line-height: 1.25; }
+    .logType { display:inline-block; font-size:9px; color: var(--subtle); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 1px 5px; margin-right: 5px; vertical-align: 1px; }
     .logText { color: var(--muted); font-size: 12px; line-height: 1.42; }
     .logText b { color: var(--text); }
+    .logThumb { width: 48px; height: 48px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: linear-gradient(135deg,#233b67,#18243f); overflow: hidden; position: relative; }
+    .logThumb.subtle { opacity: .45; border-style: dashed; }
+    .logThumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+    .thumbFallback { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; font-size: 14px; color:#d8e6ff; }
+    .eventModal { position: fixed; inset: 0; background: rgba(2,6,16,.72); display: none; align-items: center; justify-content: center; z-index: 40; padding: 12px; }
+    .eventModal.show { display: flex; }
+    .eventCard { width:min(100%,430px); background: rgba(10,18,40,.95); border:1px solid var(--line); border-radius: 16px; padding: 10px; }
+    .eventPreview { height: 180px; border-radius: 12px; overflow: hidden; border:1px solid rgba(255,255,255,.15); margin-bottom: 8px; }
+    .eventPreview img { width:100%; height:100%; object-fit:cover; display:block; }
+    .eventActions { display:flex; gap:8px; margin-top:8px; }
+    .eventActions button { flex:1; padding:8px; }
 
     .footerNote {
       color: rgba(159,178,216,.65);
@@ -316,18 +350,124 @@
       padding: 2px 8px 0;
       line-height: 1.5;
     }
+    .eventToast {
+      position: fixed;
+      left: 50%;
+      top: calc(56px + env(safe-area-inset-top));
+      transform: translate(-50%, -8px);
+      z-index: 30;
+      background: rgba(6, 11, 26, .88);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 12px;
+      padding: 8px 10px;
+      min-width: 180px;
+      max-width: min(92vw, 360px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .eventToast.show { opacity: 1; transform: translate(-50%, 0); }
+    .eventToast .k { color: var(--cyan); font-size: 10px; margin-right: 6px; }
+    .floatHud {
+      position: fixed;
+      left: 50%;
+      top: calc(8px + env(safe-area-inset-top));
+      transform: translateX(-50%);
+      z-index: 25;
+      background: rgba(8,14,30,.85);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--text);
+      display: none;
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: min(92vw, 680px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .floatHud.show { display: block; }
+    .crisisBar {
+      position: fixed;
+      left: 50%;
+      bottom: calc(62px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 24;
+      width: min(96vw, 760px);
+      background: rgba(52,18,18,.92);
+      border: 1px solid rgba(255,122,122,.4);
+      border-radius: 12px;
+      padding: 8px;
+      display: none;
+    }
+    .crisisBar.show { display: block; }
+    .crisisBar .line { font-size: 11px; color: #ffd2d2; }
+    .crisisBar .actions { margin-top: 6px; display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .crisisBar .actions button { padding: 7px 4px; font-size: 11px; box-shadow: none; }
+    .pointHud { display: none !important; }
+    .floatHud.warn { color: #ffd3d3; border-color: rgba(255,122,122,.5); }
+    .floatHud.ptsWarn { color: #ffd9a8; border-color: rgba(255,190,120,.55); }
+    .interveneGrid { display: grid; gap: 7px; margin-top: 8px; }
+    .interveneGroup { border: 1px solid rgba(255,255,255,.10); border-radius: 10px; padding: 7px; }
+    .interveneGroup b { font-size: 11px; color: var(--muted); }
+    .interveneBtns { margin-top: 6px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .interveneBtns button { padding:7px 6px; font-size:11px; box-shadow:none; }
+    .interveneBtns .warn { background: rgba(255,138,157,.16); }
+    .devTestWrap { margin-top: 8px; }
+    .devGrid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .devGrid button { padding:7px 6px; font-size:11px; box-shadow:none; }
+
+    @media (max-width: 759px) {
+      .modePanel {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        top: auto;
+        width: min(96vw, 520px);
+        z-index: 22;
+      }
+    }
+    @media (max-width: 430px) {
+      body { padding-left: 10px; padding-right: 10px; }
+      .app { gap: 8px; }
+      .planetCard { min-height: 350px; }
+      #planetCanvas { height: 350px; }
+      .modePanel { width: min(96vw, 412px); padding: 7px; gap: 5px; }
+      .modePanel button { padding: 10px 3px; font-size: 11px; }
+      .floatHud { left: 10px; right: 10px; top: calc(6px + env(safe-area-inset-top)); font-size: 10px; }
+      .crisisBar { left: 10px; right: 10px; width: auto; bottom: calc(58px + env(safe-area-inset-bottom)); }
+      .eventModal { padding: 8px; }
+      .eventCard { max-height: 88vh; border-radius: 14px; }
+      .interveneBtns { grid-template-columns: 1fr; }
+      .devGrid { grid-template-columns: 1fr; }
+      .infoGrid { grid-template-columns: 1fr; }
+      .wide { grid-column: auto; }
+    }
 
     @media (min-width: 760px) {
       .app { width: min(100%, 760px); }
       .lowerGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
-      .planetCard { min-height: 460px; }
-      #planetCanvas { height: 460px; }
+      .planetCard { min-height: 430px; }
+      #planetCanvas { height: 430px; }
+    }
+    @media (orientation: landscape) and (min-width: 900px) {
+      .app { width: min(100%, 1200px); }
+      .mainLandscape { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+      .mainLandscape .planetCard { min-height: 72vh; }
+      .mainLandscape #planetCanvas { height: 72vh; min-height: 420px; }
+      .mainLandscape .lowerGrid { display: block; }
+      .floatHud { max-width: 52vw; }
+      .crisisBar { width: min(52vw, 680px); left: calc(74%); transform: translateX(-50%); }
     }
 
     @media (max-width: 380px) {
       .appTitle { font-size: 19px; }
-      .planetCard { min-height: 350px; }
-      #planetCanvas { height: 350px; }
+      .planetCard { min-height: 336px; }
+      #planetCanvas { height: 336px; }
       .wipe { width: 52%; }
       .infoGrid { grid-template-columns: 1fr; }
       .wide { grid-column: auto; }
@@ -337,20 +477,47 @@
 </head>
 <body>
   <main class="app">
+    <div class="eventToast" id="eventToast"></div>
+    <div class="pointHud" id="pointHud">観測点 0</div>
+    <div class="floatHud" id="floatHud">観測点 0 / GF 未発生 / 経過 0年</div>
+    <div class="crisisBar" id="crisisBar">
+      <div class="line" id="crisisMain">⚠ グレートフィルター兆候</div>
+      <div class="line" id="crisisSub">詳細待機中</div>
+      <div class="actions">
+        <button id="gfActBtn">介入</button>
+        <button id="gfDetailBtn">詳細</button>
+        <button id="gfSkipBtn">見送る</button>
+      </div>
+    </div>
+    <div class="eventModal" id="eventModal">
+      <div class="eventCard">
+        <div class="eventPreview" id="eventPreview"></div>
+        <div class="logText"><span class="logType" id="eventType"></span><b id="eventTitle"></b></div>
+        <div class="logAge" id="eventAge"></div>
+        <p class="desc" id="eventBody"></p>
+        <div class="eventActions">
+          <button id="eventRegionBtn">地域を見る</button>
+          <button id="eventCloseBtn">閉じる</button>
+        </div>
+      </div>
+    </div>
     <header class="topbar">
       <div class="titleBlock">
         <h1 class="appTitle">創星日誌</h1>
         <div class="appSub">生命圏・知的生命・文明興亡を放置観測</div>
       </div>
       <div class="miniBtns">
+        <button id="fullscreenBtn" title="全画面">全画面</button>
+        <button id="resetViewBtn" title="視点リセット">視点</button>
         <button id="saveBtn" title="保存">保存</button>
         <button id="resetBtn" class="warn" title="新しい惑星">新星</button>
       </div>
     </header>
 
+    <div class="mainLandscape">
     <section class="planetCard">
       <canvas id="planetCanvas" width="900" height="760" aria-label="回転できる惑星"></canvas>
-      <div class="planetHint">↔ スワイプで回転　◎ タップで観測</div>
+      <div class="planetHint">↔ 横回転　↕ 傾き変更　◎ タップで観測</div>
       <div class="ageBadge">
         <div class="planetName" id="planetName">---</div>
         <div class="age" id="ageText">---</div>
@@ -362,7 +529,7 @@
           <div class="wipeLine" id="wipeLine">惑星表面をタップしてください。</div>
           <div class="wipeActions">
             <button id="pinBtn">ピン留め</button>
-            <button id="detailBtn">詳しく</button>
+            <button id="detailBtn">エリアで見る</button>
             <button id="closeWipeBtn">×</button>
           </div>
         </div>
@@ -399,13 +566,26 @@
         <button id="normalBtn">通常速度</button>
         <button id="fastBtn">観測早送り</button>
       </div>
+      <details class="timeStyleBox">
+        <summary>時間進行スタイル</summary>
+        <div class="styleRow">
+          <button data-style="calm">じっくり観測</button>
+          <button data-style="evolution">生命進化重視</button>
+          <button data-style="civilization">文明観察重視</button>
+          <button data-style="event">イベント重視</button>
+          <button data-style="idle" style="grid-column:1/-1">長期放置</button>
+        </div>
+        <div class="styleState" id="styleState">---</div>
+        <div class="styleState"><label><input type="checkbox" id="pauseOnModalToggle" checked> イベント閲覧中は時間を止める</label></div>
+        <div class="modalPauseNote" id="modalPauseNote">観測停止中：イベント閲覧</div>
+      </details>
     </section>
 
     <nav class="modePanel" aria-label="観察モード">
-      <button data-mode="planet" class="active">惑星</button>
-      <button data-mode="region">地域</button>
-      <button data-mode="biosphere">生命圏</button>
-      <button data-mode="record">記録</button>
+      <button data-mode="planet" class="active">🌍全体</button>
+      <button data-mode="region">🗺️エリア</button>
+      <button data-mode="biosphere">🧬進化</button>
+      <button data-mode="record">📜記録</button>
     </nav>
 
     <section class="pinTray" id="pinTray">
@@ -425,6 +605,7 @@
         </div>
         <div class="logList" id="logList"></div>
       </section>
+    </div>
     </div>
 
     <div class="footerNote">これは遊び用のプロトタイプです。科学的厳密性より、進化と文明の“眺める楽しさ”を優先しています。</div>
@@ -446,6 +627,31 @@
     const SPEEDS = [0, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000];
     const SPEED_LABELS = ['停止', '×1年/秒', '×10年/秒', '×100年/秒', '×1千年/秒', '×1万年/秒', '×10万年/秒', '×100万年/秒', '×1000万年/秒'];
     const SPEED_HELP = ['観測停止', '細かく観察', '文明史向き', '文明史早送り', '生態系早送り', '進化観察', '長期進化', '惑星史', '超高速'];
+    const TIME_STYLES = {
+      calm: 'じっくり観測',
+      evolution: '生命進化重視',
+      civilization: '文明観察重視',
+      event: 'イベント重視',
+      idle: '長期放置'
+    };
+    const MAP_TYPES = {
+      oceanic: { label: '標準海洋惑星', desc: '海洋が広く、安定した海洋循環を持つ。' },
+      continental: { label: '大陸惑星', desc: '大きな陸塊が多く、内陸文明が育ちやすい。' },
+      archipelago: { label: '群島惑星', desc: '島々と沿岸が多く、海上交易が発達しやすい。' },
+      arid: { label: '乾燥惑星', desc: '乾燥地帯が多く、水資源が進化圧になる。' },
+      frozen: { label: '氷雪惑星', desc: '寒冷域と氷床が広く、生態系の成立が遅い。' },
+      volcanic: { label: '火山惑星', desc: '地殻活動が活発で、災害と地熱資源が共存する。' },
+      jungle: { label: '湿潤密林惑星', desc: '高湿度と森林が卓越し、多様性が高い。' },
+      shallowSea: { label: '浅海惑星', desc: '浅い海と沿岸が多く、生物圏が厚い。' }
+    };
+    const EVENT_IMAGES = {
+      intelligence_birth: 'assets/intelligence_birth.webp',
+      civilization_proto: 'assets/civilization_proto.webp',
+      civilization_city: 'assets/civilization_city.webp',
+      civilization_space: 'assets/civilization_space.webp',
+      civilization_collapse: 'assets/civilization_collapse.webp',
+      rewilding: 'assets/rewilding.webp'
+    };
 
     const LIFE_STAGES = [
       { key: 'sterile', at: 0, label: '無生命惑星' },
@@ -535,9 +741,27 @@
 
     const state = {
       seed: Math.floor(Math.random() * 999999),
+      runId: '',
       name: '',
       age: 0,
       speedIndex: 5,
+      timeStyle: 'evolution',
+      mapType: 'oceanic',
+      areaLayer: 'terrain',
+      observationPoints: 120,
+      greatFilterPreparedPoints: 0,
+      interventionHistory: [],
+      greatFilter: { status: 'none', type: null, signAge: null, crisisAge: null, deadlineAge: null, resolvedAge: null, ignored: false, ignoreCount: 0, result: null },
+      endingsSeen: [],
+      filterBreakthroughCount: 0,
+      currentEnding: null,
+      endingSummary: '',
+      journalGeneratedForCurrentEnding: null,
+      observerType: 'standard',
+      unlockedObserverTypes: ['standard', 'child_boy', 'child_girl'],
+      journalArchive: [],
+      metaProgress: { endingsSeenTotal: 0, endingsSeenNames: [], breakthroughSeenTotal: 0, failedSeenTotal: 0, specialEndingsSeen: [], unlockedObserverTypes: ['standard','child_boy','child_girl'], unlockedPerks: [], carriedObservationPoints: 0 },
+      manualSpeedOffset: 0,
       lastSpeedIndex: 5,
       paused: false,
       rotY: 0,
@@ -558,8 +782,463 @@
       nextRandomEvent: 260_000_000,
       env: null,
       dirty: true,
-      lastSave: 0
+      lastSave: 0,
+      fx: null,
+      lastStyleSyncAt: 0,
+      modalLogIndex: null,
+      pauseOnEventModal: true,
+      modalPauseBackup: null
+      ,lastPointShortageAt: 0
     };
+    const uiState = {
+      detailDirty: true,
+      logsDirty: true,
+      pinsDirty: true,
+      modeDirty: true
+    };
+    const SAVE_KEY = 'sousei-nisshi-save-v2';
+    const LEGACY_SAVE_KEY = 'sousei-nisshi-save-v1';
+
+    function lineageOriginText(species) {
+      if (!species) return '未確定';
+      return `${species.base} → ${species.speciesName}`;
+    }
+
+    function civPhaseText() {
+      if (!state.intelligence) return '文明未発生';
+      if (state.collapse) return '崩壊後の再興段階';
+      const cl = civLevel();
+      if (cl >= 7) return '宇宙進出・星間準備';
+      if (cl >= 5) return '工業/情報文明の拡張';
+      if (cl >= 3) return '都市国家と交易圏';
+      return '定住と農耕の拡大';
+    }
+
+    function modeGuideText(mode) {
+      if (mode === 'planet') return '全体：星全体の環境・危険度・文明段階を見る';
+      if (mode === 'region') return 'エリア：地域分布・都市・生命・危機をマップで確認する';
+      if (mode === 'biosphere') return '進化：生命の進化系統と知的生命候補を見る';
+      return '記録：過去イベントと重要画像を見返す';
+    }
+
+    function getObservationPoints() {
+      const s = state || {};
+      return Number(s.observationPoints ?? s.points ?? s.observePoints ?? 0) || 0;
+    }
+
+    function getGreatFilterStateObject() {
+      return state.greatFilterState || state.greatFilter || null;
+    }
+
+    function getGreatFilterLabel(gf = getGreatFilterStateObject()) {
+      if (!gf) return '未発生';
+      const map = { climate: '気候崩壊', war: '惑星規模戦争', ai: '自動化暴走', resource: '資源枯渇', cosmic: '宇宙災害', biological: '生命圏崩壊' };
+      return gf.label || gf.typeLabel || map[gf.type] || gf.type || gf.name || '不明';
+    }
+
+    function getGreatFilterDeadlineText(gf = getGreatFilterStateObject()) {
+      if (!gf) return '';
+      const leftYears = gf.remainingYears ?? gf.deadlineYears ?? gf.remaining ?? null;
+      const needPoints = gf.requiredPoints ?? gf.needPoints ?? null;
+      const a = Number.isFinite(leftYears) ? `残り ${formatAge(Math.max(0, leftYears))}` : '';
+      const b = Number.isFinite(needPoints) ? `必要観測点 ${Math.max(0, Math.floor(needPoints))}` : '';
+      return [a, b].filter(Boolean).join(' / ');
+    }
+
+    function isGreatFilterCrisisActive() {
+      const gf = getGreatFilterStateObject();
+      if (!gf) return false;
+      return gf.status === 'sign' || gf.status === 'crisis';
+    }
+
+    function updateFloatingHud() {
+      const hud = $('floatHud'); if (!hud) return;
+      const crisisActive = isGreatFilterCrisisActive();
+      const journalReadingOpen = state.mode === 'record' && !!document.querySelector('details.fold[open] summary')?.textContent?.includes('最新の日誌本文');
+      const hideForRecordRead = state.mode === 'record' && (!!$('eventModal')?.classList.contains('show') || journalReadingOpen);
+      const hideForDev = state.mode === 'record' && !!$('devTestFold')?.open;
+      const planetVisible = !!$('planetCanvas') && $('planetCanvas').getBoundingClientRect().top < window.innerHeight * 0.55;
+      const show = window.scrollY > 220 && !planetVisible && !hideForRecordRead && !hideForDev && !crisisActive;
+      if (!show) { hud.classList.remove('show'); return; }
+      const gf = getGreatFilterStateObject();
+      const gfText = gf ? (gf.status === 'none' ? 'GF 未発生' : gf.status === 'sign' ? `GF兆候 ${getGreatFilterLabel(gf)}` : `GF危機 ${getGreatFilterLabel(gf)}`) : 'GF 未発生';
+      const points = getObservationPoints();
+      const intvOpen = state.mode === 'record' && !!$('interventionFold')?.open;
+      const pLabel = intvOpen ? `【観測点 ${points}】` : `観測点 ${points}`;
+      hud.textContent = `${pLabel} / ${gfText} / 経過 ${formatAge(state.age)}`;
+      hud.classList.toggle('warn', gf?.status === 'sign' || gf?.status === 'crisis');
+      const shortageRecent = performance.now() - (state.lastPointShortageAt || 0) < 3200;
+      const minCost = intvOpen ? getMinInterventionCost() : 0;
+      const shortageNow = intvOpen && points < minCost;
+      hud.classList.toggle('ptsWarn', shortageRecent || shortageNow);
+      hud.classList.add('show');
+    }
+
+    function getMinInterventionCost() {
+      const root = $('detailPanel');
+      if (!root) return 80;
+      const btns = Array.from(root.querySelectorAll('[data-intv]')).filter(b => !b.disabled);
+      if (!btns.length) return 80;
+      const costs = btns.map((b) => {
+        const d = Number(b.dataset.cost);
+        if (Number.isFinite(d) && d > 0) return d;
+        const m = (b.textContent || '').match(/(\d+)/);
+        return m ? Number(m[1]) : NaN;
+      }).filter(v => Number.isFinite(v) && v > 0);
+      return costs.length ? Math.min(...costs) : 80;
+    }
+
+    function updateCrisisBar() {
+      const bar = $('crisisBar'); if (!bar) return;
+      const gf = getGreatFilterStateObject();
+      if (!isGreatFilterCrisisActive()) { bar.classList.remove('show'); return; }
+      const isSign = gf.status === 'sign';
+      $('crisisMain').textContent = isSign ? `⚠ グレートフィルター兆候：${getGreatFilterLabel(gf)}` : `⚠ グレートフィルター接近：${getGreatFilterLabel(gf)}`;
+      const remain = gf.deadlineAge ? Math.max(0, gf.deadlineAge - state.age) : null;
+      $('crisisSub').textContent = isSign ? '兆候段階です。対策研究で備えられます。' : `残り ${formatAge(remain || 0)} / 対策研究 ${Math.floor(state.greatFilterPreparedPoints || 0)}`;
+      bar.classList.add('show');
+    }
+
+    function maybeStartGreatFilter() {
+      const gf = state.greatFilter;
+      if (!gf || gf.status !== 'none') return;
+      const cl = civLevel();
+      const risk = riskValue();
+      if (cl < 5) return;
+      const adviceCount = state.interventionHistory.filter(h => h.kind === '文明助言').length;
+      const p = (cl >= 6 ? 0.0016 : 0.0004) + risk / 200000 + adviceCount * 0.00018;
+      if (Math.random() < p) {
+        gf.status = 'sign';
+        gf.type = pick(['climate','war','ai','resource','cosmic','biological']);
+        gf.signAge = state.age;
+        slowForGreatFilterWarning();
+        addLog('civ', 'グレートフィルター兆候', `${getGreatFilterLabel(gf)} の予兆が観測されました。`, true);
+      }
+    }
+
+    function slowForGreatFilterWarning() {
+      const gf = state.greatFilter;
+      if (!gf || (gf.status !== 'sign' && gf.status !== 'crisis')) return;
+      if (state.speedIndex > 5 && (state.manualSpeedOffset || 0) <= 0) {
+        state.speedIndex = 5;
+        state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex();
+        state.paused = false;
+        if (typeof showEventToast === 'function') showEventToast('planet', '⚠ GF警告: 危機対応モードへ減速');
+      }
+    }
+
+    function resolveGreatFilterOutcome() {
+      const gf = state.greatFilter;
+      const cl = civLevel();
+      const bio = avg(state.regions.map(r => r.biodiversity));
+      const prep = state.greatFilterPreparedPoints || 0;
+      const pts = getObservationPoints();
+      const score = prep * 0.72 + pts * 0.32 + cl * 25 + bio * 120 + state.env.stability * 90 - state.env.disaster * 110 - riskValue() * 1.25;
+      const byType = { climate: state.env.stability * 40, war: (1 - state.env.socialPressure) * 18, ai: prep * 0.08, resource: state.env.resources ? state.env.resources * 25 : 10, cosmic: prep * 0.05, biological: bio * 65 };
+      const final = score + (byType[gf.type] || 0);
+      const success = final > 250 + Math.random() * 105;
+      gf.result = success ? 'breakthrough' : 'failed';
+      gf.resolvedAge = state.age;
+      if (success) {
+        gf.status = 'resolved';
+        state.filterBreakthroughCount = (state.filterBreakthroughCount || 0) + 1;
+        chooseEnding(true);
+        addLog('civ', 'グレートフィルター突破', `${getGreatFilterLabel(gf)} を突破。文明は新段階へ移行。`, true);
+        addObservationPoints(30, 'GF突破ボーナス');
+      } else {
+        gf.status = 'failed';
+        if (!state.collapse) triggerCollapse();
+        chooseEnding(false);
+        addLog('civ', 'グレートフィルター失敗', `${getGreatFilterLabel(gf)} により文明は重大な後退。`, true);
+        addObservationPoints(10, '失敗分析ボーナス');
+      }
+      unlockMetaProgress(state.currentEnding, success);
+      state.endingSummary = success ? '文明は危機を越え、新しい段階へ進みました。' : '文明は危機に耐えきれず後退し、惑星史は静かな終章へ向かいました。';
+      state.greatFilterPreparedPoints = Math.max(0, prep - 120);
+      createSouseiJournal();
+    }
+
+    function updateGreatFilterProgress() {
+      const gf = state.greatFilter;
+      if (!gf) return;
+      if (gf.status === 'none') return maybeStartGreatFilter();
+      if (gf.status === 'sign' && state.age - gf.signAge > 2_600_000) {
+        gf.status = 'crisis';
+        gf.crisisAge = state.age;
+        gf.deadlineAge = state.age + 1_450_000 + Math.random() * 950_000;
+        addLog('civ', 'グレートフィルター接近', `${getGreatFilterLabel(gf)} への対応期限が設定されました。`, true);
+      }
+      if (gf.status === 'crisis' && state.age >= gf.deadlineAge) resolveGreatFilterOutcome();
+    }
+
+    function chooseEnding(success) {
+      const meteorCount = state.interventionHistory.filter(h => h.kind === '巨大隕石').length;
+      const bioShieldCount = state.interventionHistory.filter(h => h.kind === '生命圏保護').length;
+      const prep = state.greatFilterPreparedPoints || 0;
+      let ending = success ? '静かな成熟エンド' : '文明崩壊エンド';
+      if (success && civLevel() >= 7) ending = '星間航行エンド';
+      if (success && bioShieldCount >= 3) ending = '共生文明エンド';
+      if (success && prep >= 600) ending = '準備されすぎた突破エンド';
+      if (!success && meteorCount >= 2) ending = '壊しすぎた神の手エンド';
+      if (!success && bioShieldCount >= 4) ending = '文明なき豊穣エンド';
+      if (!success && state.collapse) ending = '遺跡だけが残るエンド';
+      state.currentEnding = ending;
+      if (!state.endingsSeen.includes(ending)) state.endingsSeen.push(ending);
+    }
+
+    function observerVoiceText() {
+      const base = state.currentEnding || '未確定';
+      if (state.observerType === 'child_boy') return `ぼく、${state.name}のことをずっと見てた。すごい時も、こわい時もあって、${base}になったのがまだ信じられない。`;
+      if (state.observerType === 'child_girl') return `${state.name}は、うつくしくて、こわくて、ふしぎな星なの。${base}になったのは、かなしいけど大切な記録なのです。`;
+      if (state.observerType === 'gal') return `${state.name}、マジですごかった。やばい瞬間もあったけど、${base}まで見届けたのはデカい。`;
+      if (state.observerType === 'net_user') return `ワイくん観測ログ：${state.name}、星、無事死亡…とは限らん。${base}、クソワロタwwwwww（なお涙目）。`;
+      if (state.observerType === 'kansai') return `${state.name}、ほんまよう頑張った星やで。${base}まで来たんは、たいしたもんや。`;
+      if (state.observerType === 'samurai') return `${state.name}の興亡、まこと見事なり。${base}へ至る道、しかと記す。`;
+      if (state.observerType === 'noja_loli') return `${state.name}は不思議な星なのじゃ。${base}に至るまで、よく耐えたのじゃな。`;
+      if (state.observerType === 'foreigner') return `${state.name} is very beautiful star. Many hard events, but we reach ${base}. I keep this memory softly.`;
+      if (state.observerType === 'reincarnator') return `前の世界でも似た終幕を見た気がする。それでも${state.name}の${base}は、今回だけの重みを持っていた。`;
+      return `${state.name}は多層的な変遷を経て、${base}へ至った。観測と介入の痕跡は、次の星への示唆を残している。`;
+    }
+
+    function unlockMetaProgress(ending, success) {
+      const m = state.metaProgress;
+      m.endingsSeenNames = Array.isArray(m.endingsSeenNames) ? m.endingsSeenNames : [];
+      if (ending && !m.endingsSeenNames.includes(ending)) m.endingsSeenNames.push(ending);
+      m.endingsSeenTotal = m.endingsSeenNames.length;
+      if (success) m.breakthroughSeenTotal += 1; else m.failedSeenTotal += 1;
+      if (/壊しすぎ|文明なき|遺跡/.test(ending) && !m.specialEndingsSeen.includes(ending)) m.specialEndingsSeen.push(ending);
+      m.specialEndingsSeen = Array.from(new Set(m.specialEndingsSeen));
+      const meteorCount = state.interventionHistory.filter(h => h.kind === '巨大隕石').length;
+      const unlock = (k, msg) => { if (!m.unlockedObserverTypes.includes(k)) { m.unlockedObserverTypes.push(k); if (typeof showEventToast === 'function') showEventToast('planet', msg); } };
+      if (m.endingsSeenTotal >= 3) unlock('gal', '新しい観測者タイプ「ギャル」が解放されました');
+      if (meteorCount >= 3 || state.endingsSeen.includes('壊しすぎた神の手エンド')) unlock('net_user', '新しい観測者タイプ「ネット民」が解放されました');
+      if (m.breakthroughSeenTotal >= 2) unlock('kansai', '新しい観測者タイプ「関西」が解放されました');
+      if (state.endingsSeen.includes('文明崩壊エンド') || (state.greatFilter?.type === 'war' && success)) unlock('samurai', '新しい観測者タイプ「侍」が解放されました');
+      if (m.specialEndingsSeen.length >= 2) unlock('noja_loli', '新しい観測者タイプ「のじゃロリ」が解放されました');
+      if (state.endingsSeen.includes('星間航行エンド')) unlock('foreigner', '新しい観測者タイプ「異邦人」が解放されました');
+      if (m.breakthroughSeenTotal >= 3) unlock('reincarnator', '新しい観測者タイプ「転生者」が解放されました');
+      const perk = (k, cond, msg) => { if (cond && !m.unlockedPerks.includes(k)) { m.unlockedPerks.push(k); if (typeof showEventToast === 'function') showEventToast('planet', msg); } };
+      perk('init_points_50', m.breakthroughSeenTotal >= 2, '周回特典「初期観測点+50」が解放されました');
+      perk('gf_cost_down_20', m.breakthroughSeenTotal >= 3, '周回特典「GF対策コスト-20%」が解放されました');
+      perk('gain_bonus_10', m.endingsSeenTotal >= 5, '周回特典「観測点獲得量+10%」が解放されました');
+      perk('danger_cost_down_10', m.specialEndingsSeen.length >= 2, '周回特典「危険介入コスト-10%」が解放されました');
+      m.carriedObservationPoints = clamp(Math.floor((m.carriedObservationPoints || 0) + getObservationPoints() * 0.2), 0, 300);
+      m.unlockedObserverTypes = Array.from(new Set(m.unlockedObserverTypes));
+    }
+
+    function buildSouseiJournalText() {
+      const endingDisplayNames = {
+        '技術暴走型失敗': '技術暴走フィルター失敗',
+        '気候崩壊型失敗': '気候崩壊フィルター失敗',
+        '戦争型失敗': '惑星戦争フィルター失敗',
+        '資源枯渇型失敗': '資源枯渇フィルター失敗',
+        '生命圏崩壊型失敗': '生命圏崩壊フィルター失敗'
+      };
+      const endingMoodTitles = {
+        '技術暴走型失敗': '止まらなかった知性',
+        '文明崩壊エンド': '灯りの消えた惑星',
+        '遺跡だけが残るエンド': '遺跡だけが星を覚えている'
+      };
+      const endingRaw = state.currentEnding || '未確定';
+      const endingDisplay = endingDisplayNames[endingRaw] || endingRaw;
+      const endingTitle = endingMoodTitles[endingRaw] || endingDisplay;
+      const styleByObserver = {
+        standard: { intro: 'この星の歩みを記録する。', life: (l) => `生命段階: ${l}`, events: '重要イベント:', gf: { resolved: 'GF結果は突破となった。', failed: 'GF結果は失敗となった。', ongoing: 'GF結果は進行中。' }, closing: () => `観測者所見: ${observerVoiceText()}` },
+        child_girl: { intro: 'わたしは、この星の歩みをそっと見守ってきたの。', life: (l) => `この星で生まれたいのちは「${l}」まで育ったの。`, events: 'おぼえておきたいこと：', gf: { resolved: 'この星は、フィルターを越えることができたのです。', failed: 'この星は、フィルターを越えられなかったのです。', ongoing: 'フィルターの行方は、まだ見届けの途中なの。' }, closing: () => `観測者所見: ${observerVoiceText()}\nこの記録が、いつか誰かのやさしい道しるべになりますように。` },
+        child_boy: { intro: 'ぼくは、この星をずっと見てきたんだ。', life: (l) => `ここで生まれたいのちは「${l}」まで来たんだよ。`, events: 'ぼくが見たたいせつなできごと：', gf: { resolved: 'フィルターを越えられて、ちょっとほっとした。', failed: 'フィルターを越えられなくて、かなしかった。', ongoing: 'まだどうなるかわからなくて、少しこわかった。' }, closing: () => `観測者所見: ${observerVoiceText()}` },
+        gal: { intro: 'この星、最初から最後までちゃんと見届けたよ。', life: (l) => `生命は「${l}」まで進んで、マジですごかった。`, events: '注目イベントまとめ：', gf: { resolved: 'フィルター突破。ほんとにやばいくらい頑張った。', failed: 'フィルター失敗。これはさすがにしんどかった。', ongoing: 'フィルターは進行中。まだ目が離せない。' }, closing: () => `観測者所見: ${observerVoiceText()}` },
+        net_user: { intro: 'ワイくん観測ログ、ここに記録するで。', life: (l) => `生命段階は「${l}」。ここまでは順調。`, events: '要チェックイベント:', gf: { resolved: 'GF突破を確認。ワイくん、ちょっと感動。', failed: (isCollapse) => isCollapse ? 'GF失敗。星、無事死亡…とは笑えんかった。' : 'GF失敗。クソワロタwwwwww…と言いつつ重かった。', ongoing: 'GFは進行中。静かに見守る。' }, closing: () => `観測者所見: ${observerVoiceText()}` },
+        kansai: { intro: 'この星の歩み、最後まで見届けさせてもろたで。', life: (l) => `生命は「${l}」まで育ってきたんや。`, events: '覚えときたい出来事:', gf: { resolved: 'フィルターを越えたんは、ほんま立派や。', failed: 'フィルターを越えられへんかったのは、かなしかったな。', ongoing: 'フィルターはまだ途中や。気ぃ抜かれへん。' }, closing: () => `観測者所見: ${observerVoiceText()}` },
+        reincarnator: { intro: 'この星の記録は、今回の世界線のものとして残しておく。', life: (l) => `生命は「${l}」まで到達した。前の世界では見られなかった景色もあった。`, events: '今回の世界での主要イベント:', gf: { resolved: '今回はフィルターを越えた。前の世界より、確かな前進だ。', failed: '今回はフィルターを越えられなかった。前の世界でも似た痛みを知っている。', ongoing: 'フィルターの帰結は未定。今回の世界の選択を見守る。' }, closing: () => `観測者所見: ${observerVoiceText()}` }
+      };
+      const style = styleByObserver[state.observerType] || styleByObserver.standard;
+      const lifeLabel = getStage(LIFE_STAGES, state.age).label;
+      const lifeLine = style.life(lifeLabel);
+      const civLabel = state.collapse ? '文明崩壊後' : getStage(CIV_STAGES, state.age).label;
+      const civLine = state.observerType === 'child_girl' ? `文明は、やがて「${civLabel}」へたどりついてしまったの。` : `文明段階: ${civLabel}`;
+      const gf = state.greatFilter || {};
+      const gfResolved = style.gf.resolved;
+      const gfFailed = typeof style.gf.failed === 'function' ? style.gf.failed(!!state.collapse) : style.gf.failed;
+      const gfOngoing = style.gf.ongoing;
+      const gfResult = gf.status === 'resolved' ? gfResolved : gf.status === 'failed' ? gfFailed : gfOngoing;
+      const gfPart = `GF: ${gf.status} / ${getGreatFilterLabel(gf)} / 対策研究 ${Math.floor(state.greatFilterPreparedPoints || 0)}\n${gfResult}\n`;
+      const iv = state.interventionHistory.slice(0, 10).map(h => `- ${formatAge(h.age)} ${h.kind} 消費${h.cost} ${h.summary}`).join('\n');
+      const lg = state.logs.slice(0, 12).map(l => `- ${formatAge(l.age)} ${l.title}`).join('\n');
+      const eventHeading = style.events;
+      const closing = style.closing();
+      const header = `創星日誌「${endingTitle}」\n惑星: ${state.name}\n終幕: ${endingDisplay}\n経過: ${formatAge(state.age)}\nマップタイプ: ${MAP_TYPES[state.mapType]?.label || state.mapType}\n${style.intro}\n`;
+      return `${header}${lifeLine}\n${civLine}\n${gfPart}\n${eventHeading}\n${lg}\n\n介入履歴:\n${iv || 'なし'}\n\n${closing}`;
+    }
+
+    function createSouseiJournal(force = false) {
+      const key = `${state.name}:${state.currentEnding || '未確定'}`;
+      if (!force && state.journalGeneratedForCurrentEnding === key) return;
+      const body = buildSouseiJournalText();
+      const fileName = `創星日誌_${state.name}_${(state.currentEnding || '未確定').replace(/\s+/g,'')}.txt`;
+      const entry = { runId: state.runId, planetSeed: state.seed, planetName: state.name, endingName: state.currentEnding || '未確定', observerType: state.observerType, createdAt: Date.now(), name: fileName, text: body, age: state.age, ending: state.currentEnding };
+      const idx = state.journalArchive.findIndex(j => j && j.runId === entry.runId && j.endingName === entry.endingName && j.observerType === entry.observerType);
+      if (idx >= 0) state.journalArchive[idx] = entry;
+      else state.journalArchive.unshift(entry);
+      if (state.journalArchive.length > 12) state.journalArchive.length = 12;
+      state.journalGeneratedForCurrentEnding = key;
+      state.dirty = true;
+    }
+
+    function downloadLatestJournal() {
+      const j = state.journalArchive[0];
+      if (!j) return;
+      try {
+        const blob = new Blob([j.text], { type: 'text/plain;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = j.name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 500);
+      } catch (_) {}
+    }
+
+    function updatePointHud() {
+      // pointHudはfloatHudへ統合済み（互換用no-op）
+      return;
+    }
+
+    function spendObservationPoints(cost) {
+      const now = getObservationPoints();
+      if (now < cost) {
+        state.lastPointShortageAt = performance.now();
+        if (typeof showEventToast === 'function') showEventToast('planet', '観測点が不足しています');
+        updateFloatingHud();
+        return false;
+      }
+      if (typeof state.observationPoints === 'number') state.observationPoints -= cost;
+      else if (typeof state.points === 'number') state.points -= cost;
+      else if (typeof state.observePoints === 'number') state.observePoints -= cost;
+      state.dirty = true;
+      updatePointHud();
+      return true;
+    }
+
+    function addObservationPoints(amount, reason = '') {
+      const perks = state.metaProgress?.unlockedPerks || [];
+      let gain = amount;
+      if (perks.includes('gain_bonus_10')) gain = Math.ceil(gain * 1.1);
+      if (typeof state.observationPoints === 'number') state.observationPoints += gain;
+      else if (typeof state.points === 'number') state.points += gain;
+      else if (typeof state.observePoints === 'number') state.observePoints += gain;
+      state.dirty = true;
+      if (reason) addLog('planet', '観測点獲得', `${reason}（+${gain}）`, false);
+      updatePointHud();
+      return gain;
+    }
+
+    function pushInterventionHistory(kind, cost, summary, regionId = null) {
+      state.interventionHistory.unshift({ kind, cost, summary, regionId, age: state.age });
+      if (state.interventionHistory.length > 80) state.interventionHistory.length = 80;
+      addLog('planet', `観測介入: ${kind}`, `${summary}（消費${cost}）`, true, { regionId, subType: 'intervention' });
+    }
+
+    function applyTectonicShift(targetRegion) {
+      const targets = targetRegion ? [targetRegion] : state.regions.filter(() => Math.random() < 0.22);
+      for (const r of targets) {
+        r.resources = clamp(r.resources + (Math.random() - 0.2) * 0.25, 0, 1);
+        r.fertility = clamp(r.fertility + (Math.random() - 0.5) * 0.2, 0, 1);
+        if (Math.random() < 0.35) r.climate = pick(['乾燥', '湿潤', '温帯', '寒冷']);
+        if (Math.random() < 0.4) r.baseName = pick(['火山列島', '山脈地帯', '内海沿岸', '乾燥高原']);
+        markRegionEvent(r, 'tectonic');
+      }
+      state.env.tectonics = clamp(state.env.tectonics + 0.06, 0, 1);
+      state.env.disaster = clamp(state.env.disaster + 0.04, 0, 1);
+      state.env.mountains = clamp(state.env.mountains + 0.04, 0, 1);
+      state.env.stability = clamp(state.env.stability - 0.03, 0, 1);
+    }
+
+    function applyMeteorImpact(targetRegion) {
+      for (const r of state.regions) {
+        r.biodiversity = clamp(r.biodiversity - (0.18 + Math.random() * 0.24), 0, 1);
+        if (r.city && Math.random() < 0.45) { r.ruin = true; r.city = false; }
+      }
+      if (targetRegion) {
+        targetRegion.baseName = 'クレーター盆地';
+        targetRegion.climate = '寒冷';
+        targetRegion.ruin = true;
+        markRegionEvent(targetRegion, 'collapse');
+      }
+      state.env.temperature = clamp(state.env.temperature - 0.08, 0, 1);
+      state.env.disaster = clamp(state.env.disaster + 0.18, 0, 1);
+      state.env.stability = clamp(state.env.stability - 0.1, 0, 1);
+      if (civLevel() >= 3 && Math.random() < 0.5 && !state.collapse) triggerCollapse();
+      triggerFx('hazard', 1.35);
+    }
+
+    function drawAreaMap() {
+      const c = $('areaMapCanvas');
+      if (!c) return;
+      const g = c.getContext('2d');
+      const w = c.width, h = c.height;
+      g.clearRect(0, 0, w, h);
+      g.fillStyle = '#6fa0c3'; g.fillRect(0, 0, w, h);
+      const ll = lifeLevel(), cl = civLevel();
+      for (const r of state.regions) {
+        const x = ((r.lon + Math.PI) / (Math.PI * 2)) * w;
+        const y = (1 - (r.lat + 1.45) / 2.9) * h;
+        let color = 'rgba(120,140,170,.45)';
+        if (state.areaLayer === 'terrain') {
+          color = r.isOcean ? 'rgba(56,128,182,.78)' : r.climate === '乾燥' ? 'rgba(181,140,82,.82)' : r.climate === '寒冷' ? 'rgba(215,233,246,.86)' : 'rgba(84,156,88,.8)';
+          if (/山/.test(r.baseName)) color = 'rgba(106,128,104,.86)';
+          if (/火山|溶岩|地熱/.test(r.baseName)) color = 'rgba(132,78,68,.9)';
+          if (/クレーター/.test(r.baseName)) color = 'rgba(130,124,118,.86)';
+        } else if (state.areaLayer === 'life') {
+          const b = clamp(r.biodiversity * (ll < 3 ? .45 : 1), 0, 1);
+          color = `rgba(${50 + b*40},${90 + b*140},${65 + b*45},${0.35 + b*0.55})`;
+          if (r.lastEventType === 'expansion') color = 'rgba(132,255,176,.88)';
+        } else if (state.areaLayer === 'civ') {
+          if (cl < 2) color = 'rgba(90,100,120,.32)';
+          else if (r.ruin) color = 'rgba(138,88,78,.78)';
+          else if (r.city) color = 'rgba(248,212,112,.85)';
+          else color = 'rgba(96,122,106,.44)';
+        } else if (state.areaLayer === 'risk') {
+          const rv = clamp(r.pollution * .7 + state.env.disaster * .3 + ((r.lastEventType === 'conflict' || r.lastEventType === 'collapse') ? .25 : 0), 0, 1);
+          color = `rgba(${90 + rv*150},${42 + (1-rv)*55},${48 + (1-rv)*40},${0.35 + rv*0.6})`;
+        }
+        g.fillStyle = color;
+        g.beginPath(); g.arc(x, y, r.city ? 6 : 4.6, 0, Math.PI * 2); g.fill();
+        if (r.ruin) { g.strokeStyle = 'rgba(180,120,96,.7)'; g.strokeRect(x-4,y-4,8,8); }
+        if (cl >= 7 && r.city && !r.ruin && state.areaLayer === 'civ') { g.strokeStyle = 'rgba(126,232,255,.72)'; g.beginPath(); g.arc(x,y,8,0,Math.PI*2); g.stroke(); }
+      }
+      for (const r of state.regions) {
+        const x = ((r.lon + Math.PI) / (Math.PI * 2)) * w;
+        const y = (1 - (r.lat + 1.45) / 2.9) * h;
+        if (state.pinnedRegionIds.includes(r.id)) { g.strokeStyle = 'rgba(255,217,118,.95)'; g.lineWidth = 2; g.beginPath(); g.arc(x,y,7,0,Math.PI*2); g.stroke(); }
+        if (state.selectedRegionId === r.id) { g.strokeStyle = 'rgba(126,232,255,.95)'; g.lineWidth = 2.4; g.beginPath(); g.arc(x,y,9,0,Math.PI*2); g.stroke(); }
+      }
+    }
+
+    function areaMapPick(clientX, clientY) {
+      const c = $('areaMapCanvas'); if (!c) return null;
+      const rect = c.getBoundingClientRect();
+      const x = (clientX - rect.left) * (c.width / rect.width);
+      const y = (clientY - rect.top) * (c.height / rect.height);
+      let best = null, bestD = Infinity;
+      for (const r of state.regions) {
+        const rx = ((r.lon + Math.PI) / (Math.PI * 2)) * c.width;
+        const ry = (1 - (r.lat + 1.45) / 2.9) * c.height;
+        const d = (rx-x)*(rx-x) + (ry-y)*(ry-y);
+        if (d < bestD) { bestD = d; best = r; }
+      }
+      return best;
+    }
+
+    function chooseMapType() {
+      const roll = Math.random();
+      if (roll < 0.26) return 'oceanic';
+      if (roll < 0.48) return 'continental';
+      if (roll < 0.66) return 'archipelago';
+      if (roll < 0.74) return 'shallowSea';
+      if (roll < 0.81) return 'jungle';
+      if (roll < 0.88) return 'arid';
+      if (roll < 0.95) return 'frozen';
+      return 'volcanic';
+    }
 
     function randomName(prefix = '') {
       const n = 2 + Math.floor(Math.random() * 2);
@@ -590,17 +1269,134 @@
       return LIFE_STAGES.findIndex(s => s.key === key);
     }
 
-    function addLog(type, title, text, important = false) {
-      state.logs.unshift({ type, title, text, age: state.age, important });
+    function addLog(type, title, text, important = false, meta = {}) {
+      state.logs.unshift({ type, title, text, age: state.age, important, imageKey: meta.imageKey || null, subType: meta.subType || null, regionId: Number.isInteger(meta.regionId) ? meta.regionId : null });
       if (state.logs.length > 180) state.logs.length = 180;
       state.dirty = true;
+      uiState.logsDirty = true;
+      if (state.mode === 'record') uiState.detailDirty = true;
+      if (important) showEventToast(type, title);
+    }
+
+    function showEventToast(type, title) {
+      const el = $('eventToast');
+      if (!el) return;
+      const kind = type === 'life' ? '生命' : type === 'civ' ? '文明' : '惑星';
+      el.innerHTML = `<span class="k">${kind}</span>${escapeHtml(title)}`;
+      el.classList.add('show');
+      clearTimeout(showEventToast._t);
+      showEventToast._t = setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    function triggerFx(type, power = 1) {
+      state.fx = { type, start: performance.now(), duration: 1400 + power * 500, power };
+    }
+
+    function desiredSpeedIndex() {
+      const ll = lifeLevel(), cl = civLevel();
+      const style = state.timeStyle || 'evolution';
+      if (style === 'calm') return ll < 5 ? 2 : 3;
+      let base = 5;
+      if (style === 'evolution') base = ll < 4 ? 6 : ll < 8 ? 5 : 4;
+      else if (style === 'civilization') base = cl < 2 ? 5 : cl < 5 ? 4 : 3;
+      else if (style === 'event') base = cl < 3 ? 6 : 5;
+      else if (style === 'idle') base = cl < 2 ? 8 : 7;
+      const gf = state.greatFilter;
+      if (gf && (gf.status === 'sign' || gf.status === 'crisis')) base = Math.min(base, 5);
+      return base;
+    }
+
+    function applyStyleSpeed(silent = false) {
+      const base = desiredSpeedIndex();
+      const next = clamp(base + (state.manualSpeedOffset || 0), 0, SPEEDS.length - 1);
+      state.speedIndex = next;
+      if (!silent) uiState.detailDirty = state.mode === 'record';
+    }
+
+    function autoSlowdownForImportantEvent() {
+      if ((state.timeStyle === 'event' || state.timeStyle === 'idle' || state.timeStyle === 'civilization') && state.speedIndex > 4) {
+        state.speedIndex = 4;
+        state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex();
+        showEventToast('planet', '重要イベント発生：観測速度を一時的に下げました');
+      }
+    }
+
+    function applyModalPauseIfNeeded() {
+      if (!state.pauseOnEventModal || state.modalPauseBackup) return;
+      state.modalPauseBackup = { paused: state.paused, speedIndex: state.speedIndex, lastSpeedIndex: state.lastSpeedIndex };
+      state.paused = true;
+      const note = $('modalPauseNote'); if (note) note.classList.add('show');
+      updateAll(false);
+    }
+
+    function restoreModalPauseIfNeeded() {
+      if (!state.modalPauseBackup) return;
+      const b = state.modalPauseBackup;
+      state.paused = b.paused;
+      state.speedIndex = b.speedIndex;
+      state.lastSpeedIndex = b.lastSpeedIndex;
+      state.modalPauseBackup = null;
+      const note = $('modalPauseNote'); if (note) note.classList.remove('show');
+      updateAll(false);
+    }
+
+    function markRegionEvent(region, eventType) {
+      if (!region) return;
+      region.lastEventType = eventType;
+      region.lastEventAt = state.age;
+      uiState.detailDirty = state.mode === 'region' || state.mode === 'record';
+    }
+
+    function ensureAssistRegion() {
+      return state.regions.find(r => r.id === state.selectedRegionId) || pick(state.regions);
+    }
+
+    function runAssistEvent(kind) {
+      const region = ensureAssistRegion();
+      if (kind === 'life') {
+        addLog('life', '観測補助: 生命イベント確認', '生態系拡大イベントの視覚演出を確認しました。', true);
+        triggerFx('hazard', 0.55);
+        markRegionEvent(region, 'expansion');
+      } else if (kind === 'intelligence') {
+        if (!state.intelligence) chooseIntelligence();
+        addLog('life', '観測補助: 知的生命誕生確認', '知的生命誕生演出を再確認しました。', true);
+        triggerFx('intelligence', 1.1);
+        markRegionEvent(region, 'origin');
+      } else if (kind === 'civilization') {
+        addLog('civ', '観測補助: 文明成立確認', '文明成立時の演出を確認しました。', true);
+        triggerFx('civilization', 1);
+        markRegionEvent(region, 'prosper');
+      } else if (kind === 'hazard') {
+        addLog('planet', '観測補助: 危機イベント確認', '危機イベントのフラッシュ演出を確認しました。', true);
+        triggerFx('hazard', 1);
+        markRegionEvent(region, 'conflict');
+      } else if (kind === 'collapse') {
+        if (!state.collapse) {
+          triggerCollapse();
+        } else {
+          addLog('civ', '観測補助: 崩壊後演出確認', '文明崩壊後の警告演出を再確認しました。', true);
+          triggerFx('collapse', 1.1);
+          markRegionEvent(region, 'collapse');
+        }
+      } else if (kind === 'space') {
+        addLog('civ', '観測補助: 宇宙進出演出確認', '宇宙進出段階の軌道演出を確認しました。', true);
+        triggerFx('space', 1.2);
+        markRegionEvent(region, 'prosper');
+      }
+      uiState.logsDirty = true;
+      uiState.detailDirty = true;
+      updateAll(true);
+      if (region) selectRegion(region, true);
     }
 
     function makePlanet() {
       state.seed = Math.floor(Math.random() * 999999);
+      state.runId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,6)}-${state.seed}`;
       state.name = randomName('惑星') + '-' + (2 + Math.floor(Math.random() * 8));
       state.age = 0;
       state.speedIndex = 5;
+      state.timeStyle = state.timeStyle || 'evolution';
+      state.manualSpeedOffset = 0;
       state.lastSpeedIndex = 5;
       state.paused = false;
       state.rotY = Math.random() * Math.PI * 2;
@@ -612,7 +1408,20 @@
       state.intelligence = null;
       state.collapse = false;
       state.collapseAge = null;
+      state.currentEnding = null;
+      state.endingSummary = '';
+      state.journalGeneratedForCurrentEnding = null;
+      state.greatFilter = { status: 'none', type: null, signAge: null, crisisAge: null, deadlineAge: null, resolvedAge: null, ignored: false, ignoreCount: 0, result: null };
+      state.greatFilterPreparedPoints = 0;
+      state.interventionHistory = [];
+      const m = state.metaProgress || {};
+      let carry = Number(m.carriedObservationPoints || 0);
+      let basePoints = 120 + carry;
+      if ((m.unlockedPerks || []).includes('init_points_50')) basePoints += 50;
+      state.observationPoints = basePoints;
+      m.carriedObservationPoints = 0;
       state.nextRandomEvent = 240_000_000 + Math.random() * 280_000_000;
+      state.mapType = chooseMapType();
       state.env = {
         ocean: Math.random(),
         gravity: 0.65 + Math.random() * 0.9,
@@ -627,24 +1436,38 @@
         socialPressure: Math.random(),
         stability: Math.random()
       };
+      if (state.mapType === 'oceanic') { state.env.ocean = clamp(0.62 + Math.random() * 0.3, 0, 1); }
+      if (state.mapType === 'continental') { state.env.ocean = clamp(0.28 + Math.random() * 0.25, 0, 1); }
+      if (state.mapType === 'archipelago') { state.env.ocean = clamp(0.58 + Math.random() * 0.22, 0, 1); }
+      if (state.mapType === 'arid') { state.env.humidity = clamp(0.08 + Math.random() * 0.2, 0, 1); state.env.temperature = clamp(0.62 + Math.random() * 0.3, 0, 1); }
+      if (state.mapType === 'frozen') { state.env.temperature = clamp(Math.random() * 0.22, 0, 1); state.env.ocean = clamp(0.45 + Math.random() * 0.25, 0, 1); }
+      if (state.mapType === 'volcanic') { state.env.tectonics = clamp(0.72 + Math.random() * 0.28, 0, 1); state.env.disaster = clamp(0.62 + Math.random() * 0.3, 0, 1); }
+      if (state.mapType === 'jungle') { state.env.humidity = clamp(0.72 + Math.random() * 0.26, 0, 1); state.env.forest = clamp(0.75 + Math.random() * 0.22, 0, 1); }
+      if (state.mapType === 'shallowSea') { state.env.ocean = clamp(0.68 + Math.random() * 0.22, 0, 1); state.env.humidity = clamp(0.5 + Math.random() * 0.3, 0, 1); }
       state.landDots = makeLandDots();
       state.cloudDots = makeCloudDots();
       state.regions = makeRegions();
-      addLog('planet', '観測開始', `${state.name} の長期観測を開始。海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。`, true);
+      addLog('planet', '観測開始', `${state.name} の長期観測を開始。${MAP_TYPES[state.mapType]?.label || '標準海洋惑星'} / 海洋率${Math.round(state.env.ocean * 100)}%、重力${state.env.gravity.toFixed(2)}G。`, true);
+      applyStyleSpeed(true);
       hideWipe();
       saveState();
-      updateAll();
+      uiState.detailDirty = true;
+      uiState.logsDirty = true;
+      uiState.pinsDirty = true;
+      uiState.modeDirty = true;
+      updateAll(true);
     }
 
     function makeLandDots() {
       const dots = [];
-      const continentCount = 5 + Math.floor(Math.random() * 4);
+      const mt = state.mapType || 'oceanic';
+      const continentCount = mt === 'continental' ? 3 + Math.floor(Math.random() * 2) : mt === 'archipelago' ? 9 + Math.floor(Math.random() * 6) : 5 + Math.floor(Math.random() * 4);
       const centers = [];
       for (let i = 0; i < continentCount; i++) {
         centers.push({
           lon: Math.random() * Math.PI * 2 - Math.PI,
           lat: (Math.random() - 0.5) * Math.PI * 0.85,
-          size: 0.35 + Math.random() * 0.48
+          size: mt === 'continental' ? 0.55 + Math.random() * 0.55 : mt === 'archipelago' ? 0.14 + Math.random() * 0.22 : 0.35 + Math.random() * 0.48
         });
       }
       for (let i = 0; i < 680; i++) {
@@ -652,7 +1475,7 @@
         const lon = c.lon + (Math.random() - 0.5) * c.size * 1.8;
         const lat = c.lat + (Math.random() - 0.5) * c.size;
         const polar = Math.abs(lat) / (Math.PI / 2);
-        const isLand = Math.random() > state.env.ocean * 0.55;
+        const isLand = Math.random() > state.env.ocean * (mt === 'archipelago' ? 0.68 : mt === 'continental' ? 0.42 : 0.55);
         dots.push({
           lon, lat: clamp(lat, -1.45, 1.45),
           r: 0.006 + Math.random() * 0.018,
@@ -681,12 +1504,16 @@
       return REGION_BASES.map((base, index) => {
         const lon = (index / REGION_BASES.length) * Math.PI * 2 - Math.PI + (Math.random() - .5) * .35;
         const lat = Math.sin(index * 1.7) * .9 + (Math.random() - .5) * .25;
-        const isOcean = /海|浅海|群島|沿岸|氷縁/.test(base) || Math.random() < state.env.ocean * .34;
-        const climate = climateFrom(base, lat, isOcean);
+        let base2 = base;
+        if (state.mapType === 'volcanic' && Math.random() < .28) base2 = pick(['火山列島', '溶岩台地', '地熱地帯']);
+        if (state.mapType === 'jungle' && Math.random() < .24) base2 = pick(['赤道密林', '湿潤森林帯', '大河密林']);
+        if ((state.mapType === 'archipelago' || state.mapType === 'shallowSea') && Math.random() < .3) base2 = pick(['西海岸群島', '外洋浅海域', '内海沿岸']);
+        const isOcean = /海|浅海|群島|沿岸|氷縁/.test(base2) || Math.random() < state.env.ocean * (state.mapType === 'shallowSea' ? .5 : .34);
+        const climate = climateFrom(base2, lat, isOcean);
         const root = randomName('');
         return {
           id: index,
-          baseName: base,
+          baseName: base2,
           rootName: root,
           lon, lat,
           isOcean,
@@ -698,14 +1525,19 @@
           ruin: false,
           city: false,
           origin: Math.random(),
-          historyNames: [base],
-          currentName: base,
+          historyNames: [base2],
+          currentName: base2,
           note: ''
+          ,lastEventType: null,
+          lastEventAt: null
         };
       });
     }
 
     function climateFrom(base, lat, isOcean) {
+      if (state.mapType === 'frozen' && (Math.abs(lat) > .75 || Math.random() < .35)) return '寒冷';
+      if (state.mapType === 'arid' && !isOcean && Math.random() < .45) return '乾燥';
+      if (state.mapType === 'jungle' && !isOcean && Math.random() < .4) return '湿潤';
       if (base.includes('氷') || Math.abs(lat) > 1.15) return '寒冷';
       if (base.includes('乾燥') || state.env.humidity < .25) return '乾燥';
       if (base.includes('湿') || state.env.humidity > .72) return '湿潤';
@@ -738,7 +1570,7 @@
       const chosen = scores[0].l;
       const speciesName = randomName('') + (chosen.id === 'cephalo' ? '潮族' : chosen.id === 'avian' ? '翼人種' : chosen.id === 'mycelial' ? '記憶林' : chosen.id === 'arthropod' ? '群族' : chosen.id === 'reptile' ? '竜人種' : chosen.id === 'amphibian' ? '水棲族' : '獣人種');
       state.intelligence = { ...chosen, speciesName, score: scores[0].score };
-      addLog('life', '知的生命体の出現', `${chosen.base} から ${speciesName} が出現。特徴は「${chosen.traits.slice(0,2).join('・')}」。この惑星の文明担当になりそうです。`, true);
+      addLog('life', '知的生命体の出現', `${chosen.base} から ${speciesName} が出現。特徴は「${chosen.traits.slice(0,2).join('・')}」。この惑星の文明担当になりそうです。`, true, { imageKey: 'intelligence_birth', subType: 'intelligence' });
       const candidates = state.regions
         .map(r => ({ r, score: r.fertility + r.resources * .35 + (r.isOcean && chosen.id === 'cephalo' ? .6 : 0) + (!r.isOcean && chosen.id !== 'cephalo' ? .25 : 0) - Math.abs(r.lat) * .1 + Math.random() * .3 }))
         .sort((a,b) => b.score - a.score)
@@ -785,6 +1617,8 @@
         intelligence: ['知性の火花', '一部の生物系統で記号・道具・世代間学習が成立し始めました。']
       };
       addLog('life', msgs[st.key][0], msgs[st.key][1], true);
+      if (st.key === 'intelligence') triggerFx('intelligence', 1.1);
+      if (st.key === 'intelligence') autoSlowdownForImportantEvent();
       for (const r of state.regions) r.biodiversity = clamp(r.biodiversity + .08 + Math.random() * .12, 0, 1);
     }
 
@@ -801,19 +1635,26 @@
         space: ['宇宙進出開始', '軌道施設と宇宙港が建設されました。グレートフィルター突破の候補段階です。'],
         stellar: ['恒星間文明候補', '惑星文明の一部が恒星間進出を試みています。滅亡か継承か、分岐点です。']
       };
-      addLog('civ', msgs[st.key][0], msgs[st.key][1], true);
+      addLog('civ', msgs[st.key][0], msgs[st.key][1], true, { imageKey: st.key === 'proto' ? 'civilization_proto' : st.key === 'city' ? 'civilization_city' : st.key === 'space' ? 'civilization_space' : null, subType: st.key });
+      if (st.key === 'proto') triggerFx('civilization', 1);
+      if (st.key === 'space') triggerFx('space', 1.2);
+      if (['proto','city','industrial','space'].includes(st.key)) autoSlowdownForImportantEvent();
       evolveRegionNames();
     }
 
     function randomEventGap() {
       const ll = lifeLevel();
-      if (ll < 3) return 220_000_000 + Math.random() * 360_000_000;
-      if (ll < 8) return 45_000_000 + Math.random() * 160_000_000;
-      if (civLevel() < 5) return 2_000_000 + Math.random() * 12_000_000;
-      return 70_000 + Math.random() * 1_200_000;
+      if (ll < 3) return 140_000_000 + Math.random() * 260_000_000;
+      if (ll < 8) return 32_000_000 + Math.random() * 110_000_000;
+      if (civLevel() < 5) return 1_700_000 + Math.random() * 9_000_000;
+      return 120_000 + Math.random() * 1_100_000;
     }
 
     function randomEvent() {
+      if (state.env.tectonics > 0.68 && Math.random() < (0.0006 + state.env.tectonics * 0.0012)) {
+        applyTectonicShift(null);
+        pushInterventionHistory('自然地殻変動', 0, '高い地殻活動により自然地殻変動が発生', null);
+      }
       const ll = lifeLevel();
       const cl = civLevel();
       if (ll < 2) {
@@ -828,6 +1669,8 @@
           ['life', '形質の獲得', '視覚・群れ行動・外骨格などの形質が複数地域で発達しました。']
         ];
         const e = pick(events); addLog(e[0], e[1], e[2]);
+        if (e[1].includes('小規模絶滅') || e[1].includes('気候振動')) triggerFx('hazard', .9);
+        markRegionEvent(pick(state.regions), e[1].includes('放散') ? 'expansion' : 'ecosystem');
         for (const r of state.regions) r.biodiversity = clamp(r.biodiversity + (Math.random() - .35) * .08, 0, 1);
         return;
       }
@@ -839,6 +1682,7 @@
           ['civ', '文字記録の発展', '地域史と神話が記録され、土地の名前が固定化され始めました。']
         ];
         const e = pick(events); addLog(e[0], e[1], e[2]);
+        markRegionEvent(pick(state.regions), e[1].includes('紛争') ? 'conflict' : e[1].includes('交易') ? 'prosper' : 'origin');
         evolveRegionNames();
         return;
       }
@@ -849,6 +1693,9 @@
         ['planet', '極端気象', '気候システムの変動が激しくなり、文明圏と生態系の両方に影響が出ています。']
       ];
       const e = pick(events); addLog(e[0], e[1], e[2]);
+      if (e[1].includes('極端気象')) triggerFx('hazard', 1);
+      if (e[1].includes('技術的跳躍')) triggerFx('space', .8);
+      markRegionEvent(pick(state.regions), e[1].includes('環境負荷') ? 'conflict' : 'prosper');
       for (const r of state.regions) {
         if (r.city || Math.random() < .26) r.pollution = clamp(r.pollution + .035 + Math.random() * .08, 0, 1);
       }
@@ -857,15 +1704,19 @@
     function triggerCollapse() {
       state.collapse = true;
       state.collapseAge = state.age;
-      addLog('civ', '文明崩壊', '惑星規模の複合危機により主要文明が崩壊。都市の一部は廃墟となり、生命圏の再編が始まります。', true);
+      addLog('civ', '文明崩壊', '惑星規模の複合危機により主要文明が崩壊。都市の一部は廃墟となり、生命圏の再編が始まります。', true, { imageKey: 'civilization_collapse', subType: 'collapse' });
+      triggerFx('collapse', 1.6);
+      autoSlowdownForImportantEvent();
       for (const r of state.regions) {
         if (r.city && Math.random() < .7) {
           r.ruin = true;
           r.city = false;
+          markRegionEvent(r, 'collapse');
           r.currentName = '旧' + r.currentName + '跡';
           r.historyNames.push(r.currentName);
         }
       }
+      addLog('life', '再野生化の進行', '崩壊圏の一部で植生と野生生態系の再拡大が確認されました。', true, { imageKey: 'rewilding', subType: 'rewilding' });
     }
 
     function evolveRegionNames() {
@@ -915,6 +1766,10 @@
     }
 
     function tick(dt) {
+      if (performance.now() - state.lastStyleSyncAt > 1200 && !state.paused && (state.manualSpeedOffset || 0) === 0) {
+        applyStyleSpeed(true);
+        state.lastStyleSyncAt = performance.now();
+      }
       const speed = state.paused ? 0 : SPEEDS[state.speedIndex];
       if (speed > 0) {
         const dtYears = dt * speed;
@@ -922,6 +1777,7 @@
         state.rotY += state.autoSpin * dt;
         updateRegions(dtYears);
         updateMilestones();
+        updateGreatFilterProgress();
         state.dirty = true;
       }
       if (performance.now() - state.lastSave > 5000 && state.dirty) saveState(false);
@@ -942,8 +1798,8 @@
     function drawPlanet() {
       const w = canvas.width, h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2, cy = h * .49;
-      const radius = Math.min(w, h) * .34;
+      const cx = w / 2, cy = h * .505;
+      const radius = Math.min(w, h) * .36;
 
       const bg = ctx.createRadialGradient(cx, cy, radius * .1, cx, cy, radius * 1.8);
       bg.addColorStop(0, 'rgba(126,232,255,.13)');
@@ -956,11 +1812,14 @@
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.clip();
+      const mt = state.mapType || 'oceanic';
       const oceanAgeBoost = clamp(lifeLevel() / 8, 0, 1);
       const ocean = ctx.createRadialGradient(cx - radius * .32, cy - radius * .38, radius * .12, cx, cy, radius * 1.1);
+      const oceanMid = mt === 'shallowSea' ? '#3e8db0' : mt === 'frozen' ? '#5a84a9' : mt === 'volcanic' ? '#2c405d' : '#173b78';
+      const oceanDeep = mt === 'shallowSea' ? '#1a5f84' : mt === 'frozen' ? '#2c4f70' : mt === 'volcanic' ? '#132236' : '#071735';
       ocean.addColorStop(0, `rgba(${42 + oceanAgeBoost*20}, ${95 + oceanAgeBoost*50}, ${170 + oceanAgeBoost*38}, 1)`);
-      ocean.addColorStop(.55, '#173b78');
-      ocean.addColorStop(1, '#071735');
+      ocean.addColorStop(.55, oceanMid);
+      ocean.addColorStop(1, oceanDeep);
       ctx.fillStyle = ocean;
       ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
 
@@ -991,20 +1850,59 @@
 
       drawRegionMarkers(cx, cy, radius);
       drawOrbitIfNeeded(cx, cy, radius);
+      drawEventFx(cx, cy, radius);
+    }
+
+    function drawEventFx(cx, cy, radius) {
+      if (!state.fx) return;
+      const now = performance.now();
+      const t = (now - state.fx.start) / state.fx.duration;
+      if (t >= 1) { state.fx = null; return; }
+      const a = (1 - t) * state.fx.power;
+      ctx.save();
+      if (state.fx.type === 'intelligence') {
+        ctx.strokeStyle = `rgba(126,232,255,${0.45*a})`;
+        ctx.lineWidth = 2 + 6 * t;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * (0.45 + 0.5*t), 0, Math.PI*2); ctx.stroke();
+      } else if (state.fx.type === 'civilization') {
+        ctx.fillStyle = `rgba(255,218,118,${0.18*a})`;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * .9, 0, Math.PI*2); ctx.fill();
+      } else if (state.fx.type === 'hazard') {
+        ctx.fillStyle = `rgba(255,90,90,${0.2*a})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (state.fx.type === 'collapse') {
+        ctx.fillStyle = `rgba(40,0,0,${0.35*a})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = `rgba(255,120,120,${0.55*a})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * (0.95 + .08*Math.sin(t*20)), 0, Math.PI*2); ctx.stroke();
+      } else if (state.fx.type === 'space') {
+        ctx.strokeStyle = `rgba(126,232,255,${0.5*a})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.ellipse(cx, cy, radius * (1.24 + t*.08), radius * (.32 + t*.05), -0.25, 0, Math.PI*2); ctx.stroke();
+      }
+      ctx.restore();
     }
 
     function drawLand(cx, cy, radius) {
       const ll = lifeLevel();
+      const mt = state.mapType || 'oceanic';
       for (const d of state.landDots) {
         const p = project(d.lon, d.lat, radius, cx, cy);
         if (!p.visible) continue;
         const alpha = clamp((p.z + .12) / 1.12, 0, 1);
         const rr = d.r * radius * (0.55 + p.scale * .75);
-        const green = ll >= 5 ? 78 + d.fert * 70 : 58;
-        const brown = ll < 3 ? 110 : 76;
-        if (d.polar > .78) ctx.fillStyle = `rgba(210,235,255,${alpha * .72})`;
-        else if (d.land) ctx.fillStyle = `rgba(${brown}, ${green}, ${ll >= 5 ? 68 : 64}, ${alpha * .86})`;
-        else ctx.fillStyle = `rgba(37, 108, 155, ${alpha * .20})`;
+        let green = ll >= 5 ? 78 + d.fert * 70 : 58;
+        let brown = ll < 3 ? 110 : 76;
+        if (mt === 'arid') { green *= .6; brown = 138; }
+        if (mt === 'jungle') { green *= 1.18; brown = 62; }
+        if (mt === 'volcanic') { green *= .55; brown = 98; }
+        const polarCut = mt === 'frozen' ? .62 : .78;
+        if (d.polar > polarCut) ctx.fillStyle = `rgba(${mt==='frozen'?'230,245,255':'210,235,255'},${alpha * .76})`;
+        else if (d.land) {
+          if (mt === 'volcanic' && d.fert < .2) ctx.fillStyle = `rgba(155,70,56,${alpha * .86})`;
+          else ctx.fillStyle = `rgba(${brown}, ${green}, ${ll >= 5 ? 68 : 64}, ${alpha * .86})`;
+        } else ctx.fillStyle = `rgba(${mt==='shallowSea'?'68,150,180':'37,108,155'}, ${alpha * .20})`;
         ctx.beginPath();
         ctx.ellipse(p.x, p.y, rr * 1.55, rr, 0, 0, Math.PI * 2);
         ctx.fill();
@@ -1115,6 +2013,20 @@
         wctx.beginPath(); wctx.moveTo(w*.78,h*.60); wctx.lineTo(w*.84,h*.12); wctx.stroke();
         wctx.fillStyle = 'rgba(126,232,255,.9)'; wctx.beginPath(); wctx.arc(w*.84,h*.12,5,0,Math.PI*2); wctx.fill();
       }
+      if (region.lastEventType) {
+        const fresh = region.lastEventAt != null ? clamp((state.age - region.lastEventAt) / 8_000_000, 0, 1) : 1;
+        const evA = (1 - fresh) * .9;
+        if (evA > .05) {
+          if (region.lastEventType === 'conflict' || region.lastEventType === 'collapse') {
+            wctx.fillStyle = `rgba(140,20,20,${0.22*evA})`; wctx.fillRect(0,0,w,h);
+            wctx.fillStyle = `rgba(50,50,50,${0.28*evA})`; wctx.fillRect(w*.58,h*.45,w*.28,h*.2);
+          } else if (region.lastEventType === 'prosper' || region.lastEventType === 'origin') {
+            wctx.fillStyle = `rgba(255,220,120,${0.15*evA})`; wctx.fillRect(0,0,w,h);
+          } else if (region.lastEventType === 'expansion' || region.lastEventType === 'ecosystem') {
+            wctx.fillStyle = `rgba(120,255,160,${0.13*evA})`; wctx.fillRect(0,0,w,h);
+          }
+        }
+      }
       wctx.fillStyle = 'rgba(0,0,0,.20)'; wctx.fillRect(0,0,w,h);
     }
 
@@ -1173,8 +2085,8 @@
       const scaleY = canvas.height / rect.height;
       const px = (x - rect.left) * scaleX;
       const py = (y - rect.top) * scaleY;
-      const cx = canvas.width / 2, cy = canvas.height * .49;
-      const radius = Math.min(canvas.width, canvas.height) * .34;
+      const cx = canvas.width / 2, cy = canvas.height * .505;
+      const radius = Math.min(canvas.width, canvas.height) * .36;
       const nx = (px - cx) / radius;
       const ny = -(py - cy) / radius;
       if (nx*nx + ny*ny > 1) return null;
@@ -1196,7 +2108,7 @@
 
     function regionSummary(region) {
       const ll = lifeLevel(), cl = civLevel();
-      if (state.collapse && region.ruin) return '旧文明の痕跡あり / 再野生化進行';
+      if (state.collapse && region.ruin) return '旧都市跡 / 再野生化と再興候補';
       if (cl >= 7 && region.city) return '宇宙港・軌道施設あり';
       if (cl >= 5 && region.city) return '高密度都市圏 / 環境負荷あり';
       if (cl >= 3 && region.city) return '都市文明圏 / 交易と政治の中心';
@@ -1223,7 +2135,8 @@
       if (!region) return;
       state.selectedRegionId = region.id;
       if (show) showWipe(region);
-      updateAll();
+      uiState.detailDirty = true;
+      updateAll(true);
     }
 
     function showWipe(region) {
@@ -1242,25 +2155,29 @@
       if (id == null) return;
       if (state.pinnedRegionIds.includes(id)) return;
       if (state.pinnedRegionIds.length >= 3) {
-        alert('観測ワイプは最大3つまでです。新しく追加するには、どれか1つを閉じてください。');
+        const names = state.pinnedRegionIds.map(pid => state.regions.find(r => r.id === pid)?.currentName).filter(Boolean);
+        const tip = names.length ? `\n現在: ${names.join(' / ')}` : '';
+        alert(`観測ワイプは最大3つまでです。解除してから追加してください。${tip}`);
         return;
       }
       state.pinnedRegionIds.push(id);
       state.dirty = true;
-      updatePins();
+      uiState.pinsDirty = true;
       saveState(false);
+      updateAll(true);
     }
 
     function unpin(id) {
       state.pinnedRegionIds = state.pinnedRegionIds.filter(x => x !== id);
       state.dirty = true;
-      updatePins();
+      uiState.pinsDirty = true;
       saveState(false);
+      updateAll(true);
     }
 
-    function updateAll() {
+    function updateStats() {
       $('planetName').textContent = state.name;
-      $('ageText').textContent = '経過 ' + formatAge(state.age);
+      $('ageText').textContent = `${MAP_TYPES[state.mapType]?.label || '標準海洋惑星'} / 経過 ${formatAge(state.age)}`;
       $('lifeStageText').textContent = getStage(LIFE_STAGES, state.age).label;
       $('civStageText').textContent = state.collapse ? '文明崩壊後' : getStage(CIV_STAGES, state.age).label;
       $('speciesText').textContent = state.intelligence ? state.intelligence.speciesName : '未出現';
@@ -1268,10 +2185,32 @@
       $('riskText').textContent = risk < 30 ? `低 ${risk}%` : risk < 62 ? `中 ${risk}%` : `高 ${risk}%`;
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
-      document.querySelectorAll('.modePanel button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.mode));
-      updatePins();
-      updateDetailPanel();
-      updateLogs();
+      const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
+      const manual = state.manualSpeedOffset ? '（手動調整中）' : '';
+      const st = $('styleState'); if (st) st.textContent = `現在: ${styleName}${manual}`;
+      updateFloatingHud();
+      updateCrisisBar();
+      updatePointHud();
+    }
+
+    function updateAll(forceHeavy = false) {
+      updateStats();
+      if (forceHeavy || uiState.modeDirty) {
+        document.querySelectorAll('.modePanel button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.mode));
+        uiState.modeDirty = false;
+      }
+      if (forceHeavy || uiState.pinsDirty) {
+        updatePins();
+        uiState.pinsDirty = false;
+      }
+      if (forceHeavy || uiState.detailDirty) {
+        updateDetailPanel();
+        uiState.detailDirty = false;
+      }
+      if (forceHeavy || uiState.logsDirty) {
+        updateLogs();
+        uiState.logsDirty = false;
+      }
     }
 
     function updatePins() {
@@ -1290,7 +2229,9 @@
           if (e.target.dataset.unpin != null) return;
           selectRegion(r);
           state.mode = 'region';
-          updateAll();
+          uiState.modeDirty = true;
+          uiState.detailDirty = true;
+          updateAll(true);
         });
         list.appendChild(div);
       }
@@ -1299,17 +2240,22 @@
 
     function updateDetailPanel() {
       const panel = $('detailPanel');
+      const guide = `<div class="modeGuideCard">${escapeHtml(modeGuideText(state.mode))}</div>`;
       if (state.mode === 'planet') {
         const env = state.env;
         panel.innerHTML = `
-          <div class="detailHeader"><h2>惑星観察モード</h2><span class="tag">全体</span></div>
+          ${guide}
+          <div class="detailHeader"><h2>惑星全体モード</h2><span class="tag">全体</span></div>
+          <p class="modeHint">惑星全体を俯瞰します。詳細は折りたたみで確認できます。</p>
           <div class="infoGrid">
+            <div class="infoItem"><small>マップタイプ</small><b>${escapeHtml(MAP_TYPES[state.mapType]?.label || '標準海洋惑星')}</b></div>
             <div class="infoItem"><small>海洋率</small><b>${Math.round(env.ocean*100)}%</b></div>
             <div class="infoItem"><small>重力</small><b>${env.gravity.toFixed(2)}G</b></div>
             <div class="infoItem"><small>気候傾向</small><b>${env.temperature > .66 ? '高温' : env.temperature < .33 ? '寒冷' : '温和'}・${env.humidity > .62 ? '湿潤' : env.humidity < .35 ? '乾燥' : '中庸'}</b></div>
             <div class="infoItem"><small>地殻活動</small><b>${env.tectonics > .65 ? '活発' : env.tectonics < .3 ? '静穏' : '中程度'}</b></div>
-            <div class="infoItem wide"><small>観測メモ</small><p class="desc">惑星をスワイプで回転、表面をタップすると地域ワイプが開きます。気になる場所は最大3つまでピン留めできます。</p></div>
-          </div>`;
+            <div class="infoItem wide"><small>観測メモ</small><p class="desc">スワイプで回転、タップで地域ワイプ表示。気になる地点は3件までピン留めできます。</p></div>
+          </div>
+          <details class="fold"><summary>環境詳細を表示</summary><div class="foldBody"><p class="desc">${escapeHtml(MAP_TYPES[state.mapType]?.desc || '')}</p><div class="chipRow"><span class="chip">酸素ポテンシャル ${Math.round(env.oxygenPotential*100)}%</span><span class="chip">森林適性 ${Math.round(env.forest*100)}%</span><span class="chip">山岳率 ${Math.round(env.mountains*100)}%</span></div></div></details>`;
         return;
       }
       if (state.mode === 'region') {
@@ -1317,20 +2263,38 @@
         if (!r) return;
         const d = regionDetails(r);
         panel.innerHTML = `
-          <div class="detailHeader"><h2>${escapeHtml(r.currentName)}</h2><span class="tag">地域</span></div>
+          ${guide}
+          <div class="detailHeader"><h2>エリア観察モード</h2><span class="tag">${escapeHtml(r.currentName)}</span></div>
+          <p class="modeHint">地域分布・都市・生命・危機をマップで確認します。</p>
+          <div class="areaMapWrap">
+            <canvas id="areaMapCanvas" class="areaMapCanvas" width="720" height="360"></canvas>
+            <div class="areaLayerRow">
+              <button data-layer="terrain" class="${state.areaLayer==='terrain'?'active':''}">地形</button>
+              <button data-layer="life" class="${state.areaLayer==='life'?'active':''}">生命</button>
+              <button data-layer="civ" class="${state.areaLayer==='civ'?'active':''}">文明</button>
+              <button data-layer="risk" class="${state.areaLayer==='risk'?'active':''}">危機</button>
+            </div>
+            <div class="areaSel">${state.selectedRegionId != null ? `選択中：${escapeHtml(r.currentName)}` : '惑星上の地域をタップ'}</div>
+          </div>
           <div class="infoGrid">
             <div class="infoItem"><small>旧名履歴</small><b>${escapeHtml(r.historyNames.slice(-3).join(' → '))}</b></div>
             <div class="infoItem"><small>気候/地形</small><b>${escapeHtml(r.climate)}・${r.isOcean ? '海洋/沿岸' : '陸域'}</b></div>
             <div class="infoItem"><small>支配文明種</small><b>${escapeHtml(d.speciesLine)}</b></div>
             <div class="infoItem"><small>状態</small><b>${escapeHtml(regionSummary(r))}</b></div>
+            <div class="infoItem"><small>最近イベント</small><b>${escapeHtml(r.lastEventType ? r.lastEventType : '特記なし')}</b></div>
             <div class="infoItem wide"><small>地域メモ</small><p class="desc">${escapeHtml(d.note)}</p></div>
-          </div>`;
+          </div>
+          <details class="fold"><summary>地域名履歴の詳細</summary><div class="foldBody"><p class="desc">${escapeHtml(r.historyNames.join(' → '))}</p></div></details>`;
+        panel.innerHTML += `<details class="fold" id="interventionFold"><summary>観測介入</summary><div class="foldBody"><p class="desc">観測点を消費して、惑星の歴史に干渉します。グレートフィルター対策用に温存する判断も重要です。</p><div class="interveneGrid"><div class="interveneGroup"><b>環境介入</b><p class="desc">気候安定化: 安定度↑ / 災害圧↓、生命圏保護: 多様性↑ / 汚染↓</p><div class="interveneBtns"><button data-intv="tectonic" data-cost="70">地殻変動 70</button><button data-intv="climate" data-cost="80">気候安定化 80</button><button data-intv="bioshield" data-cost="120">生命圏保護 120</button></div></div><div class="interveneGroup"><b>文明介入</b><p class="desc">文明助言: 社会協調補正 / 汚染低下、GF対策研究: 突破スコア蓄積</p><div class="interveneBtns"><button data-intv="advice" data-cost="100">文明助言 100</button><button class="${(state.greatFilter?.status==='sign' || state.greatFilter?.status==='crisis') ? 'warn' : ''}" data-intv="gfprep" data-cost="150">GF対策研究 150</button></div></div><div class="interveneGroup"><b>危険介入</b><div class="interveneBtns"><button class="warn" data-intv="meteor" data-cost="260">巨大隕石 260</button></div></div></div></div></details>`;
+        requestAnimationFrame(drawAreaMap);
         return;
       }
       if (state.mode === 'biosphere') {
         const species = state.intelligence;
         panel.innerHTML = `
-          <div class="detailHeader"><h2>生命圏観察モード</h2><span class="tag">進化</span></div>
+          ${guide}
+          <div class="detailHeader"><h2>生命進化モード</h2><span class="tag">進化</span></div>
+          <p class="modeHint">進化系統と環境圧、文明への接続を確認します。</p>
           <div class="bars">
             ${barHtml('生物多様性', avg(state.regions.map(r=>r.biodiversity)))}
             ${barHtml('環境安定度', state.env.stability)}
@@ -1338,9 +2302,13 @@
             ${barHtml('災害圧', state.env.disaster)}
           </div>
           <div class="infoGrid" style="margin-top:10px">
-            <div class="infoItem wide"><small>文明種候補/出現種</small><b>${species ? `${escapeHtml(species.speciesName)}：${escapeHtml(species.traits.join('・'))}` : 'まだ知性候補の選抜前です。生命圏が進むと、惑星環境に応じて文明担当が決まります。'}</b></div>
+            <div class="infoItem wide"><small>進化元系統 / 出現種</small><b>${species ? `${escapeHtml(lineageOriginText(species))}` : 'まだ知性候補の選抜前です。'}</b></div>
+            <div class="infoItem wide"><small>主要特徴</small><b>${species ? `${escapeHtml(species.traits.join('・'))}` : '惑星環境の偏りに応じて系統が選抜されます。'}</b></div>
             <div class="infoItem wide"><small>文明への影響</small><p class="desc">${species ? escapeHtml(species.culture) : '哺乳系・爬虫系・鳥類系・節足系・海洋頭足系・菌類群体などから候補が出ます。'}</p></div>
-          </div>`;
+          </div>
+          <details class="fold" id="interventionFold"><summary>観測介入</summary><div class="foldBody"><p class="desc">観測点を消費して、惑星の歴史に干渉します。グレートフィルター対策用に温存する判断も重要です。</p><div class="interveneGrid"><div class="interveneGroup"><b>環境介入</b><p class="desc">気候安定化: 安定度↑ / 災害圧↓、生命圏保護: 多様性↑ / 汚染↓</p><div class="interveneBtns"><button data-intv="climate" data-cost="80">気候安定化 80</button><button data-intv="bioshield" data-cost="120">生命圏保護 120</button></div></div><div class="interveneGroup"><b>文明介入</b><p class="desc">文明助言: 社会協調補正 / 汚染低下、GF対策研究: 突破スコア蓄積</p><div class="interveneBtns"><button data-intv="advice" data-cost="100">文明助言 100</button><button class="${(state.greatFilter?.status==='sign' || state.greatFilter?.status==='crisis') ? 'warn' : ''}" data-intv="gfprep" data-cost="150">GF対策研究 150</button></div></div></div></div></details>
+          <details class="fold"><summary>生命圏詳細</summary><div class="foldBody"><div class="chipRow"><span class="chip">海洋率 ${Math.round(state.env.ocean*100)}%</span><span class="chip">湿度 ${Math.round(state.env.humidity*100)}%</span><span class="chip">安定度 ${Math.round(state.env.stability*100)}%</span></div></div></details>
+          <details class="fold"><summary>文明観察の要点</summary><div class="foldBody"><p class="desc">${escapeHtml(civPhaseText())}</p></div></details>`;
         return;
       }
       if (state.mode === 'record') {
@@ -1348,14 +2316,21 @@
         const civLogs = state.logs.filter(l => l.type === 'civ').length;
         const planetLogs = state.logs.filter(l => l.type === 'planet').length;
         panel.innerHTML = `
-          <div class="detailHeader"><h2>観測記録</h2><span class="tag">日誌</span></div>
+          ${guide}
+          <div class="detailHeader"><h2>記録モード</h2><span class="tag">日誌</span></div>
           <div class="infoGrid">
             <div class="infoItem"><small>生命ログ</small><b>${lifeLogs}件</b></div>
             <div class="infoItem"><small>文明ログ</small><b>${civLogs}件</b></div>
             <div class="infoItem"><small>惑星ログ</small><b>${planetLogs}件</b></div>
             <div class="infoItem"><small>命名済地域</small><b>${state.regions.filter(r=>r.historyNames.length>1).length}地域</b></div>
             <div class="infoItem wide"><small>現在の読みどころ</small><p class="desc">${escapeHtml(currentHighlight())}</p></div>
-          </div>`;
+          </div>
+          <details class="fold"><summary>重要イベントアルバム</summary><div class="foldBody">${state.logs.filter(l => l.important || l.imageKey).slice(0, 12).map((l, i) => `<div class="logItem" data-album="${i}"><div class="logAge">${formatAge(l.age)}</div>${eventThumbHtml(l)}<div class="logText"><span class="logType">${l.type === 'life' ? '生命' : l.type === 'civ' ? '文明' : '惑星'}</span><b>${escapeHtml(l.title)}</b></div></div>`).join('') || '<div class="logText">対象イベントがありません。</div>'}</div></details>
+          ${state.currentEnding ? `<details class="fold" open><summary>終幕と創星日誌</summary><div class="foldBody"><p class="desc"><b>${escapeHtml(state.currentEnding)}</b><br>${escapeHtml((state.greatFilter?.status === 'resolved' ? 'GF突破' : state.greatFilter?.status === 'failed' ? 'GF失敗' : 'GF進行中'))} / ${escapeHtml(state.endingSummary || '最終所見をまとめています。')}</p><div class="interveneBtns"><button data-journal=\"save\">創星日誌を保存</button><button data-journal=\"read\">日誌を読む</button><button data-journal=\"continue\">余生観測を続ける</button><button data-journal=\"new\">新しい惑星へ</button></div><div style=\"margin-top:8px\"><small>観測者</small><div class=\"interveneBtns\" style=\"margin-top:4px\">${state.metaProgress.unlockedObserverTypes.map(o=>`<button data-observer=\"${o}\">${escapeHtml(o)}</button>`).join('')}</div></div>${state.journalArchive[0] ? `<details class=\"fold\" style=\"margin-top:8px\"><summary>最新の日誌本文</summary><div class=\"foldBody\"><pre style=\"max-height:220px;overflow:auto;white-space:pre-wrap;font-size:11px;line-height:1.45\">${escapeHtml(state.journalArchive[0].text)}</pre></div></details>` : ''}</div></details>` : ''}
+          <details class="fold"><summary>周回記録</summary><div class="foldBody"><div class="infoGrid"><div class="infoItem"><small>見たエンディング種類数</small><b>${state.metaProgress.endingsSeenTotal}</b></div><div class="infoItem"><small>GF突破回数</small><b>${state.metaProgress.breakthroughSeenTotal}</b></div><div class="infoItem"><small>GF失敗回数</small><b>${state.metaProgress.failedSeenTotal}</b></div><div class="infoItem"><small>持ち越し予定観測点</small><b>${state.metaProgress.carriedObservationPoints}</b></div><div class="infoItem wide"><small>見たエンディング名</small><b>${escapeHtml((state.metaProgress.endingsSeenNames||[]).join(' / ') || 'なし')}</b></div><div class="infoItem wide"><small>解放観測者</small><b>${escapeHtml((state.metaProgress.unlockedObserverTypes||[]).join(' / '))}</b></div><div class="infoItem wide"><small>解放特典</small><b>${escapeHtml((state.metaProgress.unlockedPerks||[]).join(' / ') || 'なし')}</b></div></div></div></details>
+          <details class="fold"><summary>介入履歴</summary><div class="foldBody">${state.interventionHistory.slice(0, 16).map(h=>`<div class=\"logItem\"><div class=\"logAge\">${formatAge(h.age)}</div><div class=\"logText\"><b>${escapeHtml(h.kind)}</b><br>${escapeHtml(h.summary)} / 消費${h.cost}${h.regionId!=null?` / 地域#${h.regionId}`:''}</div></div>`).join('') || '<div class=\"logText\">介入履歴はありません。</div>'}</div></details>
+          <details class="fold devTestWrap" id="devTestFold"><summary>開発用テスト（誤操作注意）</summary><div class="foldBody"><div class="devGrid"><button data-dev="p500">観測点 +500</button><button data-dev="gf_sign">GF兆候を発生</button><button data-dev="gf_crisis">GF危機へ進行</button><button data-dev="gf_ok">GF突破テスト</button><button data-dev="gf_fail">GF失敗テスト</button><button data-dev="meteor3">巨大隕石3回扱い</button><button data-dev="end3">エンディング3種類達成</button><button data-dev="sp2">特殊エンド2種類達成</button><button data-dev="bk3">GF突破3回扱い</button><button data-dev="reunlock">解放判定を再実行</button><button data-dev="refresh">周回記録を再表示</button><button data-dev="save">テスト状態を保存</button></div><div class="infoItem wide" style="margin-top:8px"><small>状態</small><b>観測点 ${getObservationPoints()} / GF ${escapeHtml(state.greatFilter?.status || 'none')} (${escapeHtml(state.greatFilter?.type || '-')}) / Ending ${escapeHtml(state.currentEnding || '-')} / runId ${escapeHtml(state.runId || '-')}</b><p class="desc">endingsSeenNames: ${escapeHtml((state.metaProgress?.endingsSeenNames||[]).join(', ') || '-')}<br>specialEndingsSeen: ${escapeHtml((state.metaProgress?.specialEndingsSeen||[]).join(', ') || '-')}<br>breakthrough: ${state.metaProgress?.breakthroughSeenTotal||0} / failed: ${state.metaProgress?.failedSeenTotal||0}<br>unlockedObserverTypes: ${escapeHtml((state.metaProgress?.unlockedObserverTypes||[]).join(', ') || '-')}<br>unlockedPerks: ${escapeHtml((state.metaProgress?.unlockedPerks||[]).join(', ') || '-')}<br>journalArchive件数: ${state.journalArchive?.length||0}</p></div></div></details>
+          <details class="fold"><summary>観測補助（演出確認用）</summary><div class="foldBody"><p class="desc">通常観測はそのままに、重要イベント演出だけを手動確認できます。</p><div class="assistBtns"><button data-assist="life">生命イベントを試す</button><button data-assist="intelligence">知的生命誕生を試す</button><button data-assist="civilization">文明成立を試す</button><button data-assist="hazard">危機イベントを試す</button><button data-assist="collapse">文明崩壊を試す</button><button data-assist="space">宇宙進出を試す</button></div></div></details>`;
       }
     }
 
@@ -1373,6 +2348,14 @@
       return `<div class="barLine"><span>${label}</span><div class="barTrack"><div class="barFill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`;
     }
 
+    function eventThumbHtml(log) {
+      if (!log.imageKey && !log.important) return `<div class="logThumb subtle"></div>`;
+      if (!log.imageKey) return `<div class="logThumb"><div class="thumbFallback">${log.type === 'life' ? '🧬' : log.type === 'civ' ? '🏛️' : '🪐'}</div></div>`;
+      const src = EVENT_IMAGES[log.imageKey];
+      if (!src) return `<div class="logThumb"><div class="thumbFallback">✨</div></div>`;
+      return `<div class="logThumb"><img src="${src}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumbFallback',textContent:'✨'}))"></div>`;
+    }
+
     function updateLogs() {
       const list = $('logList');
       const logs = state.logs.filter(l => state.logFilter === 'all' || l.type === state.logFilter).slice(0, state.mode === 'record' ? 80 : 18);
@@ -1380,9 +2363,44 @@
       list.innerHTML = logs.map(l => `
         <div class="logItem">
           <div class="logAge">${formatAge(l.age)}</div>
-          <div class="logText"><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
+          ${eventThumbHtml(l)}
+          <div class="logText"><span class="logType">${l.type === 'life' ? '生命' : l.type === 'civ' ? '文明' : '惑星'}</span><b>${escapeHtml(l.title)}</b><br>${escapeHtml(l.text)}</div>
         </div>`).join('') || '<div class="logText">まだ記録がありません。</div>';
       document.querySelectorAll('.logFilters button').forEach(b => b.classList.toggle('active', b.dataset.log === state.logFilter));
+      list.querySelectorAll('.logItem').forEach((el, i) => {
+        const log = logs[i];
+        const thumb = el.querySelector('.logThumb');
+        if (!thumb || (!log.imageKey && !log.important)) return;
+        thumb.style.cursor = 'pointer';
+        thumb.addEventListener('click', (e) => { e.stopPropagation(); openEventModal(log); });
+      });
+    }
+
+    function openEventModal(log) {
+      const modal = $('eventModal');
+      applyModalPauseIfNeeded();
+      const preview = $('eventPreview');
+      const src = log.imageKey ? EVENT_IMAGES[log.imageKey] : null;
+      const icon = log.type === 'life' ? '🧬' : log.type === 'civ' ? '🏛️' : '🪐';
+      const fallback = `<div class="thumbFallback" style="height:100%;background:linear-gradient(135deg,#283c6a,#1b2d4a)">${icon}</div>`;
+      preview.innerHTML = src ? `<img src="${src}" alt="" onerror="this.parentNode.innerHTML='${fallback.replace(/'/g, '&#39;')}'">` : fallback;
+      $('eventType').textContent = log.type === 'life' ? '生命' : log.type === 'civ' ? '文明' : '惑星';
+      $('eventTitle').textContent = log.title || '';
+      $('eventAge').textContent = formatAge(log.age || 0);
+      $('eventBody').textContent = log.text || '';
+      const rb = $('eventRegionBtn');
+      rb.style.display = Number.isInteger(log.regionId) ? 'inline-block' : 'none';
+      rb.onclick = () => {
+        const region = state.regions.find(r => r.id === log.regionId);
+        if (region) { selectRegion(region, true); state.mode = 'region'; uiState.modeDirty = true; uiState.detailDirty = true; updateAll(true); }
+        closeEventModal();
+      };
+      modal.classList.add('show');
+    }
+
+    function closeEventModal() {
+      $('eventModal').classList.remove('show');
+      restoreModalPauseIfNeeded();
     }
 
     function avg(arr) { return arr.reduce((a,b)=>a+b,0) / Math.max(1, arr.length); }
@@ -1398,12 +2416,20 @@
         }
         const data = {
           ...state,
-          milestones: Array.from(state.milestones)
+          milestones: Array.from(state.milestones),
+          fx: null,
+          modalPauseBackup: null,
+          lastSave: 0,
+          modalLogIndex: null
         };
-        localStorage.setItem('sousei-nisshi-save-v1', JSON.stringify(data));
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
         state.lastSave = performance.now();
         state.dirty = false;
-        if (showToast) updateAll();
+        if (showToast) {
+          uiState.logsDirty = true;
+          if (state.mode === 'record') uiState.detailDirty = true;
+          updateAll(true);
+        }
       } catch (e) {
         if (showToast) alert('保存に失敗しました。ブラウザの保存領域が使えない可能性があります。');
       }
@@ -1411,12 +2437,56 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem('sousei-nisshi-save-v1');
+        const raw = localStorage.getItem(SAVE_KEY) || localStorage.getItem(LEGACY_SAVE_KEY);
         if (!raw) return false;
         const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.regions) || !Array.isArray(data.logs) || !data.env || (!Array.isArray(data.milestones) && !(data.milestones instanceof Set))) return false;
         Object.assign(state, data);
+        state.timeStyle = state.timeStyle || 'evolution';
+        state.mapType = MAP_TYPES[state.mapType] ? state.mapType : 'oceanic';
+        state.areaLayer = ['terrain','life','civ','risk'].includes(state.areaLayer) ? state.areaLayer : 'terrain';
+        state.greatFilterPreparedPoints = Number(state.greatFilterPreparedPoints || 0);
+        state.interventionHistory = Array.isArray(state.interventionHistory) ? state.interventionHistory : [];
+        state.greatFilter = state.greatFilter && typeof state.greatFilter === 'object' ? { status:'none', type:null, signAge:null, crisisAge:null, deadlineAge:null, resolvedAge:null, ignored:false, ignoreCount:0, result:null, ...state.greatFilter } : { status:'none', type:null, signAge:null, crisisAge:null, deadlineAge:null, resolvedAge:null, ignored:false, ignoreCount:0, result:null };
+        if (state.greatFilter.status === 'warning' || state.greatFilter.status === 'signal') state.greatFilter.status = 'sign';
+        if (state.greatFilter.status === 'active') state.greatFilter.status = 'crisis';
+        state.endingsSeen = Array.isArray(state.endingsSeen) ? state.endingsSeen : [];
+        state.filterBreakthroughCount = Number(state.filterBreakthroughCount || 0);
+        state.currentEnding = state.currentEnding || null;
+        state.observerType = state.observerType || 'standard';
+        state.unlockedObserverTypes = Array.isArray(state.unlockedObserverTypes) ? state.unlockedObserverTypes : ['standard','child_boy','child_girl'];
+        state.journalArchive = Array.isArray(state.journalArchive) ? state.journalArchive : [];
+        state.endingSummary = state.endingSummary || '';
+        state.journalGeneratedForCurrentEnding = state.journalGeneratedForCurrentEnding || null;
+        state.runId = state.runId || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,6)}-${state.seed || 0}`;
+        state.metaProgress = state.metaProgress && typeof state.metaProgress === 'object' ? state.metaProgress : {};
+        const mergedUnlocked = Array.from(new Set([...(state.metaProgress.unlockedObserverTypes || []), ...(state.unlockedObserverTypes || ['standard','child_boy','child_girl'])]));
+        state.metaProgress.endingsSeenTotal = Number(state.metaProgress.endingsSeenTotal || state.endingsSeen?.length || 0);
+        state.metaProgress.endingsSeenNames = Array.isArray(state.metaProgress.endingsSeenNames) ? Array.from(new Set(state.metaProgress.endingsSeenNames)) : Array.from(new Set(state.endingsSeen || []));
+        state.metaProgress.endingsSeenTotal = state.metaProgress.endingsSeenNames.length;
+        state.metaProgress.breakthroughSeenTotal = Number(state.metaProgress.breakthroughSeenTotal || state.filterBreakthroughCount || 0);
+        state.metaProgress.failedSeenTotal = Number(state.metaProgress.failedSeenTotal || 0);
+        state.metaProgress.specialEndingsSeen = Array.isArray(state.metaProgress.specialEndingsSeen) ? Array.from(new Set(state.metaProgress.specialEndingsSeen)) : [];
+        state.metaProgress.unlockedObserverTypes = mergedUnlocked.length ? mergedUnlocked : ['standard','child_boy','child_girl'];
+        state.metaProgress.unlockedPerks = Array.isArray(state.metaProgress.unlockedPerks) ? state.metaProgress.unlockedPerks : [];
+        state.metaProgress.carriedObservationPoints = Number(state.metaProgress.carriedObservationPoints || 0);
+        state.journalArchive = state.journalArchive.map(j => ({ runId: j.runId || state.runId, planetSeed: j.planetSeed ?? state.seed, planetName: j.planetName || state.name, endingName: j.endingName || j.ending || '未確定', observerType: j.observerType || 'standard', createdAt: j.createdAt || Date.now(), text: j.text || '', name: j.name || '創星日誌.txt', ...j }));
+        state.pinnedRegionIds = Array.isArray(state.pinnedRegionIds) ? state.pinnedRegionIds.filter(id => state.regions.some(r => r.id === id)).slice(0, 3) : [];
+        if (state.selectedRegionId != null && !state.regions.some(r => r.id === state.selectedRegionId)) state.selectedRegionId = state.regions[0]?.id ?? null;
+        state.logs = Array.isArray(state.logs) ? state.logs : [];
+        state.regions = Array.isArray(state.regions) ? state.regions : [];
+        state.manualSpeedOffset = Number.isFinite(state.manualSpeedOffset) ? state.manualSpeedOffset : 0;
+        state.pauseOnEventModal = state.pauseOnEventModal !== false;
+        state.fx = null;
+        state.modalPauseBackup = null;
+        state.modalLogIndex = null;
+        $('eventModal')?.classList.remove('show');
         state.milestones = new Set(data.milestones || []);
         state.dirty = false;
+        uiState.detailDirty = true;
+        uiState.logsDirty = true;
+        uiState.pinsDirty = true;
+        uiState.modeDirty = true;
         return true;
       } catch (e) { return false; }
     }
@@ -1435,9 +2505,9 @@
         if (!dragging) return;
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
-        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 8) moved = true;
+        if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 10) moved = true;
         state.rotY += dx * 0.008;
-        state.rotX = clamp(state.rotX + dy * 0.005, -0.75, 0.75);
+        state.rotX = clamp(state.rotX + dy * 0.006, -Math.PI / 4, Math.PI / 4);
         lastX = e.clientX; lastY = e.clientY;
       }
       function pointerUp(e) {
@@ -1453,24 +2523,173 @@
       canvas.addEventListener('pointerup', pointerUp);
       canvas.addEventListener('pointercancel', () => dragging = false);
 
-      $('speedDown').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex - 1, 0, SPEEDS.length - 1); state.paused = state.speedIndex === 0; updateAll(); });
-      $('speedUp').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex + 1, 0, SPEEDS.length - 1); state.paused = false; updateAll(); });
+      $('speedDown').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex - 1, 0, SPEEDS.length - 1); state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = state.speedIndex === 0; state.dirty = true; updateAll(false); });
+      $('speedUp').addEventListener('click', () => { state.speedIndex = clamp(state.speedIndex + 1, 0, SPEEDS.length - 1); state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; state.dirty = true; updateAll(false); });
       $('pauseBtn').addEventListener('click', () => {
         if (state.paused || state.speedIndex === 0) { state.speedIndex = state.lastSpeedIndex || 5; state.paused = false; }
         else { state.lastSpeedIndex = state.speedIndex; state.paused = true; }
-        updateAll();
+        state.dirty = true; updateAll(false);
       });
-      $('normalBtn').addEventListener('click', () => { state.speedIndex = 4; state.paused = false; updateAll(); });
-      $('fastBtn').addEventListener('click', () => { state.speedIndex = 7; state.paused = false; updateAll(); });
+      $('normalBtn').addEventListener('click', () => { state.speedIndex = 4; state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; state.dirty = true; updateAll(false); });
+      $('fastBtn').addEventListener('click', () => { state.speedIndex = 7; state.manualSpeedOffset = state.speedIndex - desiredSpeedIndex(); state.paused = false; state.dirty = true; updateAll(false); });
       $('pinBtn').addEventListener('click', pinSelected);
-      $('detailBtn').addEventListener('click', () => { state.mode = 'region'; updateAll(); });
+      $('detailBtn').addEventListener('click', () => { state.mode = 'region'; uiState.modeDirty = true; uiState.detailDirty = true; updateAll(true); });
       $('closeWipeBtn').addEventListener('click', hideWipe);
       $('saveBtn').addEventListener('click', () => saveState(true));
-      $('resetBtn').addEventListener('click', () => {
-        if (confirm('新しい惑星で観測を開始しますか？現在の自動保存は上書きされます。')) makePlanet();
+      $('resetViewBtn').addEventListener('click', () => {
+        state.rotX = -0.08;
+        uiState.detailDirty = false;
+        updateStats();
       });
-      document.querySelectorAll('.modePanel button').forEach(btn => btn.addEventListener('click', () => { state.mode = btn.dataset.mode; updateAll(); }));
-      document.querySelectorAll('.logFilters button').forEach(btn => btn.addEventListener('click', () => { state.logFilter = btn.dataset.log; updateLogs(); }));
+      $('fullscreenBtn').addEventListener('click', async () => {
+        try {
+          if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+          else await document.exitFullscreen();
+        } catch (_) {}
+      });
+      $('resetBtn').addEventListener('click', () => {
+        if (confirm('新しい惑星へ移行します。現在の観測進行と自動保存は上書きされます。続行しますか？')) {
+          localStorage.removeItem(SAVE_KEY);
+          localStorage.removeItem(LEGACY_SAVE_KEY);
+          makePlanet();
+        }
+      });
+      document.querySelectorAll('.modePanel button').forEach(btn => btn.addEventListener('click', () => { state.mode = btn.dataset.mode; uiState.modeDirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true); }));
+      document.querySelectorAll('.logFilters button').forEach(btn => btn.addEventListener('click', () => { state.logFilter = btn.dataset.log; uiState.logsDirty = true; updateAll(true); }));
+      document.querySelectorAll('[data-style]').forEach(btn => btn.addEventListener('click', () => {
+        state.timeStyle = btn.dataset.style;
+        state.manualSpeedOffset = 0;
+        applyStyleSpeed(true);
+        state.paused = false;
+        state.dirty = true;
+        showEventToast('planet', `時間進行スタイル: ${TIME_STYLES[state.timeStyle]}`);
+        updateAll(false);
+      }));
+      $('pauseOnModalToggle').addEventListener('change', (e) => {
+        state.pauseOnEventModal = !!e.target.checked;
+        state.dirty = true;
+        if (!state.pauseOnEventModal && $('eventModal').classList.contains('show')) restoreModalPauseIfNeeded();
+      });
+      $('detailPanel').addEventListener('click', (e) => {
+        const layerBtn = e.target.closest('[data-layer]');
+        if (layerBtn) {
+          state.areaLayer = layerBtn.dataset.layer;
+          state.dirty = true;
+          uiState.detailDirty = true;
+          updateAll(true);
+          return;
+        }
+        const btn = e.target.closest('[data-assist]');
+        if (btn) {
+          runAssistEvent(btn.dataset.assist);
+          return;
+        }
+        const ib = e.target.closest('[data-intv]');
+        if (ib) {
+          let cost = Number(ib.dataset.cost || 0);
+          const perks = state.metaProgress?.unlockedPerks || [];
+          if (ib.dataset.intv === 'gfprep' && perks.includes('gf_cost_down_20')) cost = Math.max(40, Math.floor(cost * 0.8));
+          if (ib.dataset.intv === 'meteor' && perks.includes('danger_cost_down_10')) cost = Math.max(80, Math.floor(cost * 0.9));
+          if (!spendObservationPoints(cost)) return;
+          const t = ib.dataset.intv;
+          const target = state.regions.find(r => r.id === state.selectedRegionId) || null;
+          if (t === 'tectonic') { applyTectonicShift(target); triggerFx('hazard', .7); pushInterventionHistory('地殻変動', cost, '地形・資源・気候に局所変動', target?.id ?? null); }
+          else if (t === 'climate') { state.env.disaster = clamp(state.env.disaster - 0.12, 0, 1); state.env.stability = clamp(state.env.stability + 0.08, 0, 1); for (const r of state.regions) r.pollution = clamp(r.pollution - 0.03, 0, 1); pushInterventionHistory('気候安定化', cost, '災害圧と汚染を緩和', target?.id ?? null); }
+          else if (t === 'bioshield') { for (const r of state.regions) r.biodiversity = clamp(r.biodiversity + 0.08 + Math.random()*0.06,0,1); if (!state.intelligence) state.env.socialPressure = clamp(state.env.socialPressure + 0.06,0,1); pushInterventionHistory('生命圏保護', cost, '生物多様性を回復', target?.id ?? null); }
+          else if (t === 'advice') { state.age += 150000; state.env.socialPressure = clamp(state.env.socialPressure + 0.05,0,1); state.env.disaster = clamp(state.env.disaster + 0.02,0,1); pushInterventionHistory('文明助言', cost, '文明進行を補助（依存リスク増）', target?.id ?? null); }
+          else if (t === 'gfprep') { state.greatFilterPreparedPoints = (state.greatFilterPreparedPoints || 0) + Math.floor(cost * 1.2); pushInterventionHistory('GF対策研究', cost, `対策投資を蓄積 (${state.greatFilterPreparedPoints})`, target?.id ?? null); }
+          else if (t === 'meteor') {
+            if (!confirm('危険操作: 巨大隕石を実行しますか？')) { if (typeof state.observationPoints==='number') state.observationPoints += cost; state.dirty=true; updatePointHud(); return; }
+            if (cost < 260) { if (typeof state.observationPoints==='number') { state.observationPoints += cost - 260; } cost = 260; }
+            applyMeteorImpact(target); pushInterventionHistory('巨大隕石', 260, '大量絶滅と文明後退リスクを誘発', target?.id ?? null);
+          }
+          uiState.logsDirty = true; uiState.detailDirty = true; updateAll(true);
+          return;
+        }
+        const album = e.target.closest('[data-album]');
+        if (album && state.mode === 'record') {
+          const logs = state.logs.filter(l => l.important || l.imageKey).slice(0, 12);
+          const log = logs[Number(album.dataset.album)];
+          if (log) openEventModal(log);
+          return;
+        }
+        const jb = e.target.closest('[data-journal]');
+        if (jb) {
+          const a = jb.dataset.journal;
+          if (a === 'save') { createSouseiJournal(true); downloadLatestJournal(); uiState.detailDirty = true; updateAll(true); }
+          else if (a === 'read') { if (!state.journalArchive?.length) createSouseiJournal(true); uiState.detailDirty = true; updateAll(true); }
+          else if (a === 'continue') { state.currentEnding = state.currentEnding; showEventToast('planet', '観測を継続します'); }
+          else if (a === 'new') { makePlanet(); }
+          return;
+        }
+        const ob = e.target.closest('[data-observer]');
+        if (ob) {
+          if (!(state.metaProgress?.unlockedObserverTypes || state.unlockedObserverTypes || []).includes(ob.dataset.observer)) return;
+          state.observerType = ob.dataset.observer;
+          createSouseiJournal(true);
+          uiState.detailDirty = true;
+          state.dirty = true;
+          updateAll(true);
+          return;
+        }
+        const db = e.target.closest('[data-dev]');
+        if (db) {
+          const m = state.metaProgress || (state.metaProgress = { endingsSeenTotal:0, endingsSeenNames:[], breakthroughSeenTotal:0, failedSeenTotal:0, specialEndingsSeen:[], unlockedObserverTypes:['standard','child_boy','child_girl'], unlockedPerks:[], carriedObservationPoints:0 });
+          const toast = (t) => { if (typeof showEventToast === 'function') showEventToast('planet', t); };
+          if (db.dataset.dev === 'p500') { if (typeof addObservationPoints === 'function') addObservationPoints(500, '開発用テスト'); else state.observationPoints = (state.observationPoints || 0) + 500; toast('観測点+500'); }
+          else if (db.dataset.dev === 'gf_sign') { if (state.greatFilter?.status === 'none') { state.greatFilter.status='sign'; state.greatFilter.type='climate'; state.greatFilter.signAge=state.age; } toast('GF兆候を設定'); }
+          else if (db.dataset.dev === 'gf_crisis') { state.greatFilter.status='crisis'; state.greatFilter.type=state.greatFilter.type||'climate'; state.greatFilter.crisisAge=state.age; state.greatFilter.deadlineAge=state.age+1_200_000; toast('GF危機へ進行'); }
+          else if (db.dataset.dev === 'gf_ok') { state.greatFilter.status='resolved'; state.currentEnding='星間航行エンド'; state.endingSummary='開発用: GF突破テスト'; createSouseiJournal(true); toast('GF突破テスト完了'); }
+          else if (db.dataset.dev === 'gf_fail') { state.greatFilter.status='failed'; state.currentEnding='文明崩壊エンド'; state.endingSummary='開発用: GF失敗テスト'; createSouseiJournal(true); toast('GF失敗テスト完了'); }
+          else if (db.dataset.dev === 'meteor3') { for(let i=0;i<3;i++) state.interventionHistory.unshift({ kind:'巨大隕石', cost:260, summary:'開発用', regionId:null, age:state.age }); toast('巨大隕石3回扱い'); }
+          else if (db.dataset.dev === 'end3') { m.endingsSeenNames = Array.from(new Set([...(m.endingsSeenNames||[]), '星間航行エンド','文明崩壊エンド','静かな成熟エンド'])); m.endingsSeenTotal = m.endingsSeenNames.length; toast('エンディング3種類達成扱い'); }
+          else if (db.dataset.dev === 'sp2') { m.specialEndingsSeen = Array.from(new Set([...(m.specialEndingsSeen||[]), '壊しすぎた神の手エンド','文明なき豊穣エンド'])); toast('特殊エンド2種類達成扱い'); }
+          else if (db.dataset.dev === 'bk3') { m.breakthroughSeenTotal = Math.max(3, m.breakthroughSeenTotal||0); toast('GF突破3回扱い'); }
+          else if (db.dataset.dev === 'reunlock') { if (typeof unlockMetaProgress === 'function') unlockMetaProgress(state.currentEnding || '静かな成熟エンド', true); toast('解放判定を再実行'); }
+          else if (db.dataset.dev === 'refresh') { toast('周回記録を更新'); }
+          else if (db.dataset.dev === 'save') { saveState(true); toast('テスト状態を保存'); }
+          state.dirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true);
+        }
+      });
+      $('detailPanel').addEventListener('pointerup', (e) => {
+        const canvasEl = e.target.closest('#areaMapCanvas');
+        if (!canvasEl) return;
+        const r = areaMapPick(e.clientX, e.clientY);
+        if (r) selectRegion(r, true);
+      });
+      $('eventCloseBtn').addEventListener('click', closeEventModal);
+      $('eventModal').addEventListener('click', (e) => { if (e.target.id === 'eventModal') closeEventModal(); });
+      $('gfActBtn')?.addEventListener('click', () => {
+        const gf = state.greatFilter;
+        if (gf && (gf.status === 'sign' || gf.status === 'crisis')) {
+          const need = gf.status === 'sign' ? 70 : Math.max(100, 230 - Math.floor((state.greatFilterPreparedPoints || 0) * 0.24));
+          if (!spendObservationPoints(need)) return;
+          state.greatFilterPreparedPoints += Math.floor(need * 1.08);
+          addLog('civ', '緊急GF対策', `${getGreatFilterLabel(gf)} へ緊急対策（消費${need}）を実施。`, true);
+          if (gf.status === 'crisis' && Math.random() < 0.45) gf.deadlineAge += 180_000 + Math.random() * 200_000;
+          state.dirty = true; uiState.logsDirty = true; uiState.detailDirty = true; updateAll(true);
+          return;
+        }
+        if (typeof window.openInterventionPanel === 'function') return window.openInterventionPanel('greatFilter');
+        if (typeof window.runGreatFilterIntervention === 'function') return window.runGreatFilterIntervention();
+        state.mode = 'record'; uiState.modeDirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true);
+        if (typeof showEventToast === 'function') showEventToast('planet', '介入メニューは未接続です');
+      });
+      $('gfDetailBtn')?.addEventListener('click', () => {
+        state.mode = 'record'; uiState.modeDirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true);
+        window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' });
+      });
+      $('gfSkipBtn')?.addEventListener('click', () => {
+        const gf = getGreatFilterStateObject();
+        if (!gf) return;
+        gf.ignored = true;
+        gf.ignoreCount = (gf.ignoreCount || 0) + 1;
+        state.dirty = true;
+        if (typeof showEventToast === 'function') showEventToast('planet', 'グレートフィルターを見送りました');
+        updateCrisisBar();
+      });
+      window.addEventListener('scroll', updateFloatingHud, { passive: true });
+      $('detailPanel').addEventListener('toggle', (e) => { if (e.target.id === 'interventionFold') updatePointHud(); }, true);
     }
 
     let last = performance.now();
@@ -1490,17 +2709,60 @@
       }
       // 低頻度のUI更新。毎フレームDOM更新するとスマホで重くなるため。
       if (now - lastUiUpdate > 500) {
-        updateAll();
+        updateStats();
         lastUiUpdate = now;
       }
       requestAnimationFrame(loop);
     }
 
     function initialUiRefresh() {
-      updateAll();
+      uiState.detailDirty = true;
+      uiState.logsDirty = true;
+      uiState.pinsDirty = true;
+      uiState.modeDirty = true;
+      updateAll(true);
+      const t = $('pauseOnModalToggle'); if (t) t.checked = !!state.pauseOnEventModal;
       const r = state.regions[0];
       if (r) selectRegion(r, false);
     }
+
+    window.souseiDebug = {
+      jumpToLife() { state.age = Math.max(state.age, LIFE_STAGES[2].age + 10_000); state.dirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true); },
+      jumpToIntelligence() { state.age = Math.max(state.age, CIV_STAGES[2].age + 50_000); state.dirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true); },
+      jumpToCivilization() { state.age = Math.max(state.age, CIV_STAGES[5].age + 30_000); state.dirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true); },
+      jumpToGreatFilter() {
+        state.age = Math.max(state.age, CIV_STAGES[5].age + 100_000);
+        if (state.greatFilter?.status === 'none') {
+          state.greatFilter.status = 'sign';
+          state.greatFilter.type = state.greatFilter.type || 'climate';
+          state.greatFilter.signAge = state.age;
+        }
+        state.dirty = true; uiState.detailDirty = true; uiState.logsDirty = true; updateAll(true);
+      },
+      addPoints(amount = 100) { return addObservationPoints(Number(amount) || 0, 'デバッグ加算'); },
+      status() {
+        const gf = state.greatFilter || {};
+        const speedYearsPerSecond = SPEEDS[state.speedIndex] || 0;
+        const greatFilterDeadlineRemain = gf.deadlineAge ? Math.max(0, gf.deadlineAge - state.age) : null;
+        const estimatedRealSecondsToGFResolution = speedYearsPerSecond > 0 && greatFilterDeadlineRemain != null ? greatFilterDeadlineRemain / speedYearsPerSecond : null;
+        const out = {
+          age: state.age,
+          speedIndex: state.speedIndex,
+          speedYearsPerSecond,
+          points: getObservationPoints(),
+          gfPreparedPoints: state.greatFilterPreparedPoints || 0,
+          risk: riskValue(),
+          life: getStage(LIFE_STAGES, state.age).label,
+          civ: state.collapse ? '文明崩壊後' : getStage(CIV_STAGES, state.age).label,
+          greatFilterStatus: gf.status,
+          greatFilterType: gf.type,
+          greatFilterDeadlineRemain,
+          estimatedRealSecondsToGFResolution
+        };
+        console.table(out);
+        return out;
+      }
+    };
 
     setupEvents();
     if (!loadState()) makePlanet();
