@@ -691,6 +691,17 @@
       border-radius: 12px;
       padding: 8px 10px;
       background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.12s ease;
+    }
+
+    .guideCard:hover {
+      border-color: rgba(82, 227, 255, 0.4);
+      background: rgba(82, 227, 255, 0.08);
+    }
+
+    .guideCard:active {
+      transform: scale(0.98);
     }
 
     .guideCard b {
@@ -3212,9 +3223,9 @@ function syncEvolutionStatus() {
           <p class="modeHint">星全体の物理環境、グレートフィルターの対策進行率、全球介入コマンドです。</p>
 
           <div class="modeGuide">
-            <div class="guideCard"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
-            <div class="guideCard"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
-            <div class="guideCard"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
+            <div class="guideCard" data-mode-jump="planet"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
+            <div class="guideCard" data-mode-jump="region"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
+            <div class="guideCard" data-mode-jump="biosphere"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
           </div>
 
           ${greatFilterHtml()}
@@ -4069,6 +4080,19 @@ ${base.thought}`;
           state.journalObserver = observer.dataset.observer;
           uiState.detailDirty = true;
           updateAll(true);
+          return;
+        }
+
+        const modeJump = e.target.closest('[data-mode-jump]');
+        if (modeJump) {
+          const nextMode = modeJump.dataset.modeJump;
+          if (nextMode === 'region' && state.selectedRegionId == null && state.regions[0]) {
+            state.selectedRegionId = state.regions[0].id;
+          }
+          state.mode = nextMode;
+          markAllDirty();
+          updateAll(true);
+          return;
         }
 
         const important = e.target.closest('[data-important-index]');
