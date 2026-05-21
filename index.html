@@ -185,6 +185,75 @@
       gap: 12px;
     }
 
+    .foldSection {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      overflow: hidden;
+    }
+    .foldSection > summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      list-style: none;
+    }
+    .foldSection > summary::-webkit-details-marker { display: none; }
+    .foldSectionBody {
+      padding: 0 0 2px;
+    }
+
+    .floatingHud {
+      position: fixed;
+      left: 50%;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 90;
+      display: none;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(82, 227, 255, 0.28);
+      background: rgba(2, 8, 24, 0.76);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+    }
+    .floatingHud button {
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .hudActions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .hudActions button {
+      min-width: 0;
+      white-space: nowrap;
+      writing-mode: horizontal-tb;
+      min-height: 40px;
+    }
+    .hudStats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(96px, 1fr));
+      gap: 4px 10px;
+      min-width: 220px;
+    }
+    .hudStat {
+      font-size: 10px;
+      color: var(--subtle);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hudStat b {
+      color: var(--text);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
     .leftPane,
     .rightPane {
       display: flex;
@@ -1076,6 +1145,13 @@
 
 
     @media (max-width: 768px) {
+      .app {
+        width: 100%;
+        max-width: none;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
       body::before {
         opacity: 0.08;
       }
@@ -1117,6 +1193,23 @@
       .footerNote {
         font-size: 11px;
         color: rgba(195, 208, 232, 0.72);
+      }
+
+      .floatingHud {
+        display: grid;
+        left: 10px;
+        right: 10px;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        transform: none;
+        width: auto;
+        border-radius: 18px;
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .hudStats {
+        min-width: 0;
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -1280,31 +1373,52 @@
           <button data-mode="record">📜日誌</button>
         </nav>
 
-        <!-- ピン留めされた追跡地域（登録時のみ自動展開） -->
-        <section class="pinTray" id="pinTray">
-          <div class="sectionTitle"><b>追跡観測スロット</b><span id="pinCount">0/3</span></div>
-          <div class="pinList" id="pinList"></div>
-        </section>
-
-        <!-- 詳細パネル（モード切替により書き換え） -->
-        <section class="detailPanel" id="detailPanel"></section>
+        <details class="foldSection" id="rightPaneFold" open>
+          <summary>詳細・追跡パネル</summary>
+          <div class="foldSectionBody">
+            <!-- ピン留めされた追跡地域（登録時のみ自動展開） -->
+            <section class="pinTray" id="pinTray">
+              <div class="sectionTitle"><b>追跡観測スロット</b><span id="pinCount">0/3</span></div>
+              <div class="pinList" id="pinList"></div>
+            </section>
+            <!-- 詳細パネル（モード切替により書き換え） -->
+            <section class="detailPanel" id="detailPanel"></section>
+          </div>
+        </details>
 
         <!-- 簡易ログリスト -->
-        <section class="logPanel">
-          <div class="sectionTitle"><b>統合ログフィード</b><span id="logCount">0件</span></div>
-          <div class="logFilters">
-            <button data-log="all" class="active">ALL</button>
-            <button data-log="life">生命</button>
-            <button data-log="civ">文明</button>
-            <button data-log="planet">惑星</button>
+        <details class="foldSection logPanel" id="logPanel" open>
+          <summary>統合ログフィード</summary>
+          <div class="foldSectionBody">
+            <div class="sectionTitle"><b>統合ログフィード</b><span id="logCount">0件</span></div>
+            <div class="logFilters">
+              <button data-log="all" class="active">ALL</button>
+              <button data-log="life">生命</button>
+              <button data-log="civ">文明</button>
+              <button data-log="planet">惑星</button>
+            </div>
+            <div class="logList" id="logList"></div>
           </div>
-          <div class="logList" id="logList"></div>
-        </section>
+        </details>
       </section>
     </div>
 
     <div class="footerNote">※本装置は観測用シミュレーターです。科学的近似をベースに、宇宙の知的生命と文明がグレートフィルターを突破する物語性を最優先に再構築されています。</div>
   </main>
+  <div class="floatingHud" id="floatingHud" aria-label="簡易HUD">
+    <div class="hudStats">
+      <div class="hudStat">生命段階<b id="hudLifeStage">---</b></div>
+      <div class="hudStat">文明段階<b id="hudCivStage">---</b></div>
+      <div class="hudStat">フィルター<b id="hudFilter">---</b></div>
+      <div class="hudStat">残観測点<b id="hudPoint">---</b></div>
+      <div class="hudStat" style="grid-column: 1 / -1;">進行<b id="hudSpeed">---</b></div>
+    </div>
+    <div class="hudActions">
+      <button id="hudPauseBtn">⏸ 停止</button>
+      <button id="hudNormalBtn">等速</button>
+      <button id="hudFastBtn">早送</button>
+    </div>
+  </div>
 
   <script>
     'use strict';
@@ -3141,6 +3255,11 @@ function syncEvolutionStatus() {
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
       $('autoPauseInterventionBtn').textContent = `介入チャンスで自動停止: ${state.autoPauseOnInterventionChance ? 'ON' : 'OFF'}`;
+      $('hudLifeStage').textContent = $('lifeStageText').textContent;
+      $('hudCivStage').textContent = $('civStageText').textContent;
+      $('hudFilter').textContent = $('filterText').textContent;
+      $('hudPoint').textContent = $('pointText').textContent;
+      $('hudSpeed').textContent = (state.paused || state.speedIndex === 0) ? '停止中' : SPEED_LABELS[state.speedIndex];
 
       const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
       const manual = state.manualSpeedOffset ? ' (手動調律中)' : '';
@@ -4027,6 +4146,24 @@ ${base.thought}`;
           toast('！お使いの環境では全画面表示が制限されています。');
         }
       });
+      document.addEventListener('fullscreenchange', () => {
+        const isFs = Boolean(document.fullscreenElement);
+        document.body.classList.toggle('is-fullscreen', isFs);
+        $('fullscreenBtn').textContent = isFs ? '解除' : '全画面';
+        if (isFs) {
+          ['rightPaneFold', 'logPanel', 'guideFold'].forEach(id => {
+            const el = $(id);
+            if (el && 'open' in el) el.open = false;
+          });
+        }
+      });
+
+      const bindHudProxy = (id, targetId) => {
+        $(id).addEventListener('click', () => $(targetId).click());
+      };
+      bindHudProxy('hudPauseBtn', 'pauseBtn');
+      bindHudProxy('hudNormalBtn', 'normalBtn');
+      bindHudProxy('hudFastBtn', 'fastBtn');
 
       document.querySelectorAll('.modePanel button').forEach(btn => {
         btn.addEventListener('click', () => {
