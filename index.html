@@ -1242,6 +1242,9 @@
             <button id="normalBtn">等速</button>
             <button id="fastBtn">早送り</button>
           </div>
+          <div class="quickRow">
+            <button id="autoPauseInterventionBtn">介入チャンスで自動停止: ON</button>
+          </div>
           <details class="timeStyleBox" id="timeStyleBox" open>
             <summary>進行スタイルプリセット</summary>
             <div class="styleRow">
@@ -1317,6 +1320,9 @@
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     const SAVE_KEY = 'sousei-nisshi-full-prototype-v2';
+    const APP_CONFIG = {
+      autoPauseOnInterventionChanceDefault: true
+    };
 
     const SPEEDS = [0, 1, 15, 150, 1500, 15000, 150000, 1500000, 15000000];
     const SPEED_LABELS = ['一時停止', '×1年/秒', '×15年/秒', '×150年/秒', '×1.5千年/秒', '×1.5万年/秒', '×15万年/秒', '×150万年/秒', '×1500万年/秒'];
@@ -1434,6 +1440,7 @@
       dominantIntelligenceId: null,
       interventionNoticeState: 'idle',
       notifyInterventionChance: false,
+      autoPauseOnInterventionChance: APP_CONFIG.autoPauseOnInterventionChanceDefault,
       aiObserverMode: 'normal',
       bgSpeedMode: 'auto',
       intelligence: null,
@@ -1463,8 +1470,22 @@
       if (state.bgSpeedMode !== 'auto') return;
       if (state.paused || state.speedIndex === 0) return;
       const gfStatus = state.greatFilter?.status;
-state.notifyInterventionChance = gfStatus === 'sign' || gfStatus === 'crisis';
-      state.interventionNoticeState = state.notifyInterventionChance ? 'ready' : 'idle';
+      const isChance = gfStatus === 'sign' || gfStatus === 'crisis';
+      state.notifyInterventionChance = isChance;
+      if (!isChance) {
+        state.interventionNoticeState = 'idle';
+        return;
+      }
+      if (state.interventionNoticeState !== 'ready') {
+        state.interventionNoticeState = 'ready';
+        if (state.autoPauseOnInterventionChance && !state.paused) {
+          state.lastSpeedIndex = state.speedIndex;
+          state.paused = true;
+          addLog('planet', '介入チャンス自動停止', '介入チャンスを検知。自動一時停止しました。', false, { subType: 'autopause' });
+          toast('介入チャンスを検知。自動一時停止しました。');
+          saveState(false);
+        }
+      }
     }
 
     function syncEvolutionStatus() {
@@ -1637,6 +1658,7 @@ function syncEvolutionStatus() {
       state.lastSpeedIndex = 5;
       state.manualSpeedOffset = 0;
       state.paused = false;
+      state.autoPauseOnInterventionChance = APP_CONFIG.autoPauseOnInterventionChanceDefault;
       state.rotY = Math.random() * Math.PI * 2;
       state.rotX = -0.06;
       state.env = {
@@ -3126,6 +3148,7 @@ function syncEvolutionStatus() {
 
       $('speedDisplay').innerHTML = `<b>${SPEED_LABELS[state.speedIndex]}</b><small>${SPEED_HELP[state.speedIndex]}</small>`;
       $('pauseBtn').textContent = state.paused || state.speedIndex === 0 ? '▶ 再開' : '⏸ 一時停止';
+      $('autoPauseInterventionBtn').textContent = `介入チャンスで自動停止: ${state.autoPauseOnInterventionChance ? 'ON' : 'OFF'}`;
 
       const styleName = TIME_STYLES[state.timeStyle] || TIME_STYLES.evolution;
       const manual = state.manualSpeedOffset ? ' (手動調律中)' : '';
@@ -3215,9 +3238,9 @@ function syncEvolutionStatus() {
           <details class="modeGuide collapsiblePanel" id="guideFold" open>
             <summary>表示ガイドショートカット</summary>
             <div class="collapsibleBody">
-            <div class="guideCard"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
-            <div class="guideCard"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
-            <div class="guideCard"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
+            <div class="guideCard" data-mode-jump="planet"><b>🌍 惑星スキャナー</b><small>物理重力、全球気候、地殻活動値、全球ハザードリスク。</small></div>
+            <div class="guideCard" data-mode-jump="region"><b>📍 地表面・地域詳細</b><small>地表をタップ。詳細なエリアマップ、歴史、局所介入。</small></div>
+            <div class="guideCard" data-mode-jump="biosphere"><b>🧬 進化・系統図</b><small>多様性、社会的圧力。自意識種の形質と文明への歴史メモ。</small></div>
             </div>
           </details>
 
@@ -3880,6 +3903,9 @@ ${base.thought}`;
           resolved: false,
           ...(data.state.greatFilter || {})
         };
+        if (typeof state.autoPauseOnInterventionChance === 'undefined') {
+          state.autoPauseOnInterventionChance = APP_CONFIG.autoPauseOnInterventionChanceDefault;
+        }
         state.dirty = false;
         markAllDirty();
         return true;
@@ -3977,6 +4003,12 @@ ${base.thought}`;
         updateAll(false);
       });
 
+      $('autoPauseInterventionBtn').addEventListener('click', () => {
+        state.autoPauseOnInterventionChance = !state.autoPauseOnInterventionChance;
+        saveState(false);
+        updateAll(false);
+      });
+
       $('pinBtn').addEventListener('click', pinSelected);
 
       $('detailBtn').addEventListener('click', () => {
@@ -4071,6 +4103,19 @@ ${base.thought}`;
           state.journalObserver = observer.dataset.observer;
           uiState.detailDirty = true;
           updateAll(true);
+          return;
+        }
+
+        const modeJump = e.target.closest('[data-mode-jump]');
+        if (modeJump) {
+          const nextMode = modeJump.dataset.modeJump;
+          if (nextMode === 'region' && state.selectedRegionId == null && state.regions[0]) {
+            state.selectedRegionId = state.regions[0].id;
+          }
+          state.mode = nextMode;
+          markAllDirty();
+          updateAll(true);
+          return;
         }
 
         const important = e.target.closest('[data-important-index]');
