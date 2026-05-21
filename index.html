@@ -1367,6 +1367,15 @@
       mode: 'planet',
       logFilter: 'all',
       points: 0,
+      evolutionStage: 'proto',
+      forceEvolutionStage: null,
+      evolutionStatus: '観測中',
+      intelligenceCandidates: [],
+      dominantIntelligenceId: null,
+      interventionNoticeState: 'idle',
+      notifyInterventionChance: false,
+      aiObserverMode: 'normal',
+      bgSpeedMode: 'auto',
       intelligence: null,
       collapse: false,
       collapseAge: null,
@@ -1390,6 +1399,55 @@
       meta: defaultMeta()
     };
 
+    function applyBackgroundCatchup() {
+      if (state.bgSpeedMode !== 'auto') return;
+      if (state.paused || state.speedIndex === 0) return;
+      const gfStatus = state.greatFilter?.status;
+state.notifyInterventionChance = gfStatus === 'sign' || gfStatus === 'crisis';
+      state.interventionNoticeState = state.notifyInterventionChance ? 'ready' : 'idle';
+    }
+
+    function syncEvolutionStatus() {
+      const current = getStage(LIFE_STAGES, state.age);
+      state.evolutionStage = state.forceEvolutionStage || current.key;
+      state.evolutionStatus = `${current.label} / ${state.collapse ? '文明崩壊' : '進行中'}`;
+      state.aiObserverMode = state.journalObserver;
+      state.intelligenceCandidates = state.intelligence ? [state.intelligence] : [];
+      state.dominantIntelligenceId = state.intelligence ? state.intelligence.id : null;
+    }
+function syncEvolutionStatus() {
+  const current = getStage(LIFE_STAGES, state.age);
+  const currentKey = current?.key || 'sterile';
+
+  let mappedStage = 'life_base';
+  if (state.intelligence) {
+    mappedStage = 'intelligence_fixed';
+  } else if (currentKey === 'preIntelligence' || currentKey === 'intelligence') {
+    mappedStage = 'candidates';
+  }
+
+  state.evolutionStage = state.forceEvolutionStage || mappedStage;
+  state.evolutionStatus = `${current?.label || '観測中'} / ${state.collapse ? '文明崩壊' : '進行中'}`;
+
+  if (typeof state.journalObserver === 'string' && state.journalObserver.trim()) {
+    state.aiObserverMode = state.journalObserver;
+  } else {
+    state.aiObserverMode = state.aiObserverMode || 'normal';
+  }
+
+  if (state.intelligence) {
+    state.intelligenceCandidates = [state.intelligence];
+    state.dominantIntelligenceId = state.intelligence.id || null;
+  } else if (state.evolutionStage === 'candidates') {
+    state.intelligenceCandidates = [
+      { id: 'candidate-main', name: '主流候補', stage: 'candidates' }
+    ];
+    state.dominantIntelligenceId = 'candidate-main';
+  } else {
+    state.intelligenceCandidates = [];
+    state.dominantIntelligenceId = null;
+  }
+}
     const uiState = {
       detailDirty: true,
       logsDirty: true,
@@ -2206,8 +2264,19 @@
       ctx.fill();
 
       drawRegionMarkers(cx, cy, radius);
+      drawIntelligenceGlyph(cx, cy, radius);
       drawOrbitIfNeeded(cx, cy, radius);
       drawEventFx(cx, cy, radius);
+    }
+
+    function drawIntelligenceGlyph(cx, cy, radius) {
+      if (!state.dominantIntelligenceId) return;
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 207, 86, 0.9)';
+      ctx.font = `700 ${Math.max(12, Math.round(radius * 0.11))}px system-ui`;
+      ctx.textAlign = 'center';
+      ctx.fillText('✧', cx, cy - radius * 0.72);
+      ctx.restore();
     }
 
     function drawLand(cx, cy, radius) {
@@ -2994,6 +3063,8 @@
     }
 
     function updateAll(forceHeavy = false) {
+      applyBackgroundCatchup();
+      syncEvolutionStatus();
       updateStats();
 
       if (forceHeavy || uiState.modeDirty) {
